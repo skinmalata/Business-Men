@@ -1,69 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claim Your Business - BusinessMen</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Your Business Listing - BusinessMen Nigeria Directory</title>
+  <meta name="description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Update your info, add products, and reach more customers across Nigeria for free.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://skinmalata.github.io/Business-Men/claim.html">
+  <link rel="alternate" hreflang="en" href="https://skinmalata.github.io/Business-Men/claim.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://skinmalata.github.io/Business-Men/claim.html">
+  <meta property="og:title" content="Claim Your Business Listing - BusinessMen Nigeria">
+  <meta property="og:description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Free listing with direct contact info.">
+  <meta property="og:site_name" content="BusinessMen">
+  <meta property="og:locale" content="en_NG">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Claim Your Business Listing - BusinessMen Nigeria">
+  <meta name="twitter:description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Free listing.">
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">BusinessMen</a>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/listing.html?id=all">Browse Hotels</a>
-                <a href="/claim.html" class="active">List Your Business</a>
-            </div>
+  <header>
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="container">
+        <a href="/Business-Men/" class="logo" aria-label="BusinessMen Home">BusinessMen</a>
+        <div class="nav-links">
+          <a href="/Business-Men/">Home</a>
+          <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
+          <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
+          <a href="/Business-Men/listing.html?cat=schools">Schools</a>
+          <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
+          <a href="/Business-Men/claim.html" class="active">List Your Business</a>
         </div>
+      </div>
     </nav>
+  </header>
 
-    <main class="container claim-page">
-        <h1>Claim or Add Your Business</h1>
-        <p class="claim-subtitle">Already listed? Claim your page to update info, add products, and respond to reviews. Not listed? Submit your business for free.</p>
+  <main>
+    <div class="container claim-page">
+      <h1>Claim or Add Your Business</h1>
+      <p class="claim-subtitle">Already listed on BusinessMen? Claim your page to update info, add products, and respond to reviews. Not listed yet? Submit your business for free and reach customers across Nigeria.</p>
 
-        <div class="claim-form">
-            <div class="form-group">
-                <label for="claimName">Business Name</label>
-                <input type="text" id="claimName" placeholder="e.g. Eko Hotel & Suites" required>
-            </div>
-            <div class="form-group">
-                <label for="claimEmail">Your Email</label>
-                <input type="email" id="claimEmail" placeholder="you@example.com" required>
-            </div>
-            <div class="form-group">
-                <label for="claimPhone">Phone Number</label>
-                <input type="tel" id="claimPhone" placeholder="+234 800 000 0000">
-            </div>
-            <div class="form-group">
-                <label for="claimCity">City</label>
-                <input type="text" id="claimCity" placeholder="e.g. Lagos, Abuja">
-            </div>
-            <div class="form-group">
-                <label for="claimAction">I want to...</label>
-                <select id="claimAction">
-                    <option value="claim">Claim an existing listing</option>
-                    <option value="add">Add a new business</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="claimMessage">Message (optional)</label>
-                <textarea id="claimMessage" rows="4" placeholder="Any details about your business..."></textarea>
-            </div>
-            <button class="btn-primary" onclick="submitClaim()">Submit</button>
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ContactPoint",
+        "name": "BusinessMen Claim Form",
+        "description": "Claim or add your business listing to BusinessMen Nigeria directory.",
+        "contactType": "listing claim",
+        "areaServed": "NG",
+        "availableLanguage": ["English"]
+      }
+      </script>
+
+      <form class="claim-form" onsubmit="event.preventDefault(); submitClaim();" aria-label="Business claim form">
+        <div class="form-group">
+          <label for="claimName">Business Name *</label>
+          <input type="text" id="claimName" placeholder="e.g. Eko Hotel & Suites" required aria-required="true">
         </div>
-        <div id="claimSuccess" class="claim-success" style="display:none">
-            <h3>Thank you!</h3>
-            <p>We'll review your submission and get back to you within 48 hours.</p>
+        <div class="form-group">
+          <label for="claimEmail">Your Email *</label>
+          <input type="email" id="claimEmail" placeholder="you@example.com" required aria-required="true">
         </div>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>Data sourced from public directories.</p>
+        <div class="form-group">
+          <label for="claimPhone">Phone Number</label>
+          <input type="tel" id="claimPhone" placeholder="+234 800 000 0000">
         </div>
-    </footer>
+        <div class="form-group">
+          <label for="claimCity">City</label>
+          <input type="text" id="claimCity" placeholder="e.g. Lagos, Abuja, Port Harcourt">
+        </div>
+        <div class="form-group">
+          <label for="claimAction">I want to...</label>
+          <select id="claimAction">
+            <option value="claim">Claim an existing listing</option>
+            <option value="add">Add a new business</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="claimMessage">Message (optional)</label>
+          <textarea id="claimMessage" rows="4" placeholder="Any updates or details about your business..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Submit</button>
+        <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">We'll review your submission within 48 hours.</p>
+      </form>
 
-    <script src="js/app.js"></script>
+      <div id="claimSuccess" class="claim-success" style="display:none" role="alert">
+        <h3>Thank you!</h3>
+        <p>We'll review your submission and get back to you within 48 hours.</p>
+        <a href="/Business-Men/" class="btn-primary" style="display:inline-block;margin-top:15px;">Browse Directory</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/Business-Men/">Browse businesses</a> or <a href="/Business-Men/claim.html">add your listing</a>.</p>
+    </div>
+  </footer>
+
+  <script defer src="js/app.js"></script>
+  <script defer>document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const business = params.get('business');
+    if (business && document.getElementById('claimName')) {
+      document.getElementById('claimName').value = business;
+    }
+  });</script>
 </body>
 </html>

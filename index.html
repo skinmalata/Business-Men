@@ -1,66 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BusinessMen - Nigeria Business Directory</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BusinessMen - Nigeria Business Directory | Find Companies, Hotels, Schools & More</title>
+  <meta name="description" content="BusinessMen is Nigeria's fastest-growing business directory. Search 1,300+ verified businesses including hotels, hospitals, schools, and agriculture companies across Lagos, Abuja, Port Harcourt, and all Nigerian cities. Find phone numbers, emails, and websites directly.">
+  <meta name="keywords" content="Nigeria business directory, Nigerian companies, Lagos businesses, Abuja businesses, hotels in Nigeria, hospitals in Nigeria, schools in Nigeria, agriculture companies Nigeria, business directory Nigeria, find Nigerian businesses">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://skinmalata.github.io/Business-Men/">
+  <link rel="alternate" hreflang="en" href="https://skinmalata.github.io/Business-Men/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://skinmalata.github.io/Business-Men/">
+  <meta property="og:title" content="BusinessMen - Nigeria Business Directory">
+  <meta property="og:description" content="Find 1,300+ verified Nigerian businesses with direct phone, email & website. Hotels, hospitals, schools & agriculture across all Nigerian cities.">
+  <meta property="og:site_name" content="BusinessMen">
+  <meta property="og:locale" content="en_NG">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BusinessMen - Nigeria Business Directory">
+  <meta name="twitter:description" content="Find 1,300+ verified Nigerian businesses with direct phone, email & website. Hotels, hospitals, schools & agriculture across all Nigerian cities.">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BusinessMen",
+    "url": "https://skinmalata.github.io/Business-Men/",
+    "description": "Nigeria business directory featuring hotels, hospitals, schools, and agriculture companies across all Nigerian cities.",
+    "inLanguage": "en-NG",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://skinmalata.github.io/Business-Men/listing.html?cat={category}"
+      },
+      "query-input": "required name=category"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "BusinessMen",
+    "url": "https://skinmalata.github.io/Business-Men/",
+    "description": "Nigeria's fastest-growing business directory connecting you with verified companies nationwide.",
+    "areaServed": "NG",
+    "foundingDate": "2026"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is BusinessMen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "BusinessMen is a Nigeria business directory that helps you find verified companies, hotels, hospitals, schools, and agriculture businesses across all Nigerian cities with direct contact information."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I find a business in Nigeria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Browse categories like Hotels, Hospitals, Schools, or Agriculture, or search by name, city, or keyword. Each listing includes direct phone numbers, emails, and websites."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I add my business to BusinessMen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, you can claim an existing listing or add a new business for free through our claim form. Updates are reviewed within 48 hours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which Nigerian cities are covered?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We cover Lagos, Abuja, Port Harcourt, Ibadan, Benin City, Kano, Enugu, Calabar, Owerri, Kaduna, Abeokuta, Ilorin, Jos, and 30+ other Nigerian cities."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">BusinessMen</a>
-            <div class="nav-links">
-                    <a href="/" class="active">Home</a>
-                <a href="/listing.html?cat=hotels">Hotels</a>
-                <a href="/listing.html?cat=hospitals">Hospitals</a>
-                <a href="/listing.html?cat=schools">Schools</a>
-                <a href="/listing.html?cat=agriculture">Agriculture</a>
-                <a href="/claim.html">List Your Business</a>
-            </div>
+  <header>
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="container">
+        <a href="/Business-Men/" class="logo" aria-label="BusinessMen Home">BusinessMen</a>
+        <div class="nav-links">
+          <a href="/Business-Men/" class="active">Home</a>
+          <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
+          <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
+          <a href="/Business-Men/listing.html?cat=schools">Schools</a>
+          <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
+          <a href="/Business-Men/claim.html">List Your Business</a>
         </div>
+      </div>
     </nav>
+  </header>
 
-    <section class="hero">
-        <div class="container">
-            <h1>BusinessMen - Nigeria Business Directory</h1>
-            <p>Find businesses across Nigeria — with direct contact info</p>
-            <p style="margin-top:6px;font-size:0.9rem;opacity:0.8;">Choose a category above or search below</p>
-            <div class="category-tabs">
-                <a href="/listing.html?cat=hotels" class="cat-tab">Hotels (386)</a>
-                <a href="/listing.html?cat=hospitals" class="cat-tab">Hospitals (142)</a>
-                <a href="/listing.html?cat=schools" class="cat-tab">Schools (294)</a>
-                <a href="/listing.html?cat=agriculture" class="cat-tab">Agriculture (499)</a>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search by name, city, or keyword..." oninput="handleSearch(this.value)">
-                <button onclick="handleSearch(document.getElementById('searchInput').value)">Search</button>
-            </div>
-            <div class="stats-bar">
-                <span id="totalCount">0</span> <span id="categoryLabel">listings</span>
-            </div>
+  <main>
+    <section class="hero" aria-label="Directory search">
+      <div class="container">
+        <h1>Nigeria Business Directory</h1>
+        <p>Find verified businesses across Nigeria — with direct phone, email & website</p>
+        <p style="margin-top:6px;font-size:0.9rem;opacity:0.8;">1,300+ listings across 40+ Nigerian cities</p>
+
+        <div class="category-tabs" role="tablist" aria-label="Business categories">
+          <a href="/Business-Men/listing.html?cat=hotels" class="cat-tab" role="tab">Hotels (386)</a>
+          <a href="/Business-Men/listing.html?cat=hospitals" class="cat-tab" role="tab">Hospitals (142)</a>
+          <a href="/Business-Men/listing.html?cat=schools" class="cat-tab" role="tab">Schools (294)</a>
+          <a href="/Business-Men/listing.html?cat=agriculture" class="cat-tab" role="tab">Agriculture (499)</a>
         </div>
+
+        <div class="search-box" role="search">
+          <label for="searchInput" class="sr-only">Search businesses</label>
+          <input type="text" id="searchInput" placeholder="Search by name, city, or keyword..." oninput="handleSearch(this.value)" aria-label="Search businesses">
+          <button onclick="handleSearch(document.getElementById('searchInput').value)" aria-label="Search">Search</button>
+        </div>
+
+        <div class="stats-bar">
+          <span id="totalCount">0</span> <span id="categoryLabel">listings</span> &mdash; <span id="cityCount">0</span> cities
+        </div>
+      </div>
     </section>
 
-    <main class="container">
-        <div class="filter-bar">
-            <select id="cityFilter" onchange="applyFilters()">
-                <option value="">All Cities</option>
-            </select>
-        </div>
+    <div class="container">
+      <aside class="filter-bar" aria-label="Filter options">
+        <label for="cityFilter" class="sr-only">Filter by city</label>
+        <select id="cityFilter" onchange="applyFilters()" aria-label="Filter by city">
+          <option value="">All Cities</option>
+        </select>
+      </aside>
 
-        <div id="listingGrid" class="listing-grid"></div>
-        <div id="loading" class="loading">Loading...</div>
-        <div id="noResults" class="no-results" style="display:none">No listings found matching your search.</div>
-    </main>
+      <div id="listingGrid" class="listing-grid" role="list" aria-label="Business listings"></div>
+      <div id="loading" class="loading" role="status" aria-live="polite">Loading businesses...</div>
+      <div id="noResults" class="no-results" style="display:none" role="status">No listings found matching your search. Try a different keyword or city.</div>
+    </div>
+  </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>Data sourced from public directories. <a href="/claim.html">Claim your business</a> to update your listing.</p>
-        </div>
-    </footer>
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. Data sourced from public directories. <a href="/Business-Men/claim.html">Claim your business</a> to update your listing.</p>
+      <p style="margin-top:8px;font-size:0.8rem;">Covering Lagos, Abuja, Port Harcourt, Ibadan, Kano, Enugu, Calabar, and 35+ Nigerian cities.</p>
+    </div>
+  </footer>
 
-    <script src="js/app.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => loadListings('hotels'));</script>
+  <script defer src="js/app.js"></script>
+  <script defer>document.addEventListener('DOMContentLoaded', () => loadListings('hotels'));</script>
 </body>
 </html>

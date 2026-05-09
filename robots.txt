@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://skinmalata.github.io/Business-Men/sitemap.xml

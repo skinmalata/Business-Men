@@ -1,40 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listing - BusinessMen</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="dynamicTitle">Business Directory - BusinessMen Nigeria</title>
+  <meta name="description" id="dynamicDesc" content="Find verified businesses in Nigeria with direct contact information. Browse hotels, hospitals, schools, and agriculture companies across all Nigerian cities.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://skinmalata.github.io/Business-Men/listing.html">
+  <link rel="alternate" hreflang="en" href="https://skinmalata.github.io/Business-Men/listing.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" id="ogUrl" content="https://skinmalata.github.io/Business-Men/listing.html">
+  <meta property="og:title" id="ogTitle" content="Business Directory - BusinessMen Nigeria">
+  <meta property="og:description" id="ogDesc" content="Find verified businesses in Nigeria with direct contact information.">
+  <meta property="og:site_name" content="BusinessMen">
+  <meta property="og:locale" content="en_NG">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twTitle" content="Business Directory - BusinessMen Nigeria">
+  <meta name="twitter:description" id="twDesc" content="Find verified businesses in Nigeria with direct contact information.">
+
+  <!-- JSON-LD: BreadcrumbList (updated by JS per listing) -->
+  <script type="application/ld+json" id="breadcrumbSchema">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "BusinessMen", "item": "https://skinmalata.github.io/Business-Men/"},
+      {"@type": "ListItem", "position": 2, "name": "Business Directory", "item": "https://skinmalata.github.io/Business-Men/listing.html"}
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">BusinessMen</a>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/listing.html?cat=hotels">Hotels</a>
-                <a href="/listing.html?cat=hospitals">Hospitals</a>
-                <a href="/listing.html?cat=schools">Schools</a>
-                <a href="/listing.html?cat=agriculture">Agriculture</a>
-                <a href="/claim.html">List Your Business</a>
-            </div>
+  <header>
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="container">
+        <a href="/Business-Men/" class="logo" aria-label="BusinessMen Home">BusinessMen</a>
+        <div class="nav-links">
+          <a href="/Business-Men/">Home</a>
+          <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
+          <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
+          <a href="/Business-Men/listing.html?cat=schools">Schools</a>
+          <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
+          <a href="/Business-Men/claim.html">List Your Business</a>
         </div>
+      </div>
     </nav>
+  </header>
 
-    <main class="container">
-        <div id="listingDetail" class="listing-detail"></div>
-        <div id="loading" class="loading">Loading...</div>
-    </main>
+  <main>
+    <div class="container">
+      <div id="listingDetail" class="listing-detail" itemscope itemtype="https://schema.org/LocalBusiness"></div>
+      <div id="loading" class="loading" role="status" aria-live="polite">Loading...</div>
+    </div>
+  </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>Data sourced from public directories. <a href="/claim.html">Claim your business</a> to update your listing.</p>
-        </div>
-    </footer>
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/Business-Men/claim.html">Claim your business</a> to update your listing.</p>
+    </div>
+  </footer>
 
-    <script src="js/app.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', loadListingDetail);</script>
-</body>
-</html>
+  <script defer src="js/app.js"></script>
+  <script defer>document.addEventListener('DOMContentLoaded', loadListingDetail);</script>
 </body>
 </html>
