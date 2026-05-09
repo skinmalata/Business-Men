@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessMen - Nigeria Business Directory</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">BusinessMen</a>
+            <div class="nav-links">
+                    <a href="/" class="active">Home</a>
+                <a href="/listing.html?cat=hotels">Hotels</a>
+                <a href="/listing.html?cat=hospitals">Hospitals</a>
+                <a href="/listing.html?cat=schools">Schools</a>
+                <a href="/listing.html?cat=agriculture">Agriculture</a>
+                <a href="/claim.html">List Your Business</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>BusinessMen - Nigeria Business Directory</h1>
+            <p>Find businesses across Nigeria — with direct contact info</p>
+            <p style="margin-top:6px;font-size:0.9rem;opacity:0.8;">Choose a category above or search below</p>
+            <div class="category-tabs">
+                <a href="/listing.html?cat=hotels" class="cat-tab">Hotels (386)</a>
+                <a href="/listing.html?cat=hospitals" class="cat-tab">Hospitals (142)</a>
+                <a href="/listing.html?cat=schools" class="cat-tab">Schools (294)</a>
+                <a href="/listing.html?cat=agriculture" class="cat-tab">Agriculture (499)</a>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by name, city, or keyword..." oninput="handleSearch(this.value)">
+                <button onclick="handleSearch(document.getElementById('searchInput').value)">Search</button>
+            </div>
+            <div class="stats-bar">
+                <span id="totalCount">0</span> <span id="categoryLabel">listings</span>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="filter-bar">
+            <select id="cityFilter" onchange="applyFilters()">
+                <option value="">All Cities</option>
+            </select>
+        </div>
+
+        <div id="listingGrid" class="listing-grid"></div>
+        <div id="loading" class="loading">Loading...</div>
+        <div id="noResults" class="no-results" style="display:none">No listings found matching your search.</div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Data sourced from public directories. <a href="/claim.html">Claim your business</a> to update your listing.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => loadListings('hotels'));</script>
+</body>
+</html>
