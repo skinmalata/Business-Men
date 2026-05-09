@@ -6,14 +6,18 @@ const DATA_FILES = {
   hotels: 'data/nigeria_hotels.json',
   hospitals: 'data/nigeria_hospitals.json',
   schools: 'data/nigeria_schools.json',
-  agriculture: 'data/nigeria_agriculture.json'
+    agriculture: 'data/nigeria_agriculture.json',
+    transportation: 'data/nigeria_transportation.json',
+    shopping: 'data/nigeria_shopping.json'
 };
 
 const CATEGORY_NAMES = {
   hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities. Browse contact info, addresses, and services.' },
   hospitals: { label: 'Hospitals', title: 'Hospitals in Nigeria', desc: 'Find hospitals, medical centres, and healthcare providers across Nigeria. Browse contact info and services.' },
   schools: { label: 'Schools', title: 'Schools & Universities in Nigeria', desc: 'Find schools, universities, colleges, and educational institutions across all Nigerian states.' },
-  agriculture: { label: 'Agriculture', title: 'Agriculture Companies in Nigeria', desc: 'Find agriculture companies, farms, and agribusinesses across Nigeria. Browse contact info and services.' }
+  agriculture: { label: 'Agriculture', title: 'Agriculture Companies in Nigeria', desc: 'Find agriculture companies, farms, and agribusinesses across Nigeria. Browse contact info and services.' },
+  transportation: { label: 'Transport', title: 'Transportation Companies in Nigeria', desc: 'Find transport, logistics, courier, and shipping companies across Nigeria. Browse contact info and services.' },
+  shopping: { label: 'Shopping', title: 'Shopping & Retail in Nigeria', desc: 'Find online stores, supermarkets, and retail shops across Nigeria. Browse contact info and services.' }
 };
 
 async function loadData(category) {
@@ -26,7 +30,7 @@ async function loadData(category) {
     if (countEl) countEl.textContent = allData.length;
     const labelEl = document.getElementById('categoryLabel');
     if (labelEl) {
-      const labels = { hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings' };
+      const labels = { hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings' };
       labelEl.textContent = labels[currentCategory] || 'listings';
     }
     const cityCountEl = document.getElementById('cityCount');
