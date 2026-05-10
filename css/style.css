@@ -83,7 +83,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxyge
 .card-phone:hover { text-decoration: underline; }
 .card-desc { color: #6b7280; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; line-height: 1.5; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
-.card-badge { background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.card-badge { padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.card-badge.verified { background: #d1fae5; color: #065f46; }
+.card-badge.unverified { background: #f3f4f6; color: #9ca3af; }
+.verified-badge { color: #059669; font-size: 1rem; margin-left: 4px; display: inline-block; }
+.verified-badge-lg { color: #059669; font-size: 0.85rem; font-weight: 600; margin-left: 8px; background: #d1fae5; padding: 3px 10px; border-radius: 12px; vertical-align: middle; }
+.unverified-badge { color: #9ca3af; font-size: 0.8rem; font-weight: 500; margin-left: 8px; background: #f3f4f6; padding: 3px 10px; border-radius: 12px; vertical-align: middle; }
 .card-claim { font-size: 0.8rem; color: #6b7280; text-decoration: none; }
 .card-claim:hover { color: #2563eb; }
 

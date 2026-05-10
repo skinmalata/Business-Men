@@ -46,6 +46,11 @@ async function loadData(category) {
       const cities = new Set(allData.map(d => d.city).filter(Boolean));
       cityCountEl.textContent = cities.size;
     }
+    const verifiedEl = document.getElementById('statVerified');
+    if (verifiedEl) {
+      const verifiedCount = allData.filter(d => d.verified === true).length;
+      verifiedEl.textContent = verifiedCount;
+    }
     populateCityFilter();
     return allData;
   } catch (e) {
@@ -111,17 +116,17 @@ function renderGrid(items) {
     const phone = item.phone || '';
     const desc = item.description || '';
     const city = item.city || '';
-    const email = item.email || '';
+    const verified = item.verified === true;
 
     return `
       <article class="card" onclick="showDetail('${currentCategory}', '${id}')" role="listitem">
         <div class="card-body">
-          <h3>${escapeHtml(item.name || 'Unnamed')}</h3>
+          <h3>${escapeHtml(item.name || 'Unnamed')} ${verified ? '<span class="verified-badge" title="Verified Business">&#10003;</span>' : ''}</h3>
           <div class="card-city">${escapeHtml(city)}</div>
           ${phone ? `<a href="tel:${phone}" class="card-phone" onclick="event.stopPropagation();">${escapeHtml(phone)}</a>` : ''}
           ${desc ? `<div class="card-desc">${escapeHtml(desc)}</div>` : ''}
           <div class="card-footer">
-            ${email ? `<span class="card-badge">Has Email</span>` : `<span class="card-badge">Phone Only</span>`}
+            <span class="card-badge ${verified ? 'verified' : 'unverified'}">${verified ? 'Verified' : 'Unverified'}</span>
             <span class="card-claim">View Details &rarr;</span>
           </div>
         </div>
@@ -211,6 +216,7 @@ function renderDetailView(item, cat) {
   const products = item.products || '';
   const catLabel = CATEGORY_NAMES[cat]?.label || 'Listings';
   const businessName = item.name || 'Business';
+  const verified = item.verified === true;
 
   container.innerHTML = `
     <nav aria-label="Breadcrumb">
@@ -218,7 +224,7 @@ function renderDetailView(item, cat) {
     </nav>
     <div class="detail-header">
       <div>
-        <h1>${escapeHtml(businessName)}</h1>
+        <h1>${escapeHtml(businessName)} ${verified ? '<span class="verified-badge verified-badge-lg" title="Verified Business">&#10003; Verified</span>' : '<span class="unverified-badge" title="Unverified Business">Unverified</span>'}</h1>
         ${city ? `<p style="color:#6b7280;margin-top:4px;">${escapeHtml(city)}, Nigeria</p>` : ''}
       </div>
       <div class="detail-actions">
@@ -321,9 +327,12 @@ async function loadFeatured() {
       const data = await resp.json();
       const items = Array.isArray(data) ? data : [];
       if (!items.length) continue;
-      const pick = items[Math.floor(Math.random() * items.length)];
+      // Prefer verified businesses
+      const verifiedItems = items.filter(d => d.verified === true);
+      const pool = verifiedItems.length > 0 ? verifiedItems : items;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
       const id = pick.url?.match(/(\d+)\/$/)?.[1] || '';
-      if (id) results.push({ cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description });
+      if (id) results.push({ cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified });
     } catch (e) { /* skip */ }
   }
   if (!results.length) return;
@@ -332,7 +341,7 @@ async function loadFeatured() {
     <a href="listing.html?cat=${item.cat}&id=${item.id}" class="featured-card">
       <span class="featured-badge">Featured</span>
       <div class="featured-card-body">
-        <h3>${item.name || 'Unnamed'}</h3>
+        <h3>${item.name || 'Unnamed'} ${item.verified ? '<span class="verified-badge" title="Verified Business">&#10003;</span>' : ''}</h3>
         <div class="featured-city">${item.city || ''}</div>
         ${item.phone ? `<span class="featured-phone">${item.phone}</span>` : ''}
         ${item.description ? `<p class="featured-desc">${item.description}</p>` : ''}
