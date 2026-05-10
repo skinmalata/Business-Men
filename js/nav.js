@@ -40,6 +40,7 @@
                   '<a href="/Business-Men/listing.html?cat=oilgas">Oil & Gas</a>' +
                   '<a href="/Business-Men/listing.html?cat=construction">Construction</a>' +
                   '<a href="/Business-Men/listing.html?cat=automobile">Automobile</a>' +
+                  '<a href="/Business-Men/listing.html?cat=food">Food & Restaurants</a>' +
                 '</div>' +
               '</div>' +
               '<a href="/Business-Men/claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Advertise</a>' +

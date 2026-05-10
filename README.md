@@ -1,6 +1,6 @@
 # BusinessMen
 
-Nigeria business directory — a searchable, static directory site hosted on GitHub Pages with 3,091 verified business listings across 11 categories.
+Nigeria business directory — a searchable, static directory site hosted on GitHub Pages with 3,185 verified business listings across 12 categories.
 
 ## Getting Started
 
