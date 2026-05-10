@@ -1,6 +1,6 @@
 # BusinessMen
 
-Nigeria business directory — a searchable, static directory site hosted on GitHub Pages.
+Nigeria business directory — a searchable, static directory site hosted on GitHub Pages with 2,868 verified business listings across 8 categories.
 
 ## Getting Started
 
@@ -53,7 +53,11 @@ africa-directory/
     ├── nigeria_hotels.json        # 386 hotels
     ├── nigeria_hospitals.json     # 142 hospitals
     ├── nigeria_schools.json       # 294 schools & universities
-    └── nigeria_agriculture.json   # 499 agriculture companies
+    ├── nigeria_agriculture.json   # 499 agriculture companies
+    ├── nigeria_transportation.json # 299 transport companies
+    ├── nigeria_shopping.json      # 550 shopping & retail
+    ├── nigeria_business.json      # 300 business services
+    └── nigeria_realestate.json    # 398 real estate companies
 ```
 
 ## Data Fields

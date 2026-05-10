@@ -41,7 +41,7 @@
   <header>
     <nav class="navbar" aria-label="Main navigation">
       <div class="container">
-        <a href="/Business-Men/" class="logo" aria-label="BusinessMen Home">BusinessMen</a>
+        <a href="/Business-Men/" class="logo">Business<span>Men</span></a>
         <div class="nav-links">
           <a href="/Business-Men/">Home</a>
           <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
@@ -50,7 +50,9 @@
           <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
           <a href="/Business-Men/listing.html?cat=transportation">Transport</a>
           <a href="/Business-Men/listing.html?cat=shopping">Shopping</a>
-          <a href="/Business-Men/claim.html">List Your Business</a>
+          <a href="/Business-Men/listing.html?cat=business">Business</a>
+          <a href="/Business-Men/listing.html?cat=realestate">Real Estate</a>
+          <a href="/Business-Men/claim.html" class="nav-cta">Get Listed</a>
         </div>
       </div>
     </nav>
@@ -58,8 +60,29 @@
 
   <main>
     <div class="container">
-      <div id="listingDetail" class="listing-detail" itemscope itemtype="https://schema.org/LocalBusiness"></div>
+      <!-- Listing grid view (when no id param) -->
+      <div id="listView">
+        <div class="hero-search" role="search" style="margin: 24px 0;">
+          <label for="heroCity" class="sr-only">Select city</label>
+          <select id="heroCity" aria-label="Select city">
+            <option value="">All Cities</option>
+          </select>
+          <label for="heroQuery" class="sr-only">Search businesses</label>
+          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses">
+          <button onclick="heroSearch()" aria-label="Search">Search</button>
+        </div>
+        <aside class="filter-bar" aria-label="Filter options">
+          <label for="cityFilter" class="sr-only">Filter by city</label>
+          <select id="cityFilter" onchange="applyFilters()" aria-label="Filter by city">
+            <option value="">All Cities</option>
+          </select>
+        </aside>
+        <div id="listingGrid" class="listing-grid" role="list" aria-label="Business listings"></div>
+      </div>
+      <!-- Single listing detail view (when id param present) -->
+      <div id="listingDetail" class="listing-detail" itemscope itemtype="https://schema.org/LocalBusiness" style="display:none;"></div>
       <div id="loading" class="loading" role="status" aria-live="polite">Loading...</div>
+      <div id="noResults" class="no-results" style="display:none" role="status">No listings found matching your search.</div>
     </div>
   </main>
 
@@ -70,6 +93,34 @@
   </footer>
 
   <script defer src="js/app.js"></script>
-  <script defer>document.addEventListener('DOMContentLoaded', loadListingDetail);</script>
+  <script defer>
+    function populateHeroCities() {
+      const select = document.getElementById('heroCity');
+      if (!select || typeof allData === 'undefined' || !allData.length) { setTimeout(populateHeroCities, 200); return; }
+      const cities = [...new Set(allData.map(d => d.city).filter(Boolean))].sort();
+      cities.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      });
+    }
+    function heroSearch() {
+      const query = document.getElementById('heroQuery').value.trim();
+      const city = document.getElementById('heroCity').value;
+      const params = new URLSearchParams(window.location.search);
+      if (query) params.set('q', query);
+      else params.delete('q');
+      if (city) params.set('city', city);
+      else params.delete('city');
+      window.location.href = 'listing.html?' + params.toString();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      loadListingDetail();
+      setTimeout(populateHeroCities, 500);
+    });
+    window.populateHeroCities = populateHeroCities;
+    window.heroSearch = heroSearch;
+  </script>
 </body>
 </html>
