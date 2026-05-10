@@ -90,6 +90,7 @@
     <section class="hero" aria-label="Directory search">
       <div class="container">
         <h1>Nigeria's Largest Business Directory</h1>
+        <p>Connect with trusted companies in your area — hotels, hospitals, schools, agriculture, transport, shopping, real estate, oil & gas, construction, and automobile with direct contact info.</p>
         <div class="hero-search" role="search">
           <label for="heroCity" class="sr-only">Select city</label>
           <select id="heroCity" aria-label="Select city">
@@ -97,7 +98,7 @@
             <option>Abia State</option><option>Adamawa State</option><option>Akwa Ibom State</option><option>Anambra State</option><option>Bauchi State</option><option>Bayelsa State</option><option>Benue State</option><option>Borno State</option><option>Cross River State</option><option>Delta State</option><option>Ebonyi State</option><option>Edo State</option><option>Ekiti State</option><option>Enugu State</option><option>Abuja FCT</option><option>Gombe State</option><option>Imo State</option><option>Jigawa State</option><option>Kaduna State</option><option>Kano State</option><option>Katsina State</option><option>Kebbi State</option><option>Kogi State</option><option>Kwara State</option><option>Lagos State</option><option>Nasarawa State</option><option>Niger State</option><option>Ogun State</option><option>Ondo State</option><option>Osun State</option><option>Oyo State</option><option>Plateau State</option><option>Rivers State</option><option>Sokoto State</option><option>Taraba State</option><option>Yobe State</option><option>Zamfara State</option>
           </select>
           <label for="heroQuery" class="sr-only">Search businesses</label>
-          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses">
+          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses" onkeydown="if(event.key==='Enter')heroSearch()">
           <button onclick="heroSearch()" aria-label="Search">Search</button>
         </div>
 
