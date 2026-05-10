@@ -26,6 +26,26 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .logo span { color: #e94560; }
 .nav-scroll { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 0 8px; flex: 1; justify-content: flex-end; }
 .nav-scroll::-webkit-scrollbar { display: none; }
+
+.nav-dropdown { position: relative; }
+.nav-dropdown > a { cursor: pointer; }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 12px;
+  background: white; border: 1px solid #e8ecf4; border-radius: 12px; padding: 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12); min-width: 170px; opacity: 0; visibility: hidden;
+  transition: all 0.2s; z-index: 200;
+}
+.nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; margin-top: 8px; }
+.nav-dropdown-menu::before {
+  content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+  width: 12px; height: 12px; background: white; border-left: 1px solid #e8ecf4; border-top: 1px solid #e8ecf4;
+}
+.nav-dropdown-menu a {
+  display: block; padding: 8px 14px; border-radius: 8px; color: #1e293b;
+  font-size: 0.82rem; font-weight: 500; white-space: nowrap; transition: all 0.15s;
+}
+.nav-dropdown-menu a:hover { background: rgba(233,69,96,0.06); color: #e94560; }
+
 .nav-scroll a {
   color: #475569; text-decoration: none; font-size: 0.82rem; font-weight: 500;
   padding: 6px 14px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
@@ -298,6 +318,12 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .footer-bottom a { color: #e94560; text-decoration: none; }
 
 /* === RESPONSIVE === */
+@media (hover: none) {
+  .nav-dropdown-menu { position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0; margin: 4px 0 0 12px; min-width: auto; }
+  .nav-dropdown-menu::before { display: none; }
+  .nav-dropdown-menu a { padding: 4px 12px; font-size: 0.78rem; }
+  .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7rem; }
+}
 @media (max-width: 768px) {
   .hero h1 { font-size: 2rem; }
   .hero p { font-size: 1rem; }
