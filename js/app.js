@@ -1,20 +1,23 @@
 let allData = [];
 let filteredData = [];
 let currentCategory = 'hotels';
+let currentPage = 1;
+const ITEMS_PER_PAGE = 20;
+let searchTimeout = null;
 
 const DATA_FILES = {
   hotels: 'data/nigeria_hotels.json',
   hospitals: 'data/nigeria_hospitals.json',
   schools: 'data/nigeria_schools.json',
-    agriculture: 'data/nigeria_agriculture.json',
-    transportation: 'data/nigeria_transportation.json',
-    shopping: 'data/nigeria_shopping.json',
-    business: 'data/nigeria_business.json',
-    realestate: 'data/nigeria_realestate.json',
-    oilgas: 'data/nigeria_oilgas.json',
-    construction: 'data/nigeria_construction.json',
-    automobile: 'data/nigeria_automobile.json'
-  };
+  agriculture: 'data/nigeria_agriculture.json',
+  transportation: 'data/nigeria_transportation.json',
+  shopping: 'data/nigeria_shopping.json',
+  business: 'data/nigeria_business.json',
+  realestate: 'data/nigeria_realestate.json',
+  oilgas: 'data/nigeria_oilgas.json',
+  construction: 'data/nigeria_construction.json',
+  automobile: 'data/nigeria_automobile.json'
+};
 
 const CATEGORY_NAMES = {
   hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities. Browse contact info, addresses, and services.' },
@@ -33,6 +36,7 @@ const CATEGORY_NAMES = {
 async function loadData(category) {
   currentCategory = category || 'hotels';
   const file = DATA_FILES[currentCategory] || DATA_FILES.hotels;
+  showSkeletons();
   try {
     const resp = await fetch(file);
     allData = await resp.json();
@@ -61,6 +65,19 @@ async function loadData(category) {
   }
 }
 
+function showSkeletons() {
+  const grid = document.getElementById('listingGrid');
+  const skeletonContainer = document.getElementById('skeletonGrid');
+  if (skeletonContainer) skeletonContainer.style.display = 'grid';
+  if (grid) grid.innerHTML = '';
+  currentPage = 1;
+}
+
+function hideSkeletons() {
+  const el = document.getElementById('skeletonGrid');
+  if (el) el.style.display = 'none';
+}
+
 function populateCityFilter() {
   const select = document.getElementById('cityFilter');
   if (!select) return;
@@ -75,23 +92,35 @@ function populateCityFilter() {
 }
 
 function handleSearch(query) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const grid = document.getElementById('listingGrid');
+    if (!grid) return;
+    query = query.trim().toLowerCase();
+
+    filteredData = allData.filter(item => {
+      const name = (item.name || '').toLowerCase();
+      const city = (item.city || '').toLowerCase();
+      const desc = (item.description || '').toLowerCase();
+      const phone = (item.phone || '');
+      return `${name} ${city} ${desc} ${phone}`.includes(query);
+    });
+
+    currentPage = 1;
+    applyFilters();
+  }, 250);
+}
+
+function handleSort(sortBy) {
   const grid = document.getElementById('listingGrid');
   if (!grid) return;
-  query = query.trim().toLowerCase();
-
-  filteredData = allData.filter(item => {
-    const name = (item.name || '').toLowerCase();
-    const city = (item.city || '').toLowerCase();
-    const desc = (item.description || '').toLowerCase();
-    const phone = (item.phone || '');
-    return `${name} ${city} ${desc} ${phone}`.includes(query);
-  });
-
+  currentPage = 1;
   applyFilters();
 }
 
 function applyFilters() {
   const cityFilter = document.getElementById('cityFilter');
+  const sortBy = document.getElementById('sortFilter');
   const grid = document.getElementById('listingGrid');
   if (!grid) return;
 
@@ -101,10 +130,36 @@ function applyFilters() {
     results = results.filter(d => d.city === cityFilter.value);
   }
 
+  if (sortBy && sortBy.value) {
+    const val = sortBy.value;
+    if (val === 'verified') results.sort((a, b) => (b.verified === true) - (a.verified === true));
+    else if (val === 'name') results.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    else if (val === 'city') results.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
+  }
+
   const noResults = document.getElementById('noResults');
   if (noResults) noResults.style.display = results.length ? 'none' : 'block';
 
-  renderGrid(results);
+  const totalPages = Math.max(1, Math.ceil(results.length / ITEMS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageItems = results.slice(start, start + ITEMS_PER_PAGE);
+
+  hideSkeletons();
+  renderGrid(pageItems);
+  renderPagination(results.length, totalPages);
+  updateResultsCount(results.length, start, pageItems.length);
+}
+
+function updateResultsCount(total, start, count) {
+  const el = document.getElementById('resultsCount');
+  if (!el) return;
+  if (total === 0) {
+    el.textContent = 'No results found';
+    return;
+  }
+  el.textContent = `Showing ${start + 1}\u2013${start + count} of ${total}`;
 }
 
 function renderGrid(items) {
@@ -123,7 +178,7 @@ function renderGrid(items) {
     return `
       <article class="card" onclick="showDetail('${currentCategory}', '${id}')" role="listitem">
         <div class="card-body">
-          <h3>${escapeHtml(item.name || 'Unnamed')} ${verified ? '<span class="verified-badge" title="Verified Business">&#10003;</span>' : ''}</h3>
+          <h3>${escapeHtml(item.name || 'Unnamed')} ${verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''}</h3>
           <div class="card-city">${escapeHtml(city)}</div>
           ${phone ? `<a href="tel:${phone}" class="card-phone" onclick="event.stopPropagation();">${escapeHtml(phone)}</a>` : ''}
           ${desc ? `<div class="card-desc">${escapeHtml(desc)}</div>` : ''}
@@ -137,11 +192,52 @@ function renderGrid(items) {
   }).join('');
 }
 
+function renderPagination(total, totalPages) {
+  const container = document.getElementById('pagination');
+  if (!container) return;
+
+  if (total <= ITEMS_PER_PAGE) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>&larr; Prev</button>`;
+
+  const startPage = Math.max(1, currentPage - 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
+
+  if (startPage > 1) {
+    html += `<button onclick="goToPage(1)">1</button>`;
+    if (startPage > 2) html += `<span class="page-info">...</span>`;
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) html += `<span class="page-info">...</span>`;
+    html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>Next &rarr;</button>`;
+
+  container.innerHTML = html;
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function goToPage(page) {
+  currentPage = page;
+  applyFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 async function loadListings(category) {
   await loadData(category);
   filteredData = allData;
   updateListingPageMeta(category);
-  renderGrid(allData);
+  applyFilters();
 }
 
 function updateListingPageMeta(category) {
@@ -202,6 +298,7 @@ function closeDetail() {
   const url = new URL(window.location);
   url.searchParams.delete('id');
   history.pushState({cat}, '', url);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderDetailView(item, cat) {
@@ -226,8 +323,8 @@ function renderDetailView(item, cat) {
     </nav>
     <div class="detail-header">
       <div>
-        <h1>${escapeHtml(businessName)} ${verified ? '<span class="verified-badge verified-badge-lg" title="Verified Business">&#10003; Verified</span>' : '<span class="unverified-badge" title="Unverified Business">Unverified</span>'}</h1>
-        ${city ? `<p style="color:#6b7280;margin-top:4px;">${escapeHtml(city)}, Nigeria</p>` : ''}
+        <h1>${escapeHtml(businessName)} ${verified ? '<span class="verified-badge-lg" title="Verified Business">\u2713 Verified</span>' : '<span class="unverified-badge" title="Unverified Business">Unverified</span>'}</h1>
+        ${city ? `<p style="margin-top:6px;">${escapeHtml(city)}, Nigeria</p>` : ''}
       </div>
       <div class="detail-actions">
         <a href="claim.html?business=${encodeURIComponent(businessName)}" class="btn-secondary" rel="nofollow">Claim this Business</a>
@@ -243,13 +340,13 @@ function renderDetailView(item, cat) {
         ${website ? `<div class="info-row"><span class="label">Website</span><span class="value"><a href="${website}" target="_blank" rel="noopener noreferrer">${escapeHtml(website)}</a></span></div>` : ''}
         ${hours ? `<div class="info-row"><span class="label">Hours</span><span class="value">${escapeHtml(hours)}</span></div>` : ''}
         ${!address && !phone && !email && !website && !hours ? '<p>No contact info available.</p>' : ''}
-        ${phone || email || website ? '<p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">Contact information is verified from public sources.</p>' : ''}
+        ${phone || email || website ? '<p style="margin-top:16px;font-size:0.8rem;color:#94a3b8;">Contact information sourced from public business directories.</p>' : ''}
       </section>
 
       <section class="detail-section">
         <h2>About ${escapeHtml(businessName)}</h2>
         ${desc ? `<p>${escapeHtml(desc)}</p>` : `<p>${escapeHtml(businessName)} is a ${catLabel.toLowerCase().slice(0, -1)} business located in ${escapeHtml(city || 'Nigeria')}.</p>`}
-        ${city ? `<p style="margin-top:10px;color:#6b7280;font-size:0.9rem;">Serving the ${escapeHtml(city)} area and surrounding regions in Nigeria.</p>` : ''}
+        ${city ? `<p style="margin-top:12px;color:#64748b;font-size:0.9rem;">Serving the ${escapeHtml(city)} area and surrounding regions in Nigeria.</p>` : ''}
       </section>
 
       ${products ? `
@@ -261,8 +358,8 @@ function renderDetailView(item, cat) {
 
       <section class="detail-section">
         <h2>Claim This Listing</h2>
-        <p style="color:#6b7280;font-size:0.9rem;">Is this your business? Claim your page on BusinessMen to update information, add products and services, and respond to customer inquiries.</p>
-        <a href="claim.html?business=${encodeURIComponent(businessName)}" class="btn-primary" style="display:inline-block;margin-top:12px;" rel="nofollow">Claim Now</a>
+        <p style="color:#64748b;font-size:0.9rem;">Is this your business? Claim your page on BusinessMen to update information, add products and services, and respond to customer inquiries.</p>
+        <a href="claim.html?business=${encodeURIComponent(businessName)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Claim Now</a>
       </section>
     </div>
   `;
@@ -329,7 +426,6 @@ async function loadFeatured() {
       const data = await resp.json();
       const items = Array.isArray(data) ? data : [];
       if (!items.length) continue;
-      // Prefer verified businesses
       const verifiedItems = items.filter(d => d.verified === true);
       const pool = verifiedItems.length > 0 ? verifiedItems : items;
       const pick = pool[Math.floor(Math.random() * pool.length)];
@@ -343,11 +439,11 @@ async function loadFeatured() {
     <a href="listing.html?cat=${item.cat}&id=${item.id}" class="featured-card">
       <span class="featured-badge">Featured</span>
       <div class="featured-card-body">
-        <h3>${item.name || 'Unnamed'} ${item.verified ? '<span class="verified-badge" title="Verified Business">&#10003;</span>' : ''}</h3>
+        <h3>${item.name || 'Unnamed'} ${item.verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''}</h3>
         <div class="featured-city">${item.city || ''}</div>
         ${item.phone ? `<span class="featured-phone">${item.phone}</span>` : ''}
         ${item.description ? `<p class="featured-desc">${item.description}</p>` : ''}
-        <span class="featured-view">View Details &rarr;</span>
+        <span class="featured-view">View Details</span>
       </div>
     </a>
   `).join('');
@@ -366,3 +462,5 @@ window.loadListings = loadListings;
 window.loadListingDetail = loadListingDetail;
 window.loadFeatured = loadFeatured;
 window.submitClaim = submitClaim;
+window.goToPage = goToPage;
+window.handleSort = handleSort;

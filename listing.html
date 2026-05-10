@@ -42,7 +42,7 @@
     <nav class="navbar" aria-label="Main navigation">
       <div class="container">
         <a href="/Business-Men/" class="logo">Business<span>Men</span></a>
-        <div class="nav-links">
+        <div class="nav-scroll">
           <a href="/Business-Men/">Home</a>
           <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
           <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
@@ -72,16 +72,33 @@
             <option>Abia State</option><option>Adamawa State</option><option>Akwa Ibom State</option><option>Anambra State</option><option>Bauchi State</option><option>Bayelsa State</option><option>Benue State</option><option>Borno State</option><option>Cross River State</option><option>Delta State</option><option>Ebonyi State</option><option>Edo State</option><option>Ekiti State</option><option>Enugu State</option><option>Abuja FCT</option><option>Gombe State</option><option>Imo State</option><option>Jigawa State</option><option>Kaduna State</option><option>Kano State</option><option>Katsina State</option><option>Kebbi State</option><option>Kogi State</option><option>Kwara State</option><option>Lagos State</option><option>Nasarawa State</option><option>Niger State</option><option>Ogun State</option><option>Ondo State</option><option>Osun State</option><option>Oyo State</option><option>Plateau State</option><option>Rivers State</option><option>Sokoto State</option><option>Taraba State</option><option>Yobe State</option><option>Zamfara State</option>
           </select>
           <label for="heroQuery" class="sr-only">Search businesses</label>
-          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses">
+          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses" oninput="handleSearch(this.value)">
           <button onclick="heroSearch()" aria-label="Search">Search</button>
         </div>
-        <aside class="filter-bar" aria-label="Filter options">
+        <div class="toolbar">
           <label for="cityFilter" class="sr-only">Filter by city</label>
           <select id="cityFilter" onchange="applyFilters()" aria-label="Filter by city">
             <option value="">All Cities</option>
           </select>
-        </aside>
+          <label for="sortFilter" class="sr-only">Sort by</label>
+          <select id="sortFilter" onchange="handleSort(this.value)" aria-label="Sort by">
+            <option value="">Default Order</option>
+            <option value="verified">Verified First</option>
+            <option value="name">Name A-Z</option>
+            <option value="city">City</option>
+          </select>
+          <span class="results-count" id="resultsCount" style="margin-left:auto;color:#64748b;font-size:0.85rem;"></span>
+        </div>
+        <div id="skeletonGrid" class="skeleton-grid" style="display:none;">
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        </div>
         <div id="listingGrid" class="listing-grid" role="list" aria-label="Business listings"></div>
+        <div id="pagination" class="pagination"></div>
       </div>
       <!-- Single listing detail view (when id param present) -->
       <div id="listingDetail" class="listing-detail" itemscope itemtype="https://schema.org/LocalBusiness" style="display:none;"></div>
@@ -92,13 +109,38 @@
 
   <footer class="footer" role="contentinfo">
     <div class="container">
-      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/Business-Men/claim.html">Claim your business</a> to update your listing.</p>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Business<span>Men</span></h3>
+          <p>Nigeria's fastest-growing business directory. Find verified companies with direct contact information across all Nigerian cities.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
+          <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
+          <a href="/Business-Men/listing.html?cat=schools">Schools</a>
+          <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
+          <a href="/Business-Men/listing.html?cat=transportation">Transport</a>
+          <a href="/Business-Men/listing.html?cat=shopping">Shopping</a>
+          <a href="/Business-Men/listing.html?cat=realestate">Real Estate</a>
+          <a href="/Business-Men/listing.html?cat=construction">Construction</a>
+          <a href="/Business-Men/listing.html?cat=automobile">Automobile</a>
+        </div>
+        <div class="footer-col">
+          <h4>Business</h4>
+          <a href="/Business-Men/claim.html">Add Your Business</a>
+          <a href="/Business-Men/claim.html">Claim a Listing</a>
+          <a href="/Business-Men/">Home</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/Business-Men/claim.html">Claim your business</a> to update your listing.</p>
+      </div>
     </div>
   </footer>
 
   <script defer src="js/app.js"></script>
   <script defer>
-    function populateHeroCities() {}
     function heroSearch() {
       const query = document.getElementById('heroQuery').value.trim();
       const city = document.getElementById('heroCity').value;
@@ -112,7 +154,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadListingDetail();
     });
-    window.populateHeroCities = populateHeroCities;
     window.heroSearch = heroSearch;
   </script>
 </body>
