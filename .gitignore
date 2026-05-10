@@ -4,3 +4,4 @@ node_modules/
 __pycache__/
 *checkpoint*
 *_urls.json
+data_backup/
