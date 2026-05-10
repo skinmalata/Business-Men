@@ -10,8 +10,9 @@ const DATA_FILES = {
     transportation: 'data/nigeria_transportation.json',
     shopping: 'data/nigeria_shopping.json',
     business: 'data/nigeria_business.json',
-    realestate: 'data/nigeria_realestate.json'
-};
+    realestate: 'data/nigeria_realestate.json',
+    oilgas: 'data/nigeria_oilgas.json'
+  };
 
 const CATEGORY_NAMES = {
   hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities. Browse contact info, addresses, and services.' },
@@ -21,7 +22,8 @@ const CATEGORY_NAMES = {
   transportation: { label: 'Transport', title: 'Transportation Companies in Nigeria', desc: 'Find transport, logistics, courier, and shipping companies across Nigeria. Browse contact info and services.' },
   shopping: { label: 'Shopping', title: 'Shopping & Retail in Nigeria', desc: 'Find online stores, supermarkets, and retail shops across Nigeria. Browse contact info and services.' },
   business: { label: 'Business', title: 'Business Services in Nigeria', desc: 'Find business services, consulting firms, and professional services across all Nigerian cities.' },
-  realestate: { label: 'Real Estate', title: 'Real Estate Companies in Nigeria', desc: 'Find real estate agents, property developers, estate surveyors, and property managers across all Nigerian cities.' }
+  realestate: { label: 'Real Estate', title: 'Real Estate Companies in Nigeria', desc: 'Find real estate agents, property developers, estate surveyors, and property managers across all Nigerian cities.' },
+  oilgas: { label: 'Oil & Gas', title: 'Oil & Gas Companies in Nigeria', desc: 'Find oil and gas companies, petroleum marketers, and energy service providers across all Nigerian states.' }
 };
 
 async function loadData(category) {
@@ -34,7 +36,7 @@ async function loadData(category) {
     if (countEl) countEl.textContent = allData.length;
     const labelEl = document.getElementById('categoryLabel');
     if (labelEl) {
-      const labels = { hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings', business: 'business listings', realestate: 'real estate listings' };
+      const labels = { hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings', business: 'business listings', realestate: 'real estate listings', oilgas: 'oil & gas listings' };
       labelEl.textContent = labels[currentCategory] || 'listings';
     }
     const cityCountEl = document.getElementById('cityCount');

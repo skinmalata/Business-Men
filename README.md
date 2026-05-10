@@ -57,7 +57,8 @@ africa-directory/
     ├── nigeria_transportation.json # 299 transport companies
     ├── nigeria_shopping.json      # 550 shopping & retail
     ├── nigeria_business.json      # 300 business services
-    └── nigeria_realestate.json    # 398 real estate companies
+    ├── nigeria_realestate.json    # 398 real estate companies
+    └── nigeria_oilgas.json        # 63 oil & gas companies
 ```
 
 ## Data Fields
