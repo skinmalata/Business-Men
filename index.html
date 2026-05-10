@@ -113,6 +113,7 @@
           <label for="heroCity" class="sr-only">Select city</label>
           <select id="heroCity" aria-label="Select city">
             <option value="">All Cities</option>
+            <option>Abia State</option><option>Adamawa State</option><option>Akwa Ibom State</option><option>Anambra State</option><option>Bauchi State</option><option>Bayelsa State</option><option>Benue State</option><option>Borno State</option><option>Cross River State</option><option>Delta State</option><option>Ebonyi State</option><option>Edo State</option><option>Ekiti State</option><option>Enugu State</option><option>Abuja FCT</option><option>Gombe State</option><option>Imo State</option><option>Jigawa State</option><option>Kaduna State</option><option>Kano State</option><option>Katsina State</option><option>Kebbi State</option><option>Kogi State</option><option>Kwara State</option><option>Lagos State</option><option>Nasarawa State</option><option>Niger State</option><option>Ogun State</option><option>Ondo State</option><option>Osun State</option><option>Oyo State</option><option>Plateau State</option><option>Rivers State</option><option>Sokoto State</option><option>Taraba State</option><option>Yobe State</option><option>Zamfara State</option>
           </select>
           <label for="heroQuery" class="sr-only">Search businesses</label>
           <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses">
@@ -229,17 +230,7 @@
 
   <script defer src="js/app.js"></script>
   <script defer>
-    function populateHeroCities() {
-      const select = document.getElementById('heroCity');
-      if (!select || typeof allData === 'undefined' || !allData.length) { setTimeout(populateHeroCities, 200); return; }
-      const cities = [...new Set(allData.map(d => d.city).filter(Boolean))].sort();
-      cities.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        select.appendChild(opt);
-      });
-    }
+    function populateHeroCities() {}
     function heroSearch() {
       const query = document.getElementById('heroQuery').value.trim();
       const city = document.getElementById('heroCity').value;
@@ -252,7 +243,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadListings('hotels');
       loadFeatured();
-      setTimeout(populateHeroCities, 500);
     });
     window.populateHeroCities = populateHeroCities;
     window.heroSearch = heroSearch;
