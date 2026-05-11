@@ -4,4 +4,6 @@ node_modules/
 __pycache__/
 *checkpoint*
 *_urls.json
+*_v2.json
+nigeria_hotels_*.json
 data_backup/

@@ -50,7 +50,7 @@ africa-directory/
 ├── css/style.css        # Styles
 ├── js/app.js            # All JavaScript
 └── data/
-    ├── nigeria_hotels.json        # 386 hotels
+    ├── nigeria_hotels.json        # 730 hotels (30 states)
     ├── nigeria_hospitals.json     # 142 hospitals
     ├── nigeria_schools.json       # 294 schools & universities
     ├── nigeria_agriculture.json   # 499 agriculture companies
