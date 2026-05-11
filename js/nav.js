@@ -1,7 +1,8 @@
 (function () {
   function getActivePage() {
     var path = window.location.pathname.replace(/\/+$/, '');
-    if (path.endsWith('listing.html')) return 'services';
+    if (path.endsWith('listing.html')) return 'listings';
+    if (path.endsWith('services.html')) return 'services';
     if (path.endsWith('claim.html')) return 'contact';
     return 'home';
   }
@@ -24,7 +25,7 @@
             '<div class="nav-scroll">' +
               '<a href="/Business-Men/"' + (active === 'home' ? ' class="active"' : '') + '>Home</a>' +
               '<a href="/Business-Men/#about">About</a>' +
-              '<a href="/Business-Men/listing.html"' + (active === 'services' ? ' class="active"' : '') + '>Services</a>' +
+              '<a href="/Business-Men/services.html"' + (active === 'services' ? ' class="active"' : '') + '>Services</a>' +
               '<div class="nav-dropdown">' +
                 '<a href="/Business-Men/#categories">Categories</a>' +
                 '<div class="nav-dropdown-menu">' +
