@@ -339,7 +339,7 @@ function renderDetailView(item, cat) {
         ${city ? `<p style="margin-top:6px;">${escapeHtml(city)}, Nigeria</p>` : ''}
       </div>
       <div class="detail-actions">
-        <a href="claim.html?business=${encodeURIComponent(businessName)}" class="btn-secondary" rel="nofollow">Claim this Business</a>
+        ${getClaim(id)?.verified ? `<span class="claimed-badge" title="Claimed & Verified">\u2713 Claimed</span>` : `<a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-secondary" rel="nofollow">Claim this Business</a>`}
       </div>
     </div>
 
@@ -422,8 +422,10 @@ function renderDetailView(item, cat) {
 
       <section class="detail-section">
         <h2>Claim This Listing</h2>
-        <p style="color:#64748b;font-size:0.9rem;">Is this your business? Claim your page on BusinessMen to update information, add products and services, and respond to customer inquiries.</p>
-        <a href="claim.html?business=${encodeURIComponent(businessName)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Claim Now</a>
+        ${getClaim(id)?.verified
+          ? `<div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Claimed</span><p style="color:#166534;margin-top:8px;">This business has been claimed and verified by the owner.</p></div>`
+          : `<p style="color:#64748b;font-size:0.9rem;">Is this your business? Claim your page on BusinessMen to update information, add products and services, and respond to customer inquiries.</p>
+        <a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Claim Now</a>`}
       </section>
     </div>
   `;
@@ -489,6 +491,11 @@ function submitReview(e, businessId) {
 
   if (!name || !rating || !text) {
     alert('Please fill in all fields and select a rating.');
+    return;
+  }
+
+  if (/https?:\/\/[^\s]+|www\.[^\s]+/i.test(text) || /https?:\/\/[^\s]+|www\.[^\s]+/i.test(name)) {
+    alert('Links are not allowed in reviews. Please remove any URLs.');
     return;
   }
 
@@ -604,6 +611,27 @@ function submitClaim() {
   const form = document.querySelector('.claim-form');
   if (form) form.style.display = 'none';
   if (success) success.style.display = 'block';
+}
+
+// === CLAIMS ===
+function getClaim(businessId) {
+  try {
+    return JSON.parse(localStorage.getItem('claim_' + businessId)) || null;
+  } catch { return null; }
+}
+
+function saveClaim(businessId, data) {
+  localStorage.setItem('claim_' + businessId, JSON.stringify(data));
+}
+
+function verifyClaim(businessId, enteredPhone) {
+  const params = new URLSearchParams(window.location.search);
+  const listingPhone = params.get('phone') || '';
+  const normalizedEntered = enteredPhone.replace(/[\s\-\(\)\+]/g, '').toLowerCase();
+  const normalizedListing = listingPhone.replace(/[\s\-\(\)\+]/g, '').toLowerCase();
+  const partialMatch = normalizedListing.length > 6 && normalizedListing.includes(normalizedEntered.slice(-7));
+
+  return partialMatch;
 }
 
 window.handleSearch = handleSearch;

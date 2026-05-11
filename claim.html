@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Claim Your Business Listing - BusinessMen Nigeria Directory</title>
-  <meta name="description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Update your info, add products, and reach more customers across Nigeria for free.">
+  <meta name="description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Verify ownership and update your listing for free.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://skinmalata.github.io/Business-Men/claim.html">
   <link rel="alternate" hreflang="en" href="https://skinmalata.github.io/Business-Men/claim.html">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://skinmalata.github.io/Business-Men/claim.html">
   <meta property="og:title" content="Claim Your Business Listing - BusinessMen Nigeria">
@@ -18,83 +17,52 @@
   <meta property="og:site_name" content="BusinessMen">
   <meta property="og:locale" content="en_NG">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Claim Your Business Listing - BusinessMen Nigeria">
   <meta name="twitter:description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Free listing.">
 
   <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/nav.js"></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar" aria-label="Main navigation">
-      <div class="container">
-        <a href="/Business-Men/" class="logo" aria-label="BusinessMen Home">BusinessMen</a>
-        <div class="nav-links">
-          <a href="/Business-Men/">Home</a>
-          <a href="/Business-Men/listing.html?cat=hotels">Hotels</a>
-          <a href="/Business-Men/listing.html?cat=hospitals">Hospitals</a>
-          <a href="/Business-Men/listing.html?cat=schools">Schools</a>
-          <a href="/Business-Men/listing.html?cat=agriculture">Agriculture</a>
-          <a href="/Business-Men/claim.html" class="active">List Your Business</a>
-        </div>
-      </div>
-    </nav>
-  </header>
+  <div id="nav-container"></div>
 
   <main>
     <div class="container claim-page">
-      <h1>Claim or Add Your Business</h1>
-      <p class="claim-subtitle">Already listed on BusinessMen? Claim your page to update info, add products, and respond to reviews. Not listed yet? Submit your business for free and reach customers across Nigeria.</p>
+      <h1>Claim Your Business</h1>
+      <p class="claim-subtitle">Verify ownership to claim this business and manage your listing.</p>
 
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "ContactPoint",
-        "name": "BusinessMen Claim Form",
-        "description": "Claim or add your business listing to BusinessMen Nigeria directory.",
-        "contactType": "listing claim",
-        "areaServed": "NG",
-        "availableLanguage": ["English"]
-      }
-      </script>
-
-      <form class="claim-form" onsubmit="event.preventDefault(); submitClaim();" aria-label="Business claim form">
+      <form class="claim-form" id="claimForm" onsubmit="event.preventDefault(); handleClaimSubmit(event);">
         <div class="form-group">
-          <label for="claimName">Business Name *</label>
-          <input type="text" id="claimName" placeholder="e.g. Eko Hotel & Suites" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="claimEmail">Your Email *</label>
-          <input type="email" id="claimEmail" placeholder="you@example.com" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="claimPhone">Phone Number</label>
-          <input type="tel" id="claimPhone" placeholder="+234 800 000 0000">
+          <label for="claimName">Business Name</label>
+          <input type="text" id="claimName" readonly style="background:#f8fafc;font-weight:600;">
         </div>
         <div class="form-group">
           <label for="claimCity">City</label>
-          <input type="text" id="claimCity" placeholder="e.g. Lagos, Abuja, Port Harcourt">
+          <input type="text" id="claimCity" readonly style="background:#f8fafc;">
+        </div>
+        <div class="form-group" id="verifyGroup">
+          <label for="claimVerify">Verify Ownership</label>
+          <p style="font-size:0.85rem;color:#64748b;margin-bottom:8px;">Enter the phone number listed on this business page to verify you are the owner.</p>
+          <input type="tel" id="claimVerify" placeholder="Enter phone number from the listing" required style="border:2px solid #d1d9e6;">
+          <div id="verifyHint" style="display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:0.85rem;"></div>
         </div>
         <div class="form-group">
-          <label for="claimAction">I want to...</label>
-          <select id="claimAction">
-            <option value="claim">Claim an existing listing</option>
-            <option value="add">Add a new business</option>
-          </select>
+          <label for="claimEmail">Your Email *</label>
+          <input type="email" id="claimEmail" placeholder="you@example.com" required>
         </div>
         <div class="form-group">
           <label for="claimMessage">Message (optional)</label>
-          <textarea id="claimMessage" rows="4" placeholder="Any updates or details about your business..."></textarea>
+          <textarea id="claimMessage" rows="4" placeholder="Any updates about your business..."></textarea>
         </div>
-        <button type="submit" class="btn-primary">Submit</button>
-        <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">We'll review your submission within 48 hours.</p>
+        <button type="submit" class="btn-primary" id="claimSubmitBtn" disabled>Verify & Claim</button>
+        <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">Phone verification prevents unauthorized claims.</p>
       </form>
 
       <div id="claimSuccess" class="claim-success" style="display:none" role="alert">
-        <h3>Thank you!</h3>
-        <p>We'll review your submission and get back to you within 48 hours.</p>
-        <a href="/Business-Men/" class="btn-primary" style="display:inline-block;margin-top:15px;">Browse Directory</a>
+        <h3 id="claimResultTitle">Thank you!</h3>
+        <p id="claimResultMsg">Your claim has been submitted.</p>
+        <a href="/Business-Men/listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
       </div>
     </div>
   </main>
@@ -106,12 +74,108 @@
   </footer>
 
   <script defer src="js/app.js"></script>
-  <script defer>document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const business = params.get('business');
-    if (business && document.getElementById('claimName')) {
-      document.getElementById('claimName').value = business;
+  <script defer>
+    function normalizePhone(p) {
+      return (p || '').replace(/[\s\-\(\)\+]/g, '').toLowerCase();
     }
-  });</script>
+
+    function handleClaimSubmit(e) {
+      e.preventDefault();
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const name = document.getElementById('claimName').value.trim();
+      const email = document.getElementById('claimEmail').value.trim();
+      const message = document.getElementById('claimMessage').value.trim();
+      const enteredPhone = document.getElementById('claimVerify').value.trim();
+      const listingPhone = params.get('phone') || '';
+      const verified = normalizePhone(enteredPhone).length > 0 &&
+        normalizePhone(listingPhone).length > 0 &&
+        normalizePhone(listingPhone).includes(normalizePhone(enteredPhone).slice(-7));
+
+      const claimData = {
+        name,
+        email,
+        message,
+        claimedAt: new Date().toISOString(),
+        verified: verified
+      };
+
+      localStorage.setItem('claim_' + id, JSON.stringify(claimData));
+
+      const form = document.getElementById('claimForm');
+      const success = document.getElementById('claimSuccess');
+      const title = document.getElementById('claimResultTitle');
+      const msg = document.getElementById('claimResultMsg');
+
+      form.style.display = 'none';
+      success.style.display = 'block';
+
+      if (verified) {
+        title.textContent = 'Business Claimed Successfully!';
+        msg.textContent = 'Phone number matched. You are now verified as the owner of "' + name + '". A claimed badge will appear on your listing.';
+      } else {
+        title.textContent = 'Claim Submitted for Review';
+        msg.textContent = 'The phone number did not match our listing. Your claim has been saved and will be reviewed manually. We\'ll contact you at ' + email + '.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('id');
+      var name = params.get('name');
+      var city = params.get('city');
+      var phone = params.get('phone');
+
+      if (name) document.getElementById('claimName').value = decodeURIComponent(name);
+      if (city) document.getElementById('claimCity').value = decodeURIComponent(city);
+
+      var existingClaim = null;
+      try { existingClaim = JSON.parse(localStorage.getItem('claim_' + id)); } catch(e) {}
+
+      if (existingClaim && existingClaim.verified) {
+        document.getElementById('verifyGroup').style.display = 'none';
+        document.getElementById('claimSubmitBtn').style.display = 'none';
+        document.querySelector('.claim-form p:last-child').style.display = 'none';
+        document.getElementById('claimForm').innerHTML +=
+          '<div class="claim-success"><h3>Already Claimed</h3><p>This business has already been claimed and verified.</p><a href="/Business-Men/listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
+        return;
+      }
+
+      if (phone) {
+        var verifyInput = document.getElementById('claimVerify');
+        var submitBtn = document.getElementById('claimSubmitBtn');
+        var hint = document.getElementById('verifyHint');
+
+        verifyInput.addEventListener('input', function() {
+          var entered = normalizePhone(this.value);
+          var listed = normalizePhone(phone);
+          var partial = normalizePhone(phone).slice(-7);
+
+          if (entered.length === 0) {
+            hint.style.display = 'none';
+            submitBtn.disabled = true;
+            return;
+          }
+
+          if (listed.includes(entered.slice(-7)) && entered.length >= 4) {
+            hint.style.display = 'block';
+            hint.className = 'verify-match';
+            hint.innerHTML = '\u2713 Phone matches! You can now claim this business.';
+            submitBtn.disabled = false;
+          } else if (entered.length >= 4) {
+            hint.style.display = 'block';
+            hint.className = 'verify-nomatch';
+            hint.innerHTML = 'Phone does not match. You can still submit for manual review.';
+            submitBtn.disabled = false;
+          } else {
+            hint.style.display = 'none';
+            submitBtn.disabled = true;
+          }
+        });
+      }
+    });
+
+    window.handleClaimSubmit = handleClaimSubmit;
+  </script>
 </body>
 </html>
