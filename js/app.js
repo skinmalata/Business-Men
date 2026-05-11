@@ -342,6 +342,28 @@ function renderDetailView(item, cat) {
         ${getClaim(id)?.verified ? `<span class="claimed-badge" title="Claimed & Verified">\u2713 Claimed</span>` : `<a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-secondary" rel="nofollow">Claim this Business</a>`}
       </div>
     </div>
+    <div class="detail-toolbar">
+      <button class="toolbar-btn" onclick="getDirections('${escapeHtml(businessName)}', '${escapeHtml(city)}', '${escapeHtml(address)}')" title="Get Directions">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Directions
+      </button>
+      <button class="toolbar-btn" onclick="scrollToReviews()" title="Leave a Review">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Review
+      </button>
+      <button class="toolbar-btn" onclick="shareBusiness('${escapeHtml(businessName)}', '${cat}', '${id}')" title="Share">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share
+      </button>
+      <button class="toolbar-btn ${isBookmarked(id) ? 'bookmarked' : ''}" onclick="toggleBookmark('${id}', '${cat}')" title="Bookmark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="${isBookmarked(id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        ${isBookmarked(id) ? 'Saved' : 'Save'}
+      </button>
+      <button class="toolbar-btn toolbar-btn-danger" onclick="reportBusiness('${id}')" title="Report">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Report
+      </button>
+    </div>
 
     <div class="detail-body">
       <section class="detail-section">
@@ -634,6 +656,61 @@ function verifyClaim(businessId, enteredPhone) {
   return partialMatch;
 }
 
+// === ACTION BUTTONS ===
+function getDirections(name, city, address) {
+  const q = encodeURIComponent([name, address, city, 'Nigeria'].filter(Boolean).join(', '));
+  window.open('https://maps.google.com?q=' + q, '_blank', 'noopener');
+}
+
+function scrollToReviews() {
+  const el = document.querySelector('.reviews-section');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function shareBusiness(name, cat, id) {
+  const url = window.location.origin + '/Business-Men/listing.html?cat=' + cat + '&id=' + id;
+  if (navigator.share) {
+    navigator.share({ title: name, url: url }).catch(function() {});
+  } else {
+    navigator.clipboard.writeText(url).then(function() {
+      var btn = event.target.closest('.toolbar-btn');
+      if (btn) { var orig = btn.innerHTML; btn.innerHTML = 'Copied!'; setTimeout(function() { btn.innerHTML = orig; }, 2000); }
+    }).catch(function() {});
+  }
+}
+
+function isBookmarked(id) {
+  try {
+    var b = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+    return b.indexOf(id) !== -1;
+  } catch { return false; }
+}
+
+function toggleBookmark(id, cat) {
+  var bookmarks = [];
+  try { bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]'); } catch {}
+  var idx = bookmarks.indexOf(id);
+  if (idx === -1) {
+    bookmarks.push(id);
+  } else {
+    bookmarks.splice(idx, 1);
+  }
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  var params = new URLSearchParams(window.location.search);
+  var item = allData.find(function(d) { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
+  if (item) renderDetailView(item, params.get('cat') || 'hotels');
+}
+
+function reportBusiness(id) {
+  var reason = prompt('Why are you reporting this listing? (e.g., wrong number, closed business, spam)');
+  if (!reason || !reason.trim()) return;
+  var reports = [];
+  try { reports = JSON.parse(localStorage.getItem('reports') || '[]'); } catch {}
+  reports.push({ id: id, reason: reason.trim(), date: new Date().toISOString() });
+  localStorage.setItem('reports', JSON.stringify(reports));
+  alert('Thank you. Your report has been submitted for review.');
+}
+
 window.handleSearch = handleSearch;
 window.applyFilters = applyFilters;
 window.loadListings = loadListings;
@@ -646,3 +723,8 @@ window.submitReview = submitReview;
 window.setRating = setRating;
 window.hoverRating = hoverRating;
 window.resetRating = resetRating;
+window.getDirections = getDirections;
+window.scrollToReviews = scrollToReviews;
+window.shareBusiness = shareBusiness;
+window.toggleBookmark = toggleBookmark;
+window.reportBusiness = reportBusiness;
