@@ -62,14 +62,14 @@
       <div id="claimSuccess" class="claim-success" style="display:none" role="alert">
         <h3 id="claimResultTitle">Thank you!</h3>
         <p id="claimResultMsg">Your claim has been submitted.</p>
-        <a href="/listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
+        <a href="listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
       </div>
     </div>
   </main>
 
   <footer class="footer" role="contentinfo">
     <div class="container">
-      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/">Browse businesses</a> or <a href="/claim.html">add your listing</a>.</p>
+      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href=".">Browse businesses</a> or <a href="claim.html">add your listing</a>.</p>
     </div>
   </footer>
 
@@ -137,7 +137,7 @@
         document.getElementById('claimSubmitBtn').style.display = 'none';
         document.querySelector('.claim-form p:last-child').style.display = 'none';
         document.getElementById('claimForm').innerHTML +=
-          '<div class="claim-success"><h3>Already Claimed</h3><p>This business has already been claimed and verified.</p><a href="/listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
+          '<div class="claim-success"><h3>Already Claimed</h3><p>This business has already been claimed and verified.</p><a href="listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
         return;
       }
 
