@@ -668,7 +668,7 @@ function scrollToReviews() {
 }
 
 function shareBusiness(name, cat, id) {
-  const url = window.location.origin + '/Business-Men/listing.html?cat=' + cat + '&id=' + id;
+  const url = window.location.origin + '/listing.html?cat=' + cat + '&id=' + id;
   if (navigator.share) {
     navigator.share({ title: name, url: url }).catch(function() {});
   } else {

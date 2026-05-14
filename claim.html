@@ -6,12 +6,12 @@
   <title>Claim Your Business Listing - BusinessMen Nigeria Directory</title>
   <meta name="description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Verify ownership and update your listing for free.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://skinmalata.github.io/Business-Men/claim.html">
-  <link rel="alternate" hreflang="en" href="https://skinmalata.github.io/Business-Men/claim.html">
+  <link rel="canonical" href="https://businessmen.com.ng/claim.html">
+  <link rel="alternate" hreflang="en" href="https://businessmen.com.ng/claim.html">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
 
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://skinmalata.github.io/Business-Men/claim.html">
+  <meta property="og:url" content="https://businessmen.com.ng/claim.html">
   <meta property="og:title" content="Claim Your Business Listing - BusinessMen Nigeria">
   <meta property="og:description" content="Claim or add your business to BusinessMen, Nigeria's fastest-growing business directory. Free listing with direct contact info.">
   <meta property="og:site_name" content="BusinessMen">
@@ -62,14 +62,14 @@
       <div id="claimSuccess" class="claim-success" style="display:none" role="alert">
         <h3 id="claimResultTitle">Thank you!</h3>
         <p id="claimResultMsg">Your claim has been submitted.</p>
-        <a href="/Business-Men/listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
+        <a href="/listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
       </div>
     </div>
   </main>
 
   <footer class="footer" role="contentinfo">
     <div class="container">
-      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/Business-Men/">Browse businesses</a> or <a href="/Business-Men/claim.html">add your listing</a>.</p>
+      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="/">Browse businesses</a> or <a href="/claim.html">add your listing</a>.</p>
     </div>
   </footer>
 
@@ -137,7 +137,7 @@
         document.getElementById('claimSubmitBtn').style.display = 'none';
         document.querySelector('.claim-form p:last-child').style.display = 'none';
         document.getElementById('claimForm').innerHTML +=
-          '<div class="claim-success"><h3>Already Claimed</h3><p>This business has already been claimed and verified.</p><a href="/Business-Men/listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
+          '<div class="claim-success"><h3>Already Claimed</h3><p>This business has already been claimed and verified.</p><a href="/listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
         return;
       }
 
