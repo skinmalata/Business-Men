@@ -478,44 +478,146 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px; text-align: center; font-size: 0.8rem; color: #475569; }
 .footer-bottom a { color: #e94560; text-decoration: none; }
 
-/* === RESPONSIVE === */
-@media (hover: none) {
-  .nav-dropdown-menu { position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0; margin: 4px 0 0 12px; min-width: auto; }
-  .nav-dropdown-menu::before { display: none; }
-  .nav-dropdown-menu a { padding: 4px 12px; font-size: 0.78rem; }
-  .nav-dropdown > a::after { content: ' \25BE'; font-size: 0.7rem; }
+/* === NAV TOGGLE (hamburger) === */
+.nav-toggle {
+  display: none; background: none; border: none; color: #0f172a; font-size: 1.5rem;
+  cursor: pointer; padding: 4px 8px; line-height: 1; z-index: 101;
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* === RESPONSIVE === */
+@media (hover: none) and (pointer: coarse) {
+  .nav-dropdown-menu { display: none; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0 0 0 16px; margin: 0; min-width: auto; background: transparent; }
+  .nav-dropdown-menu::before { display: none; }
+  .nav-dropdown-menu a { padding: 10px 14px; font-size: 0.85rem; color: #475569; }
+  .nav-dropdown-trigger { cursor: pointer; }
+  .dropdown-arrow { font-size: 0.7rem; margin-left: 4px; display: inline-block; transition: transform 0.2s; }
+  .nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+}
+
+@media (max-width: 900px) {
+  .nav-toggle { display: block; }
+  .navbar .container { flex-wrap: wrap; }
+  .nav-scroll {
+    display: none; width: 100%; flex-direction: column; align-items: stretch;
+    background: white; border-top: 1px solid #e8ecf4; padding: 12px 0;
+    max-height: calc(100vh - 64px); overflow-y: auto;
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 100;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  }
+  .navbar.nav-open .nav-scroll { display: flex; }
+  .nav-scroll a { padding: 12px 24px; font-size: 0.9rem; border-radius: 0; color: #1e293b; }
+  .nav-scroll a:hover { background: #f8fafc; }
+  .nav-scroll a.active { background: rgba(233,69,96,0.08); }
+  .nav-dropdown { display: flex; flex-direction: column; }
+  .nav-dropdown-menu { display: none; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0 0 0 24px; margin: 0; min-width: auto; background: transparent; border-radius: 0; }
+  .nav-dropdown-menu::before { display: none; }
+  .nav-dropdown-menu a { padding: 10px 14px; font-size: 0.85rem; color: #475569; white-space: normal; }
+  .nav-dropdown-menu a:hover { background: transparent; color: #e94560; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; }
+  .nav-dropdown-trigger { cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px !important; }
+  .dropdown-arrow { font-size: 0.7rem; margin-left: 4px; display: inline-block; transition: transform 0.2s; }
+  .nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+  .nav-cta { margin: 8px 24px !important; text-align: center; }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+  .nav-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
 @media (max-width: 768px) {
-  .hero h1 { font-size: 2rem; }
-  .hero p { font-size: 1rem; }
+  .hero h1 { font-size: 1.8rem; }
+  .hero p { font-size: 0.95rem; }
+  .hero { padding: 56px 0 48px; }
   .hero-search { flex-direction: column; border-radius: 12px; }
-  .hero-search select { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); width: 100%; }
-  .hero-search button { border-radius: 0; }
-  .hero-stats { gap: 24px; }
+  .hero-search select { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); width: 100%; min-width: unset; }
+  .hero-search input { padding: 16px 20px; font-size: 16px; }
+  .hero-search button { padding: 16px; border-radius: 0; }
+  .hero-stats { gap: 20px; }
   .hero-stat + .hero-stat::before { display: none; }
-  .hero-stat-number { font-size: 1.4rem; }
+  .hero-stat-number { font-size: 1.3rem; }
+  .hero-stat-label { font-size: 0.7rem; }
   .category-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .cat-card { padding: 16px 10px; }
-  .cat-card-icon { font-size: 1.4rem; }
+  .cat-card { padding: 14px 8px; }
+  .cat-card-icon { font-size: 1.3rem; }
+  .cat-card-name { font-size: 0.78rem; }
+  .cat-card-count { font-size: 0.7rem; }
   .featured-grid { grid-template-columns: 1fr; }
   .listing-grid { grid-template-columns: 1fr; }
   .skeleton-grid { grid-template-columns: 1fr; }
-  .detail-header { padding: 24px; }
-  .detail-header h1 { font-size: 1.4rem; }
+  .detail-header { padding: 20px; flex-direction: column; }
+  .detail-header h1 { font-size: 1.3rem; }
+  .detail-actions { width: 100%; }
+  .detail-actions .btn-secondary { width: 100%; text-align: center; }
   .footer-grid { grid-template-columns: 1fr; gap: 24px; }
   .toolbar { flex-direction: column; align-items: stretch; }
   .toolbar select { width: 100%; }
   .page-header { flex-direction: column; align-items: flex-start; }
-  .pagination { flex-wrap: wrap; }
+  .pagination { flex-wrap: wrap; justify-content: center; }
+  .pagination button { min-width: 38px; padding: 8px 14px; font-size: 0.8rem; }
+  .claim-page { margin: 24px auto 40px; }
+  .claim-form { padding: 24px; }
+  .section-header { padding: 40px 0 8px; }
+  .section-header h2 { font-size: 1.4rem; }
+  .categories-section { padding: 0 0 40px; }
+  .featured-section { padding: 40px 0; }
+  .intro-section { padding: 40px 0; }
+  .intro-section h2 { font-size: 1.25rem; }
+  .detail-toolbar { gap: 6px; }
+  .toolbar-btn { padding: 10px 14px; font-size: 0.78rem; flex: 1; justify-content: center; }
+  .card-body { padding: 16px; }
+  .card h3 { font-size: 0.95rem; }
 }
+
 @media (max-width: 480px) {
-  .container { padding: 0 16px; }
-  .hero h1 { font-size: 1.6rem; }
-  .hero { padding: 56px 0 40px; }
-  .category-grid { grid-template-columns: repeat(2, 1fr); }
-  .navbar { height: 56px; }
-  .nav-scroll a { font-size: 0.75rem; padding: 4px 10px; }
-  .nav-cta { padding: 6px 14px !important; font-size: 0.75rem !important; }
+  .container { padding: 0 14px; }
+  .hero h1 { font-size: 1.4rem; letter-spacing: -0.5px; }
+  .hero p { font-size: 0.88rem; }
+  .hero { padding: 44px 0 36px; }
+  .hero-search select { padding: 14px 16px; font-size: 0.9rem; }
+  .hero-search input { padding: 14px 16px; }
+  .hero-search button { padding: 14px; font-size: 0.9rem; }
+  .hero-stats { gap: 16px; }
+  .hero-stat-number { font-size: 1.1rem; }
+  .category-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .cat-card { padding: 12px 6px; border-radius: 10px; }
+  .cat-card-icon { font-size: 1.1rem; margin-bottom: 4px; }
+  .cat-card-name { font-size: 0.72rem; }
+  .cat-card-count { font-size: 0.65rem; }
+  .navbar { height: 52px; }
+  .logo { font-size: 1.1rem; }
+  .logo svg { width: 18px; height: 18px; }
+  .nav-toggle { font-size: 1.3rem; }
+  .listing-grid { gap: 12px; }
+  .card-body { padding: 14px; }
+  .card h3 { font-size: 0.9rem; padding-right: 50px; }
+  .card-city { font-size: 0.78rem; }
+  .card-phone { font-size: 0.82rem; padding: 2px 8px; }
+  .card-desc { font-size: 0.78rem; }
+  .card-footer { flex-wrap: wrap; gap: 6px; }
+  .card-badge { font-size: 0.65rem; padding: 3px 8px; }
+  .detail-header { padding: 16px; border-radius: 12px; }
+  .detail-header h1 { font-size: 1.15rem; }
+  .detail-section { padding: 18px; }
+  .detail-section h2 { font-size: 1rem; }
+  .info-row { font-size: 0.85rem; flex-direction: column; gap: 2px; }
+  .info-row .label { min-width: unset; }
+  .toolbar-btn { padding: 8px 10px; font-size: 0.72rem; gap: 4px; }
+  .toolbar-btn svg { width: 14px; height: 14px; }
+  .pagination { gap: 4px; }
+  .pagination button { min-width: 34px; padding: 6px 10px; font-size: 0.75rem; }
+  .claim-page h1 { font-size: 1.3rem; }
+  .claim-form { padding: 18px; }
+  .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; font-size: 16px; }
+  .btn-primary { padding: 12px 20px; font-size: 0.85rem; }
+  .featured-card-body { padding: 16px; }
+  .featured-card-body h3 { font-size: 0.95rem; }
+  .page-header h2 { font-size: 1.1rem; }
+  .results-count { font-size: 0.8rem; }
+  /* Prevent iOS zoom on input focus */
+  input, select, textarea { font-size: 16px !important; }
+  .review-card { padding: 14px; }
+  .star-rating .star { font-size: 1.5rem; }
+  .products-box { font-size: 0.8rem; max-height: 200px; }
 }
 
 /* === PRINT === */

@@ -22,12 +22,13 @@
                 '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>' +
               '</svg>Business<span>Men</span>' +
             '</a>' +
+            '<button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>' +
             '<div class="nav-scroll">' +
               '<a href="/"' + (active === 'home' ? ' class="active"' : '') + '>Home</a>' +
               '<a href="/#about">About</a>' +
               '<a href="/services.html"' + (active === 'services' ? ' class="active"' : '') + '>Services</a>' +
               '<div class="nav-dropdown">' +
-                '<a href="/#categories">Categories</a>' +
+                '<a href="/#categories" class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></a>' +
                 '<div class="nav-dropdown-menu">' +
                   '<a href="/listing.html?cat=hotels">Hotels</a>' +
                   '<a href="/listing.html?cat=hospitals">Hospitals</a>' +
@@ -49,6 +50,38 @@
           '</div>' +
         '</nav>' +
       '</header>';
+
+    var toggle = container.querySelector('.nav-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var nav = container.querySelector('.navbar');
+        var expanded = this.getAttribute('aria-expanded') === 'true';
+        nav.classList.toggle('nav-open');
+        this.setAttribute('aria-expanded', !expanded);
+        this.innerHTML = expanded ? '\u2630' : '\u2715';
+      });
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.navbar')) {
+          var nav = container.querySelector('.navbar');
+          if (nav && nav.classList.contains('nav-open')) {
+            nav.classList.remove('nav-open');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.innerHTML = '\u2630';
+          }
+        }
+      });
+    }
+
+    var dropdownTrigger = container.querySelector('.nav-dropdown-trigger');
+    if (dropdownTrigger) {
+      dropdownTrigger.addEventListener('click', function(e) {
+        if (window.innerWidth <= 900) {
+          e.preventDefault();
+          this.parentElement.classList.toggle('open');
+        }
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
