@@ -633,6 +633,25 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
   .products-box { font-size: 0.8rem; max-height: 200px; }
 }
 
+/* === MARKETPLACE PROMO ON HOMEPAGE === */
+.marketplace-promo { padding: 60px 0; background: linear-gradient(135deg, #080e1a, #111d33); }
+.marketplace-promo-inner { text-align: center; }
+.marketplace-promo-inner h2 { font-size: 1.6rem; color: white; margin-bottom: 10px; }
+.marketplace-promo-inner p { color: #94a3b8; font-size: 1rem; margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+.marketplace-promo-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.marketplace-promo-actions .btn-primary {
+  background: linear-gradient(135deg, #e94560, #d63851); color: white; padding: 14px 28px;
+  border-radius: 8px; font-size: 0.95rem; font-weight: 600; display: inline-block;
+  box-shadow: 0 4px 16px rgba(233,69,96,0.3); transition: all 0.2s;
+}
+.marketplace-promo-actions .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(233,69,96,0.4); }
+.marketplace-promo-actions .btn-outline {
+  color: white; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px;
+  border-radius: 8px; font-size: 0.95rem; font-weight: 600; display: inline-block;
+  transition: all 0.2s;
+}
+.marketplace-promo-actions .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.05); }
+
 /* === MARKETPLACE === */
 .marketplace-hero {
   background: linear-gradient(135deg, #080e1a, #111d33); color: white; text-align: center;
