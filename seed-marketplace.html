@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seeding Marketplace...</title>
+  <meta name="robots" content="noindex">
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f5f6fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .box { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; max-width: 400px; }
+    .done { color: #166534; font-weight: 700; }
+    .error { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="box" id="status">Seeding marketplace data...</div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    var ads = [
+      { title: "iPhone 14 Pro Max 256GB", category: "Electronics", price: "850,000", description: "Brand new sealed iPhone 14 Pro Max, deep purple. Original Apple Nigeria stock with 1-year warranty.", phone: "0803 123 4567" },
+      { title: "Toyota Camry 2020 LE", category: "Vehicles", price: "4,500,000", description: "Well maintained Toyota Camry 2020 model. Clean title, original papers. Mileage: 45,000km. Cash on delivery.", phone: "0805 234 5678" },
+      { title: "3-Bedroom Flat for Rent in Lekki", category: "Real Estate", price: "1,200,000/year", description: "Spacious 3-bedroom flat in a secure estate in Lekki Phase 1. 24/7 security, backup generator, ample parking. Available immediately.", phone: "0802 345 6789" },
+      { title: "Modern Living Room Furniture Set", category: "Furniture", price: "350,000", description: "Complete 7-piece living room set including sofa, loveseat, center table, and TV stand. Premium leather upholstery.", phone: "0806 456 7890" },
+      { title: "Native Wedding Gown - Custom Made", category: "Fashion", price: "85,000", description: "Custom-made native wedding gown with matching gele and accessories. Choose your fabric and style. Delivery within 7 days.", phone: "0808 567 8901" },
+      { title: "Accountant Needed - Ikeja", category: "Jobs", price: "150,000/month", description: "Manufacturing company in Ikeja needs an experienced accountant. Minimum 3 years experience. Must know QuickBooks. Send CV.", phone: "0809 678 9012" },
+      { title: "Professional Camera Service - Events", category: "Services", price: "50,000", description: "Professional photography and videography for weddings, birthdays, and corporate events. Full day coverage + edited photos.", phone: "0701 789 0123" },
+      { title: "Fresh Catfish - Farm Direct", category: "Agriculture", price: "2,500/kg", description: "Fresh catfish straight from our farm in Ogun State. Available in whole or processed. Minimum order 5kg. Free delivery in Lagos.", phone: "0703 890 1234" },
+      { title: "Small Chops Platter - Party Size", category: "Food & Drinks", price: "25,000", description: "Assorted small chops platter serving 20 persons. Includes samosa, spring rolls, puff-puff, gizzard, and drinks. Order 24hrs ahead.", phone: "0810 901 2345" },
+      { title: "MacBook Pro M3 14-inch", category: "Electronics", price: "1,200,000", description: "Apple MacBook Pro M3 14-inch, 18GB RAM, 512GB SSD. Space grey. Used for 3 months. Original box and charger.", phone: "0811 012 3456" },
+      { title: "Mercedes-Benz C300 2022", category: "Vehicles", price: "8,500,000", description: "Mercedes C300 AMG Line 2022. 20,000km. Full service history. Panoramic sunroof, leather seats, premium sound.", phone: "0812 123 4567" },
+      { title: "Land for Sale - Ibeju Lekki", category: "Real Estate", price: "1,500,000/plot", description: "500sqm plots available in Ibeju-Lekki. C of O document ready. Close to the Lekki Free Trade Zone. Great investment opportunity.", phone: "0803 234 5678" },
+      { title: "King-Size Bed with Mattress", category: "Furniture", price: "180,000", description: "King-size orthopedic bed frame with premium memory foam mattress. Solid wood construction. 5-year guarantee.", phone: "0805 345 6789" },
+      { title: "Men's Classic Suit - Tailored", category: "Fashion", price: "65,000", description: "Fully tailored classic suit in your choice of fabric. Jacket, trousers, and shirt included. 3 fitting sessions.", phone: "0807 456 7890" },
+      { title: "Receptionist Wanted - Victoria Island", category: "Jobs", price: "120,000/month", description: "Hotel in VI needs a professional receptionist. Must be fluent in English, computer literate. Female preferred. Resume to WhatsApp.", phone: "0809 567 8901" },
+      { title: "AC Installation & Repair", category: "Services", price: "15,000", description: "Professional AC installation, servicing, and repair. All brands. Free diagnosis. Same-day service within Lagos mainland.", phone: "0813 678 9012" },
+      { title: "Organic Vegetables Basket", category: "Agriculture", price: "3,500", description: "Weekly organic vegetable basket. Tomatoes, peppers, onions, carrots, green beans, and spinach. Farm fresh. Home delivery.", phone: "0815 789 0123" },
+      { title: "Homemade Chin Chin - 1kg Pack", category: "Food & Drinks", price: "2,000", description: "Crunchy homemade chin chin. Made fresh to order. Available in regular, coconut, and peanut flavors. Order minimum 2 packs.", phone: "0817 890 1234" },
+      { title: "Samsung 65\" 4K Smart TV", category: "Electronics", price: "420,000", description: "Samsung 65-inch 4K UHD Smart TV with built-in streaming apps. 2 years old, excellent condition. Remote included.", phone: "0802 901 2345" },
+      { title: "Honda Accord 2019", category: "Vehicles", price: "3,200,000", description: "Honda Accord 2019 EX-L, clean Nigerian title. Leather seats, moonroof, backup camera. Well maintained. Reasonable offers.", phone: "0804 012 3456" },
+      { title: "Studio Apartment - Yaba", category: "Real Estate", price: "400,000/year", description: "Neat studio apartment in Yaba. Self-contained with kitchenette. Good neighborhood, close to UNILAG and markets.", phone: "0806 123 4567" },
+      { title: "Office Desk and Chair Set", category: "Furniture", price: "95,000", description: "Executive office desk with ergonomic chair. Glass top desk with metal legs. Adjustable height chair. Like new condition.", phone: "0808 234 5678" },
+      { title: "Aso Ebi - Ankara Styles", category: "Fashion", price: "15,000", description: "Latest Ankara styles for all occasions. Full outfit including blouse, wrapper, and headtie. Custom measurements. 3-day delivery.", phone: "0810 345 6789" },
+      { title: "Driver Needed - Lekki", category: "Jobs", price: "80,000/month", description: "Private family needs an experienced driver in Lekki. Must have valid drivers license. Minimum 5 years experience. Reference required.", phone: "0812 456 7890" },
+      { title: "House Cleaning Service", category: "Services", price: "10,000", description: "Professional deep cleaning service for apartments. 2-person team, eco-friendly products. 3-4 hours. Covers all rooms and kitchen.", phone: "0814 567 8901" },
+      { title: "Broiler Chickens - Live", category: "Agriculture", price: "3,000/bird", description: "Healthy broiler chickens ready for market. Vaccinated, 6-8 weeks old. Minimum 10 birds. Delivery available within Lagos.", phone: "0816 678 9012" },
+      { title: "Jollof Rice & Chicken - Party Tray", category: "Food & Drinks", price: "12,000", description: "Party size jollof rice tray with 4 pieces of fried chicken, plantain, coleslaw. Serves 10-12 people. Order by 10am for same day.", phone: "0818 789 0123" },
+      { title: "PlayStation 5 Digital Edition", category: "Electronics", price: "380,000", description: "PS5 Digital Edition, 825GB SSD. Includes 2 controllers and 3 games. Barely used, still under warranty.", phone: "0801 890 1234" },
+      { title: "Lexus RX350 2021", category: "Vehicles", price: "7,200,000", description: "Lexus RX350 2021 model. Clean Nigerian title. Sunroof, premium leather, heated seats. One owner. Service record available.", phone: "0803 901 2345" },
+      { title: "Shop Space for Rent - Computer Village", category: "Real Estate", price: "600,000/year", description: "Lock-up shop at Computer Village, Ikeja. High foot traffic area. 10sqm space with storage. Ideal for phone or accessory business.", phone: "0805 012 3456" },
+    ];
+
+    var status = document.getElementById('status');
+    var count = 0;
+    var errors = [];
+
+    function uploadNext(i) {
+      if (i >= ads.length) {
+        var msg = 'Seeded ' + count + ' of ' + ads.length + ' listings successfully!';
+        if (errors.length) msg += '<br><br><span class="error">' + errors.length + ' errors</span>';
+        status.innerHTML = '<span class="done">' + msg + '</span><br><br><a href="marketplace.html" style="display:inline-block;background:#e94560;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">View Marketplace</a>';
+        return;
+      }
+
+      var ad = ads[i];
+      status.textContent = 'Seeding ' + (i + 1) + ' of ' + ads.length + ': ' + ad.title + '...';
+
+      db.collection('marketplace').add({
+        title: ad.title,
+        category: ad.category,
+        price: ad.price,
+        description: ad.description,
+        phone: ad.phone,
+        imageUrl: null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
+      }).then(function() {
+        count++;
+        setTimeout(function() { uploadNext(i + 1); }, 300);
+      }).catch(function(err) {
+        errors.push(ad.title + ': ' + err.message);
+        setTimeout(function() { uploadNext(i + 1); }, 300);
+      });
+    }
+
+    uploadNext(0);
+  </script>
+</body>
+</html>
