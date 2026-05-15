@@ -12,17 +12,11 @@
 <body>
   <div id="nav-container"></div>
 
-  <section class="hero" aria-label="Marketplace search">
-    <div class="hero-slider" aria-hidden="true">
-      <video class="hero-video" autoplay muted loop playsinline>
-        <source src="slider/1.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="hero-overlay"></div>
+  <section class="marketplace-hero">
     <div class="container">
       <h1>Marketplace</h1>
-      <p>Buy, sell, and trade — free ads, no account needed. Listings expire in 48 hours.</p>
-      <div class="hero-search" role="search">
+      <p style="margin-bottom:20px">Buy, sell, and trade — free ads, no account needed. Listings expire in 48 hours.</p>
+      <div class="marketplace-hero-search" role="search">
         <label for="marketplaceCat" class="sr-only">Select category</label>
         <select id="marketplaceCat" aria-label="Select category">
           <option value="all">All Categories</option>
@@ -41,8 +35,8 @@
         <input type="text" id="marketplaceQuery" placeholder="Search products, services, jobs..." aria-label="Search marketplace" onkeydown="if(event.key==='Enter')heroMarketplaceSearch()">
         <button onclick="heroMarketplaceSearch()" aria-label="Search">Search</button>
       </div>
-      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="post-ad.html" class="btn-outline" style="color:white;border-color:rgba(255,255,255,0.4)">+ Post a Free Ad</a>
+      <div style="margin-top:16px">
+        <a href="post-ad.html" class="btn-primary">+ Post a Free Ad</a>
       </div>
     </div>
   </section>

@@ -664,6 +664,32 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 }
 .marketplace-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #94a3b8; }
 .marketplace-card-phone { font-size: 0.8rem; color: #e94560; font-weight: 600; }
+.marketplace-hero-search {
+  display: flex; background: white; border-radius: 12px; overflow: hidden;
+  max-width: 640px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.marketplace-hero-search select {
+  padding: 16px 20px; border: none; background: white; font-size: 0.95rem;
+  outline: none; color: #1e293b; min-width: 160px; cursor: pointer;
+  border-right: 1px solid #e8ecf4;
+}
+.marketplace-hero-search input {
+  flex: 1; padding: 16px 20px; border: none; font-size: 0.95rem;
+  outline: none; color: #1e293b; min-width: 0;
+}
+.marketplace-hero-search input::placeholder { color: #94a3b8; }
+.marketplace-hero-search button {
+  padding: 16px 28px; background: #e94560; color: white; border: none;
+  font-size: 0.95rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.marketplace-hero-search button:hover { background: #d63851; }
+@media (max-width: 700px) {
+  .marketplace-hero-search { flex-direction: column; border-radius: 12px; }
+  .marketplace-hero-search select { border-right: none; border-bottom: 1px solid #e8ecf4; width: 100%; }
+  .marketplace-hero-search input { padding: 14px 16px; font-size: 16px; }
+  .marketplace-hero-search button { padding: 14px; }
+}
+
 .marketplace-filter-bar {
   display: flex; gap: 12px; align-items: center; margin-bottom: 24px; flex-wrap: wrap;
 }
