@@ -7,3 +7,8 @@ __pycache__/
 *_v2.json
 nigeria_hotels_*.json
 data_backup/
+nigeria_hospitals_federal.json
+nigeria_hospitals_converted.json
+hospital_urls_full.json
+slider/slide*.png
+slider/slide*.jpg
