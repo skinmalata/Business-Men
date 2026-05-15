@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace - BusinessMen Nigeria</title>
+  <meta name="description" content="Browse buy and sell listings in Nigeria. Post free ads for products, services, jobs, real estate and more. No account needed.">
+  <link rel="canonical" href="https://businessmen.com.ng/marketplace.html">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/nav.js"></script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <section class="marketplace-hero">
+    <div class="container">
+      <h1>Marketplace</h1>
+      <p>Buy, sell, and trade — free ads, no account needed. Listings expire in 48 hours.</p>
+      <a href="post-ad.html" class="btn-primary">Post a Free Ad</a>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="marketplace-filter-bar">
+      <input type="text" id="searchInput" placeholder="Search listings..." oninput="filterAds()">
+      <select id="categoryFilter" onchange="filterAds()">
+        <option value="all">All Categories</option>
+        <option>Real Estate</option>
+        <option>Electronics</option>
+        <option>Vehicles</option>
+        <option>Furniture</option>
+        <option>Fashion</option>
+        <option>Jobs</option>
+        <option>Services</option>
+        <option>Agriculture</option>
+        <option>Food & Drinks</option>
+        <option>Other</option>
+      </select>
+      <a href="post-ad.html" class="btn-primary">+ Post Ad</a>
+    </div>
+
+    <div class="marketplace-grid" id="adGrid"></div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    var allAds = [];
+    var unsubListener = null;
+
+    function formatPrice(price) {
+      var p = price.replace(/,/g, '').trim();
+      if (/^\d+$/.test(p)) {
+        return '₦' + Number(p).toLocaleString();
+      }
+      return price;
+    }
+
+    function timeAgo(date) {
+      var diff = Date.now() - date;
+      var mins = Math.floor(diff / 60000);
+      if (mins < 60) return mins + 'm ago';
+      var hours = Math.floor(mins / 60);
+      if (hours < 48) return hours + 'h ago';
+      var days = Math.floor(hours / 24);
+      return days + 'd ago';
+    }
+
+    function renderAds(ads) {
+      var grid = document.getElementById('adGrid');
+      if (ads.length === 0) {
+        grid.innerHTML = '<div class="empty-marketplace"><h3>No listings found</h3><p>Be the first to <a href="post-ad.html" style="color:#e94560;font-weight:600">post an ad</a>.</p></div>';
+        return;
+      }
+      grid.innerHTML = ads.map(function(ad) {
+        var imgHtml = ad.imageUrl
+          ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
+          : '<div class="marketplace-card-img-placeholder">No photo</div>';
+        var created = ad.createdAt ? timeAgo(ad.createdAt.toMillis()) : '';
+        return (
+          '<a href="ad-detail.html?id=' + ad.id + '" class="marketplace-card">' +
+            imgHtml +
+            '<div class="marketplace-card-body">' +
+              '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
+              '<h3>' + ad.title + '</h3>' +
+              '<div class="marketplace-card-desc">' + ad.description + '</div>' +
+              '<div class="marketplace-card-meta">' +
+                '<span>' + ad.category + '</span>' +
+                '<span>' + created + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</a>'
+        );
+      }).join('');
+    }
+
+    function filterAds() {
+      var search = document.getElementById('searchInput').value.toLowerCase().trim();
+      var cat = document.getElementById('categoryFilter').value;
+
+      var filtered = allAds.filter(function(ad) {
+        if (cat !== 'all' && ad.category !== cat) return false;
+        if (search && ad.title.toLowerCase().indexOf(search) === -1 && ad.description.toLowerCase().indexOf(search) === -1) return false;
+        return true;
+      });
+
+      renderAds(filtered);
+    }
+
+    // Listen for real-time updates
+    db.collection('marketplace')
+      .where('expiresAt', '>', new Date())
+      .onSnapshot(function(snapshot) {
+        allAds = [];
+        snapshot.forEach(function(doc) {
+          var ad = doc.data();
+          ad.id = doc.id;
+          allAds.push(ad);
+        });
+        allAds.sort(function(a, b) {
+          var ta = a.createdAt ? a.createdAt.toMillis() : 0;
+          var tb = b.createdAt ? b.createdAt.toMillis() : 0;
+          return tb - ta;
+        });
+        renderAds(allAds);
+      }, function(err) {
+        document.getElementById('adGrid').innerHTML = '<div class="empty-marketplace"><h3>Could not load listings</h3><p>' + err.message + '</p></div>';
+      });
+  </script>
+</body>
+</html>

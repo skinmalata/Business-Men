@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad Detail - BusinessMen Marketplace</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/nav.js"></script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main class="ad-detail-page container" id="adContainer"></main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    function getParam(name) {
+      var m = window.location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+
+    function formatPrice(price) {
+      var p = price.replace(/,/g, '').trim();
+      if (/^\d+$/.test(p)) return '₦' + Number(p).toLocaleString();
+      return price;
+    }
+
+    var adId = getParam('id');
+    var container = document.getElementById('adContainer');
+
+    if (!adId) {
+      container.innerHTML = '<div class="empty-marketplace"><h3>No ad specified</h3><p><a href="marketplace.html" style="color:#e94560">Browse marketplace</a></p></div>';
+    } else {
+      db.collection('marketplace').doc(adId).get().then(function(doc) {
+        if (!doc.exists) {
+          container.innerHTML = '<div class="ad-detail-expired"><h3>Ad not found</h3><p>This ad may have expired or been removed.</p><a href="marketplace.html" class="btn-primary">Browse Marketplace</a></div>';
+          return;
+        }
+
+        var ad = doc.data();
+        var now = new Date();
+        var expires = ad.expiresAt ? ad.expiresAt.toDate() : null;
+
+        if (expires && expires < now) {
+          container.innerHTML = '<div class="ad-detail-expired"><h3>This ad has expired</h3><p>Listings are active for 48 hours.</p><a href="marketplace.html" class="btn-primary">Browse Marketplace</a></div>';
+          return;
+        }
+
+        var imgHtml = ad.imageUrl
+          ? '<img class="ad-detail-img" src="' + ad.imageUrl + '" alt="' + ad.title + '">'
+          : '<div class="ad-detail-img-placeholder">No photo available</div>';
+
+        var created = ad.createdAt ? new Date(ad.createdAt.toMillis()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+
+        container.innerHTML =
+          imgHtml +
+          '<h1 class="ad-detail-title">' + ad.title + '</h1>' +
+          '<div class="ad-detail-price">' + formatPrice(ad.price) + '</div>' +
+          '<div class="ad-detail-meta">' +
+            '<span>' + ad.category + '</span>' +
+            '<span>Posted ' + created + '</span>' +
+            '<span>Expires in 48h</span>' +
+          '</div>' +
+          '<div class="ad-detail-section">' +
+            '<h2>Description</h2>' +
+            '<p>' + (ad.description || 'No description provided.') + '</p>' +
+          '</div>' +
+          '<div class="ad-detail-contact">' +
+            '<h2>Contact Seller</h2>' +
+            '<div class="ad-detail-contact-phone">' + (ad.phone || 'No phone') + '</div>' +
+            '<p style="color:#64748b;font-size:0.85rem;margin-top:6px">Call or WhatsApp to inquire about this listing.</p>' +
+          '</div>' +
+          '<a href="marketplace.html" style="color:#e94560;font-weight:500">&larr; Back to Marketplace</a>';
+      }).catch(function(err) {
+        container.innerHTML = '<div class="empty-marketplace"><h3>Error loading ad</h3><p>' + err.message + '</p></div>';
+      });
+    }
+  </script>
+</body>
+</html>

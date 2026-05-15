@@ -5,6 +5,9 @@
     if (path.endsWith('getlisted.html')) return 'getlisted';
     if (path.endsWith('services.html')) return 'services';
     if (path.endsWith('claim.html')) return 'contact';
+    if (path.endsWith('marketplace.html')) return 'marketplace';
+    if (path.endsWith('post-ad.html')) return 'marketplace';
+    if (path.endsWith('ad-detail.html')) return 'marketplace';
     return 'home';
   }
 
@@ -45,6 +48,7 @@
                   '<a href="listing.html?cat=food">Food & Restaurants</a>' +
                 '</div>' +
               '</div>' +
+              '<a href="marketplace.html"' + (active === 'marketplace' ? ' class="active"' : '') + '>Marketplace</a>' +
               '<a href="getlisted.html"' + (active === 'getlisted' ? ' class="active"' : '') + '>Get Listed</a>' +
               '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Contact</a>' +
             '</div>' +

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post an Ad - BusinessMen Marketplace</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/nav.js"></script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main class="post-ad-page">
+    <h1>Post an Ad</h1>
+    <p>Your ad will appear on the marketplace for 48 hours. No account needed.</p>
+
+    <div id="postForm" class="post-ad-form">
+      <div class="form-group">
+        <label for="title">Product / Service Title *</label>
+        <input type="text" id="title" maxlength="100" placeholder="e.g. 3-Bedroom Flat for Rent in Ikeja" required>
+        <div class="char-count"><span id="titleCount">0</span>/100</div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category *</label>
+        <select id="category" required>
+          <option value="">Select category</option>
+          <option>Real Estate</option>
+          <option>Electronics</option>
+          <option>Vehicles</option>
+          <option>Furniture</option>
+          <option>Fashion</option>
+          <option>Jobs</option>
+          <option>Services</option>
+          <option>Agriculture</option>
+          <option>Food & Drinks</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price (₦) *</label>
+        <input type="text" id="price" placeholder="e.g. 500,000" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description *</label>
+        <textarea id="description" maxlength="1000" placeholder="Describe your product or service..." required></textarea>
+        <div class="char-count"><span id="descCount">0</span>/1000</div>
+      </div>
+
+      <div class="form-group">
+        <label>Photo (optional)</label>
+        <div class="file-upload" id="fileUpload">
+          <input type="file" id="photoInput" accept="image/*">
+          <div class="file-upload-label" id="uploadLabel">
+            Click to upload a photo <strong>+</strong>
+          </div>
+          <img class="image-preview" id="imagePreview">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" placeholder="e.g. 0803 123 4567" required>
+      </div>
+
+      <button class="btn-primary" id="submitBtn" onclick="submitAd()">Post Ad</button>
+    </div>
+
+    <div class="success-message" id="successMessage" style="display:none">
+      <h2>Ad Posted Successfully!</h2>
+      <p>Your ad is now live on the marketplace. It will expire in 48 hours.</p>
+      <a href="marketplace.html" class="btn-primary">View Marketplace</a>
+      <a href="post-ad.html" style="display:inline-block;margin-top:12px;color:#e94560;font-weight:500">Post another ad</a>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    const IMGBB_KEY = 'df8c2d3afb2b3e84094cd427cb29c6ca';
+
+    document.getElementById('title').addEventListener('input', function() {
+      document.getElementById('titleCount').textContent = this.value.length;
+    });
+    document.getElementById('description').addEventListener('input', function() {
+      document.getElementById('descCount').textContent = this.value.length;
+    });
+
+    document.getElementById('photoInput').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var preview = document.getElementById('imagePreview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.getElementById('uploadLabel').textContent = 'Tap to change photo';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function uploadToImgbb(file) {
+      return new Promise(function(resolve, reject) {
+        var formData = new FormData();
+        formData.append('image', file);
+        formData.append('key', IMGBB_KEY);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.imgbb.com/1/upload');
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            try {
+              var resp = JSON.parse(xhr.responseText);
+              resolve(resp.data.url);
+            } catch(e) { reject(e); }
+          } else { reject(xhr.statusText); }
+        };
+        xhr.onerror = function() { reject('Network error'); };
+        xhr.send(formData);
+      });
+    }
+
+    function submitAd() {
+      var title = document.getElementById('title').value.trim();
+      var category = document.getElementById('category').value;
+      var price = document.getElementById('price').value.trim();
+      var desc = document.getElementById('description').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+      var photoFile = document.getElementById('photoInput').files[0];
+      var btn = document.getElementById('submitBtn');
+
+      if (!title || !category || !price || !desc || !phone) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      btn.textContent = 'Posting...';
+      btn.disabled = true;
+
+      var uploadPromise = photoFile ? uploadToImgbb(photoFile) : Promise.resolve(null);
+
+      uploadPromise.then(function(imageUrl) {
+        return db.collection('marketplace').add({
+          title: title,
+          category: category,
+          price: price,
+          description: desc,
+          phone: phone,
+          imageUrl: imageUrl,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
+        });
+      }).then(function() {
+        document.getElementById('postForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+      }).catch(function(err) {
+        alert('Error posting ad: ' + err.message);
+        btn.textContent = 'Post Ad';
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
