@@ -339,7 +339,7 @@ function renderDetailView(item, cat) {
         ${city ? `<p style="margin-top:6px;">${escapeHtml(city)}, Nigeria</p>` : ''}
       </div>
       <div class="detail-actions">
-        ${getClaim(id)?.verified ? `<span class="claimed-badge" title="Claimed & Verified">\u2713 Claimed</span>` : `<a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-secondary" rel="nofollow">Claim this Business</a>`}
+        ${getClaim(id)?.verified ? `<span class="claimed-badge" title="Verified Owner">\u2713 Verified Owner</span>` : `<a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-secondary" rel="nofollow">Edit This Business</a>`}
       </div>
     </div>
     <div class="detail-toolbar">
@@ -347,6 +347,10 @@ function renderDetailView(item, cat) {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Directions
       </button>
+      ${phone ? `<button class="toolbar-btn toolbar-btn-whatsapp" onclick="whatsappBusiness('${encodeURIComponent(businessName)}', '${phone}')" title="Send WhatsApp Message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </button>` : ''}
       <button class="toolbar-btn" onclick="scrollToReviews()" title="Leave a Review">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Review
@@ -373,6 +377,7 @@ function renderDetailView(item, cat) {
         ${email ? `<div class="info-row"><span class="label">Email</span><span class="value"><a href="mailto:${email}" rel="nofollow">${escapeHtml(email)}</a></span></div>` : ''}
         ${website ? `<div class="info-row"><span class="label">Website</span><span class="value"><a href="${website}" target="_blank" rel="noopener noreferrer">${escapeHtml(website)}</a></span></div>` : ''}
         ${hours ? `<div class="info-row"><span class="label">Hours</span><span class="value">${escapeHtml(hours)}</span></div>` : ''}
+        ${getClaim(id)?.whatsapp ? `<div class="info-row"><span class="label">WhatsApp</span><span class="value"><a href="https://wa.me/${getClaim(id).whatsapp}" target="_blank" rel="noopener">${escapeHtml(getClaim(id).whatsapp)}</a></span></div>` : ''}
         ${!address && !phone && !email && !website && !hours ? '<p>No contact info available.</p>' : ''}
         ${phone || email || website ? '<p style="margin-top:16px;font-size:0.8rem;color:#94a3b8;">Contact information sourced from public business directories.</p>' : ''}
       </section>
@@ -443,11 +448,11 @@ function renderDetailView(item, cat) {
       </section>
 
       <section class="detail-section">
-        <h2>Claim This Listing</h2>
+        <h2>Edit This Listing</h2>
         ${getClaim(id)?.verified
-          ? `<div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Claimed</span><p style="color:#166534;margin-top:8px;">This business has been claimed and verified by the owner.</p></div>`
-          : `<p style="color:#64748b;font-size:0.9rem;">Is this your business? Claim your page on BusinessMen to update information, add products and services, and respond to customer inquiries.</p>
-        <a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Claim Now</a>`}
+          ? `<div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Verified Owner</span><p style="color:#166534;margin-top:8px;">You have verified ownership and edited this listing.</p></div>`
+          : `<p style="color:#64748b;font-size:0.9rem;">Is this your business? Edit your listing on BusinessMen to update contact info, add a WhatsApp number, and keep your information current.</p>
+        <a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Edit Now</a>`}
       </section>
     </div>
   `;
@@ -662,6 +667,14 @@ function getDirections(name, city, address) {
   window.open('https://maps.google.com?q=' + q, '_blank', 'noopener');
 }
 
+function whatsappBusiness(name, phone) {
+  const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+  const digits = cleaned.replace(/\D/g, '');
+  const number = digits.startsWith('234') ? digits : '234' + digits.replace(/^0+/, '');
+  const text = encodeURIComponent('Hi, I found your business on BusinessMen. I would like to know more about your services.');
+  window.open('https://wa.me/' + number + '?text=' + text, '_blank', 'noopener');
+}
+
 function scrollToReviews() {
   const el = document.querySelector('.reviews-section');
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -724,6 +737,7 @@ window.setRating = setRating;
 window.hoverRating = hoverRating;
 window.resetRating = resetRating;
 window.getDirections = getDirections;
+window.whatsappBusiness = whatsappBusiness;
 window.scrollToReviews = scrollToReviews;
 window.shareBusiness = shareBusiness;
 window.toggleBookmark = toggleBookmark;

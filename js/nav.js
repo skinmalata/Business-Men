@@ -44,7 +44,7 @@
                   '<a href="listing.html?cat=food">Food & Restaurants</a>' +
                 '</div>' +
               '</div>' +
-              '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Advertise</a>' +
+              '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Edit Listing</a>' +
               '<a href="claim.html">Contact</a>' +
             '</div>' +
           '</div>' +

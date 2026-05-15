@@ -460,6 +460,8 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .toolbar-btn:hover { border-color: #e94560; color: #e94560; background: rgba(233,69,96,0.04); }
 .toolbar-btn.bookmarked { border-color: #f59e0b; color: #f59e0b; background: #fffbeb; }
 .toolbar-btn-danger:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+.toolbar-btn-whatsapp:hover { border-color: #25D366; color: #25D366; background: #f0fdf4; }
+.toolbar-btn-whatsapp.bookmarked { border-color: #25D366; color: #25D366; background: #f0fdf4; }
 .toolbar-btn svg { flex-shrink: 0; }
 
 /* === LOADING & NO RESULTS === */
