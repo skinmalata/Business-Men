@@ -23,6 +23,7 @@
 
   <link rel="stylesheet" href="css/style.css">
   <script defer src="js/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -100,6 +101,17 @@
 
   <script defer src="js/app.js"></script>
   <script defer>
+    // === EmailJS Configuration ===
+    // 1. Sign up at https://www.emailjs.com/
+    // 2. Connect an email service (Gmail, Outlook, etc.)
+    // 3. Create an email template with variables: {{code}}, {{business_name}}, {{to_email}}
+    // 4. Paste your keys below:
+    var EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+    var EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+    var EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
     var _confirmCode = '';
     var _editId = null;
 
@@ -115,22 +127,24 @@
       }
       _confirmCode = generateCode();
       _editId = new URLSearchParams(window.location.search).get('id');
+      var businessName = document.getElementById('claimName').value.trim();
 
       document.getElementById('confirmEmailDisplay').textContent = email;
       document.getElementById('editForm').style.display = 'none';
       document.getElementById('confirmForm').style.display = 'block';
       document.getElementById('claimSuccess').style.display = 'none';
 
-      var subject = encodeURIComponent('BusinessMen - Confirm Edit: ' + document.getElementById('claimName').value.trim());
-      var body = encodeURIComponent(
-        'Use this code to confirm your edit on BusinessMen:\n\n' +
-        'Confirmation Code: ' + _confirmCode + '\n\n' +
-        'Enter this code on the website to complete your edit.\n\n' +
-        'Business: ' + document.getElementById('claimName').value.trim() + '\n' +
-        'Submitted: ' + new Date().toLocaleString() + '\n\n' +
-        'If you did not request this, please ignore this email.'
-      );
-      window.open('mailto:' + email + '?subject=' + subject + '&body=' + body, '_blank');
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: email,
+        code: _confirmCode,
+        business_name: businessName
+      }).then(function() {
+        // email sent
+      }, function(err) {
+        console.error('EmailJS failed:', err);
+        document.getElementById('confirmError').style.display = 'block';
+        document.getElementById('confirmError').textContent = 'Failed to send email. Please try again or contact support.';
+      });
     }
 
     function resendConfirmation() {
