@@ -23,7 +23,7 @@
 
   <link rel="stylesheet" href="css/style.css">
   <script defer src="js/nav.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 </head>
 <body>
   <div id="nav-container"></div>
@@ -101,17 +101,7 @@
 
   <script defer src="js/app.js"></script>
   <script defer>
-    // === EmailJS Configuration ===
-    // 1. Sign up at https://www.emailjs.com/
-    // 2. Connect an email service (Gmail, Outlook, etc.)
-    // 3. Create an email template with variables: {{code}}, {{business_name}}, {{to_email}}
-    // 4. Paste your keys below:
-    var EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
-    var EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
-    var EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-
+    var WEB3FORMS_KEY = '80a38aab-9247-4e00-8133-4b2f7ec81138';
     var _confirmCode = '';
     var _editId = null;
 
@@ -134,16 +124,31 @@
       document.getElementById('confirmForm').style.display = 'block';
       document.getElementById('claimSuccess').style.display = 'none';
 
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: email,
-        code: _confirmCode,
-        business_name: businessName
-      }).then(function() {
-        // email sent
-      }, function(err) {
-        console.error('EmailJS failed:', err);
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          email: email,
+          subject: 'BusinessMen - Confirm Edit: ' + businessName,
+          message: 'Your confirmation code is: ' + _confirmCode + '\n\n' +
+                   'Enter this code on the website to complete your edit.\n\n' +
+                   'Business: ' + businessName + '\n' +
+                   'Submitted: ' + new Date().toLocaleString() + '\n\n' +
+                   'If you did not request this, please ignore this email.',
+          from_name: 'BusinessMen'
+        })
+      }).then(function(resp) {
+        return resp.json();
+      }).then(function(data) {
+        if (!data.success) {
+          document.getElementById('confirmError').style.display = 'block';
+          document.getElementById('confirmError').textContent = 'Failed to send email. Please try again.';
+        }
+      }).catch(function(err) {
+        console.error('Web3Forms failed:', err);
         document.getElementById('confirmError').style.display = 'block';
-        document.getElementById('confirmError').textContent = 'Failed to send email. Please try again or contact support.';
+        document.getElementById('confirmError').textContent = 'Failed to send email. Please try again.';
       });
     }
 
