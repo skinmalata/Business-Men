@@ -63,6 +63,10 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .hero {
   color: white; text-align: center; position: relative; overflow: hidden;
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #080e1a 0%, #111d33 40%, #0a1628 70%, #1a0a1e 100%);
+}
+@supports (min-height: 100dvh) {
+  .hero { min-height: 100dvh; }
 }
 .hero-slider {
   position: absolute; inset: 0; z-index: 0; overflow: hidden;
