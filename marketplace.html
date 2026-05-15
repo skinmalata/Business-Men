@@ -12,15 +12,42 @@
 <body>
   <div id="nav-container"></div>
 
-  <section class="marketplace-hero">
+  <section class="hero" aria-label="Marketplace search">
+    <div class="hero-slider" aria-hidden="true">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source src="slider/1.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-overlay"></div>
     <div class="container">
       <h1>Marketplace</h1>
       <p>Buy, sell, and trade — free ads, no account needed. Listings expire in 48 hours.</p>
-      <a href="post-ad.html" class="btn-primary">Post a Free Ad</a>
+      <div class="hero-search" role="search">
+        <label for="marketplaceCat" class="sr-only">Select category</label>
+        <select id="marketplaceCat" aria-label="Select category">
+          <option value="all">All Categories</option>
+          <option>Real Estate</option>
+          <option>Electronics</option>
+          <option>Vehicles</option>
+          <option>Furniture</option>
+          <option>Fashion</option>
+          <option>Jobs</option>
+          <option>Services</option>
+          <option>Agriculture</option>
+          <option>Food & Drinks</option>
+          <option>Other</option>
+        </select>
+        <label for="marketplaceQuery" class="sr-only">Search marketplace</label>
+        <input type="text" id="marketplaceQuery" placeholder="Search products, services, jobs..." aria-label="Search marketplace" onkeydown="if(event.key==='Enter')heroMarketplaceSearch()">
+        <button onclick="heroMarketplaceSearch()" aria-label="Search">Search</button>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="post-ad.html" class="btn-outline" style="color:white;border-color:rgba(255,255,255,0.4)">+ Post a Free Ad</a>
+      </div>
     </div>
   </section>
 
-  <main class="container">
+  <main class="container" style="padding-top:28px">
     <div class="marketplace-filter-bar">
       <input type="text" id="searchInput" placeholder="Search listings..." oninput="filterAds()">
       <select id="categoryFilter" onchange="filterAds()">
@@ -36,7 +63,7 @@
         <option>Food & Drinks</option>
         <option>Other</option>
       </select>
-      <a href="post-ad.html" class="btn-primary">+ Post Ad</a>
+      <span style="color:#94a3b8;font-size:0.85rem" id="resultCount"></span>
     </div>
 
     <div class="marketplace-grid" id="adGrid"></div>
@@ -47,7 +74,6 @@
   <script src="js/firebase-config.js"></script>
   <script>
     var allAds = [];
-    var unsubListener = null;
 
     function formatPrice(price) {
       var p = price.replace(/,/g, '').trim();
@@ -69,8 +95,9 @@
 
     function renderAds(ads) {
       var grid = document.getElementById('adGrid');
+      document.getElementById('resultCount').textContent = ads.length + ' listing' + (ads.length !== 1 ? 's' : '');
       if (ads.length === 0) {
-        grid.innerHTML = '<div class="empty-marketplace"><h3>No listings found</h3><p>Be the first to <a href="post-ad.html" style="color:#e94560;font-weight:600">post an ad</a>.</p></div>';
+        grid.innerHTML = '<div class="empty-marketplace"><h3>No listings found</h3><p>Try a different search or <a href="post-ad.html" style="color:#e94560;font-weight:600">post an ad</a>.</p></div>';
         return;
       }
       grid.innerHTML = ads.map(function(ad) {
@@ -108,7 +135,16 @@
       renderAds(filtered);
     }
 
-    // Listen for real-time updates
+    function heroMarketplaceSearch() {
+      var q = document.getElementById('marketplaceQuery').value;
+      var cat = document.getElementById('marketplaceCat').value;
+      document.getElementById('searchInput').value = q;
+      document.getElementById('categoryFilter').value = cat;
+      document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('searchInput').focus();
+      filterAds();
+    }
+
     db.collection('marketplace')
       .where('expiresAt', '>', new Date())
       .onSnapshot(function(snapshot) {
@@ -123,7 +159,7 @@
           var tb = b.createdAt ? b.createdAt.toMillis() : 0;
           return tb - ta;
         });
-        renderAds(allAds);
+        filterAds();
       }, function(err) {
         document.getElementById('adGrid').innerHTML = '<div class="empty-marketplace"><h3>Could not load listings</h3><p>' + err.message + '</p></div>';
       });
