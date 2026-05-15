@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Listed - BusinessMen Nigeria</title>
+  <meta name="description" content="List your business on BusinessMen Nigeria's fastest-growing business directory. Get verified and connect with customers nationwide.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://businessmen.com.ng/getlisted.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='35' cy='85' r='8' fill='%23e94560'/><circle cx='75' cy='85' r='8' fill='%23e94560'/><path d='M10 15h20l12 55a8 8 0 0 0 8 7h38a8 8 0 0 0 8-7l8-38H25' fill='none' stroke='%23e94560' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://businessmen.com.ng/getlisted.html">
+  <meta property="og:title" content="Get Listed - BusinessMen Nigeria">
+  <meta property="og:description" content="List your business on BusinessMen Nigeria's fastest-growing business directory.">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/nav.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main>
+    <section class="services-hero" style="padding:80px 0 56px;">
+      <div class="container" style="text-align:center;">
+        <h1>Get Your Business Listed</h1>
+        <p>Submit your business details below. You'll receive an email confirmation, and once verified, your listing goes live on BusinessMen.</p>
+      </div>
+    </section>
+
+    <section class="claim-section" style="padding:40px 0 80px;">
+      <div class="container">
+        <div class="claim-form-container">
+          <form class="claim-form" id="getListedForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="glCategory">Category</label>
+                <select id="glCategory" required>
+                  <option value="">Select category</option>
+                  <option>Hotels</option>
+                  <option>Hospitals</option>
+                  <option>Schools</option>
+                  <option>Agriculture</option>
+                  <option>Transportation</option>
+                  <option>Shopping</option>
+                  <option>Business Services</option>
+                  <option>Real Estate</option>
+                  <option>Oil & Gas</option>
+                  <option>Construction</option>
+                  <option>Automobile</option>
+                  <option>Food & Restaurants</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="glState">State</label>
+                <select id="glState" required>
+                  <option value="">Select state</option>
+                  <option>Abia State</option><option>Adamawa State</option><option>Akwa Ibom State</option><option>Anambra State</option><option>Bauchi State</option><option>Bayelsa State</option><option>Benue State</option><option>Borno State</option><option>Cross River State</option><option>Delta State</option><option>Ebonyi State</option><option>Edo State</option><option>Ekiti State</option><option>Enugu State</option><option>Abuja FCT</option><option>Gombe State</option><option>Imo State</option><option>Jigawa State</option><option>Kaduna State</option><option>Kano State</option><option>Katsina State</option><option>Kebbi State</option><option>Kogi State</option><option>Kwara State</option><option>Lagos State</option><option>Nasarawa State</option><option>Niger State</option><option>Ogun State</option><option>Ondo State</option><option>Osun State</option><option>Oyo State</option><option>Plateau State</option><option>Rivers State</option><option>Sokoto State</option><option>Taraba State</option><option>Yobe State</option><option>Zamfara State</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="glBusiness">Business Name</label>
+              <input type="text" id="glBusiness" required placeholder="e.g. Lagos Luxury Hotel">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="glPhone">Phone Number</label>
+                <input type="tel" id="glPhone" required placeholder="e.g. 0803 123 4567">
+              </div>
+              <div class="form-group">
+                <label for="glEmail">Email Address</label>
+                <input type="email" id="glEmail" required placeholder="your@email.com">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="glWebsite">Website (optional)</label>
+                <input type="url" id="glWebsite" placeholder="https://example.com">
+              </div>
+              <div class="form-group">
+                <label for="glWhatsapp">WhatsApp (optional)</label>
+                <input type="tel" id="glWhatsapp" placeholder="e.g. 0803 123 4567">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="glAddress">Business Address</label>
+              <input type="text" id="glAddress" required placeholder="Street, area, landmark">
+            </div>
+
+            <div class="form-group">
+              <label for="glDesc">Short Description</label>
+              <textarea id="glDesc" rows="3" required placeholder="Describe your business and what you offer..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="glEmailConfirm">Confirm Email Address</label>
+              <input type="email" id="glEmailConfirm" required placeholder="Re-enter your email">
+            </div>
+
+            <div class="form-group">
+              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%;padding:16px;font-size:1.05rem;">Submit Listing</button>
+          </form>
+
+          <div id="glSuccess" class="claim-success" style="display:none;">
+            <div style="text-align:center;padding:40px 20px;">
+              <div style="font-size:3rem;margin-bottom:16px;">&#10003;</div>
+              <h2 style="color:#166534;margin-bottom:8px;">Listing Submitted!</h2>
+              <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! We've sent a confirmation email to the address you provided. Click the link in that email to verify your listing. Once confirmed, your business will go live on BusinessMen within 24 hours.</p>
+              <p style="color:#94a3b8;font-size:0.9rem;">Didn't receive the email? Check your spam folder or <a href="mailto:businessmenlisting@gmail.com?subject=Confirm%20Listing">contact us</a>.</p>
+              <a href="." class="btn-primary" style="display:inline-block;margin-top:20px;">Back to Home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <h3>Business<span>Men</span></h3>
+            <p>Nigeria's fastest-growing business directory. Find verified companies with direct contact information across all Nigerian cities.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Categories</h4>
+            <a href="listing.html?cat=hotels">Hotels</a>
+            <a href="listing.html?cat=hospitals">Hospitals</a>
+            <a href="listing.html?cat=schools">Schools</a>
+            <a href="listing.html?cat=agriculture">Agriculture</a>
+            <a href="listing.html?cat=transportation">Transport</a>
+            <a href="listing.html?cat=shopping">Shopping</a>
+            <a href="listing.html?cat=realestate">Real Estate</a>
+            <a href="listing.html?cat=construction">Construction</a>
+            <a href="listing.html?cat=automobile">Automobile</a>
+          </div>
+          <div class="footer-col">
+            <h4>Business</h4>
+            <a href="getlisted.html">Get Listed</a>
+            <a href="claim.html">Edit Your Business</a>
+            <a href=".">Home</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href="getlisted.html">Get listed</a> to add your business.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+  document.getElementById('getListedForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length === 0) {
+      alert('Please complete the reCAPTCHA verification.');
+      return;
+    }
+
+    var name = document.getElementById('glBusiness').value.trim();
+    var email = document.getElementById('glEmail').value.trim();
+    var emailConfirm = document.getElementById('glEmailConfirm').value.trim();
+    var category = document.getElementById('glCategory').value;
+    var state = document.getElementById('glState').value;
+    var phone = document.getElementById('glPhone').value.trim();
+    var website = document.getElementById('glWebsite').value.trim();
+    var whatsapp = document.getElementById('glWhatsapp').value.trim();
+    var address = document.getElementById('glAddress').value.trim();
+    var desc = document.getElementById('glDesc').value.trim();
+
+    if (email !== emailConfirm) {
+      alert('Email addresses do not match. Please re-enter.');
+      return;
+    }
+
+    var pending = [];
+    try { pending = JSON.parse(localStorage.getItem('pendingListings') || '[]'); } catch(e) {}
+
+    pending.push({
+      name: name,
+      email: email,
+      category: category,
+      state: state,
+      phone: phone,
+      website: website,
+      whatsapp: whatsapp,
+      address: address,
+      description: desc,
+      submitted: new Date().toISOString(),
+      confirmed: false
+    });
+
+    localStorage.setItem('pendingListings', JSON.stringify(pending));
+
+    var mailto = 'mailto:businessmenlisting@gmail.com?subject=' + encodeURIComponent('New Listing: ' + name) +
+      '&body=' + encodeURIComponent(
+        'Category: ' + category + '\n' +
+        'State: ' + state + '\n' +
+        'Business: ' + name + '\n' +
+        'Phone: ' + phone + '\n' +
+        'Email: ' + email + '\n' +
+        'Website: ' + (website || 'N/A') + '\n' +
+        'WhatsApp: ' + (whatsapp || 'N/A') + '\n' +
+        'Address: ' + address + '\n' +
+        'Description: ' + desc + '\n\n' +
+        'Please confirm and publish this listing.'
+      );
+
+    document.getElementById('getListedForm').style.display = 'none';
+    document.getElementById('glSuccess').style.display = 'block';
+
+    var mailLink = document.createElement('a');
+    mailLink.href = mailto;
+    mailLink.click();
+  });
+  </script>
+</body>
+</html>

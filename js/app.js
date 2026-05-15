@@ -447,6 +447,9 @@ function renderDetailView(item, cat) {
             <label for="reviewText">Your Review</label>
             <textarea id="reviewText" rows="4" placeholder="Share your experience with this business..." required></textarea>
           </div>
+          <div class="form-group">
+            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-callback="onReviewCaptcha"></div>
+          </div>
           <button type="submit" class="btn-primary">Submit Review</button>
         </form>
       </section>
@@ -516,6 +519,12 @@ function resetRating() {
 
 function submitReview(e, businessId) {
   e.preventDefault();
+
+  if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length === 0) {
+    alert('Please complete the reCAPTCHA verification.');
+    return;
+  }
+
   const name = document.getElementById('reviewName').value.trim();
   const rating = parseInt(document.getElementById('reviewRating').value);
   const text = document.getElementById('reviewText').value.trim();

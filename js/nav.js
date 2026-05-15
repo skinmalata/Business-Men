@@ -2,6 +2,7 @@
   function getActivePage() {
     var path = window.location.pathname.replace(/\/+$/, '');
     if (path.endsWith('listing.html')) return 'listings';
+    if (path.endsWith('getlisted.html')) return 'getlisted';
     if (path.endsWith('services.html')) return 'services';
     if (path.endsWith('claim.html')) return 'contact';
     return 'home';
@@ -44,8 +45,8 @@
                   '<a href="listing.html?cat=food">Food & Restaurants</a>' +
                 '</div>' +
               '</div>' +
-              '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Edit Listing</a>' +
-              '<a href="claim.html">Contact</a>' +
+              '<a href="getlisted.html"' + (active === 'getlisted' ? ' class="active"' : '') + '>Get Listed</a>' +
+              '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Contact</a>' +
             '</div>' +
           '</div>' +
         '</nav>' +
