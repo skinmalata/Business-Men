@@ -71,22 +71,9 @@
       { title: "Yoga Mat - Premium Non-Slip", category: "Other", price: "12,000", description: "Premium 6mm thick yoga mat with carrying strap. Non-slip surface, eco-friendly TPE material. Available in 4 colors.", phone: "0805 901 2345" },
     ];
 
-    var imgIdx = {};
     function getImgUrl(cat, title) {
-      var s = title.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
-      var pool = {
-        'Electronics': 'https://picsum.photos/seed/' + s + '/400/300',
-        'Vehicles': 'https://picsum.photos/seed/' + s + '/400/300',
-        'Real Estate': 'https://picsum.photos/seed/' + s + '/400/300',
-        'Furniture': 'https://picsum.photos/seed/' + s + '/400/300',
-        'Fashion': 'https://picsum.photos/seed/' + s + '/400/300',
-        'Jobs': 'https://picsum.photos/seed/office' + s + '/400/300',
-        'Services': 'https://picsum.photos/seed/tools' + s + '/400/300',
-        'Agriculture': 'https://picsum.photos/seed/farm' + s + '/400/300',
-        'Food & Drinks': 'https://picsum.photos/seed/food' + s + '/400/300',
-        'Other': 'https://picsum.photos/seed/item' + s + '/400/300',
-      };
-      return pool[cat] || 'https://picsum.photos/seed/' + s + '/400/300';
+      var s = title.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '').slice(0, 20);
+      return 'https://placehold.co/400x300/e2e8f0/64748b?text=' + s;
     }
 
     var status = document.getElementById('status');
