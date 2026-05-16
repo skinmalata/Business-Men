@@ -87,14 +87,8 @@ function normalizeCityDisplay(city) {
 function populateCityFilter() {
   const select = document.getElementById('cityFilter');
   if (!select) return;
-  select.innerHTML = '<option value="">All Cities</option>';
-  const cities = [...new Set(allData.map(d => d.city).filter(Boolean))].sort();
-  cities.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c;
-    opt.textContent = normalizeCityDisplay(c);
-    select.appendChild(opt);
-  });
+  const states = ['Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno','Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Abuja FCT','Gombe','Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba','Yobe','Zamfara'];
+  select.innerHTML = '<option value="">All States</option>' + states.map(s => '<option>' + s + '</option>').join('');
 }
 
 function handleSearch(query) {
@@ -133,7 +127,7 @@ function applyFilters() {
   let results = filteredData.length ? filteredData : allData;
 
   if (cityFilter && cityFilter.value) {
-    results = results.filter(d => d.city === cityFilter.value);
+    results = results.filter(d => normalizeCityDisplay(d.city) === cityFilter.value);
   }
 
   if (sortBy && sortBy.value) {
