@@ -203,18 +203,6 @@
       </div>
     </section>
 
-    <!-- Featured Products -->
-    <section class="featured-section" aria-label="Featured products">
-      <div class="container">
-        <h2 style="font-size:1.5rem;text-align:center;color:#0f172a;margin-bottom:8px;">Featured Products</h2>
-        <p style="text-align:center;color:#64748b;margin-bottom:30px;">Latest listings from the marketplace</p>
-        <div class="marketplace-grid" id="homeMarketplaceGrid"></div>
-        <div style="text-align:center;margin-top:24px">
-          <a href="marketplace.html" class="btn-outline">View All Products &rarr;</a>
-        </div>
-      </div>
-    </section>
-
     <!-- Marketplace Promo -->
     <section class="marketplace-promo" aria-label="Marketplace">
       <div class="container">
@@ -225,6 +213,18 @@
             <a href="marketplace.html" class="btn-primary">Browse Marketplace</a>
             <a href="post-ad.html" class="btn-outline">Post a Free Ad</a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-section" aria-label="Featured products">
+      <div class="container">
+        <h2 style="font-size:1.5rem;text-align:center;color:#0f172a;margin-bottom:8px;">Featured Products</h2>
+        <p style="text-align:center;color:#64748b;margin-bottom:30px;">Latest listings from the marketplace</p>
+        <div class="marketplace-grid" id="homeMarketplaceGrid"></div>
+        <div style="text-align:center;margin-top:24px">
+          <a href="marketplace.html" class="btn-outline">View All Products &rarr;</a>
         </div>
       </div>
     </section>
@@ -330,19 +330,28 @@
       if (!grid) return;
       db.collection('marketplace')
         .where('expiresAt', '>', new Date())
-        .orderBy('createdAt', 'desc')
-        .limit(6)
         .get()
         .then(function(snapshot) {
           if (snapshot.empty) { grid.innerHTML = ''; return; }
-          grid.innerHTML = '';
+          var ads = [];
           snapshot.forEach(function(doc) {
             var ad = doc.data();
+            ad.id = doc.id;
+            ads.push(ad);
+          });
+          ads.sort(function(a, b) {
+            var ta = a.createdAt ? a.createdAt.toMillis() : 0;
+            var tb = b.createdAt ? b.createdAt.toMillis() : 0;
+            return tb - ta;
+          });
+          ads = ads.slice(0, 6);
+          grid.innerHTML = '';
+          ads.forEach(function(ad) {
             var img = ad.imageUrl
               ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
               : '<div class="marketplace-card-img-placeholder">No photo</div>';
             var card = document.createElement('a');
-            card.href = 'ad-detail.html?id=' + doc.id;
+            card.href = 'ad-detail.html?id=' + ad.id;
             card.className = 'marketplace-card';
             card.innerHTML = img +
               '<div class="marketplace-card-body">' +
