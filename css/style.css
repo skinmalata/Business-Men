@@ -476,18 +476,18 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .no-results { text-align: center; padding: 48px; color: #94a3b8; font-size: 1rem; }
 
 /* === FOOTER === */
-.footer { background: #0b1120; color: #94a3b8; padding: 48px 0 32px; margin-top: 0; }
+.footer { background: #0b1120; color: #fff; padding: 48px 0 32px; margin-top: 0; }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
 .footer-brand h3 { font-size: 1.2rem; color: white; margin-bottom: 12px; }
 .footer-brand h3 span { color: #e94560; }
 .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 340px; }
 .footer-col h4 { color: white; font-size: 0.85rem; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-.footer-col a { display: block; color: #64748b; font-size: 0.85rem; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a { display: block; color: #fff; font-size: 0.85rem; margin-bottom: 10px; transition: color 0.2s; }
 .footer-col a:hover { color: #e94560; }
 .footer-cat-cols { display: flex; gap: 24px; }
 .footer-cat-cols > div { display: flex; flex-direction: column; }
 .footer-cat-cols a { white-space: nowrap; }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px; text-align: center; font-size: 0.8rem; color: #475569; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px; text-align: center; font-size: 0.8rem; color: #fff; }
 .footer-bottom a { color: #e94560; text-decoration: none; }
 
 /* === NAV TOGGLE (hamburger) === */
