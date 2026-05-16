@@ -22,9 +22,7 @@
         '<nav class="navbar" aria-label="Main navigation">' +
           '<div class="container">' +
             '<a href="." class="logo">' +
-              '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:7px">' +
-                '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>' +
-              '</svg>Business<span>Men</span>' +
+              '<img src="bm2.png" alt="BusinessMen" style="height:26px;vertical-align:middle;margin-right:7px">' +
             '</a>' +
             '<button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>' +
             '<div class="nav-scroll">' +
