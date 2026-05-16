@@ -66,6 +66,11 @@
         <input type="tel" id="phone" placeholder="e.g. 0803 123 4567" required>
       </div>
 
+      <div class="form-group">
+        <label for="whatsapp">WhatsApp Number (optional)</label>
+        <input type="tel" id="whatsapp" placeholder="e.g. 0803 123 4567">
+      </div>
+
       <button class="btn-primary" id="submitBtn" onclick="submitAd()">Post Ad</button>
     </div>
 
@@ -129,6 +134,7 @@
       var price = document.getElementById('price').value.trim();
       var desc = document.getElementById('description').value.trim();
       var phone = document.getElementById('phone').value.trim();
+      var whatsapp = document.getElementById('whatsapp').value.trim();
       var photoFile = document.getElementById('photoInput').files[0];
       var btn = document.getElementById('submitBtn');
 
@@ -149,6 +155,7 @@
           price: price,
           description: desc,
           phone: phone,
+          whatsapp: whatsapp || null,
           imageUrl: imageUrl,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)

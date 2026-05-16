@@ -50,7 +50,44 @@
       { title: "PlayStation 5 Digital Edition", category: "Electronics", price: "380,000", description: "PS5 Digital Edition, 825GB SSD. Includes 2 controllers and 3 games. Barely used, still under warranty.", phone: "0801 890 1234" },
       { title: "Lexus RX350 2021", category: "Vehicles", price: "7,200,000", description: "Lexus RX350 2021 model. Clean Nigerian title. Sunroof, premium leather, heated seats. One owner. Service record available.", phone: "0803 901 2345" },
       { title: "Shop Space for Rent - Computer Village", category: "Real Estate", price: "600,000/year", description: "Lock-up shop at Computer Village, Ikeja. High foot traffic area. 10sqm space with storage. Ideal for phone or accessory business.", phone: "0805 012 3456" },
+      { title: "Dell XPS 15 Laptop", category: "Electronics", price: "650,000", description: "Dell XPS 15 Intel i7 12th gen, 16GB RAM, 512GB SSD. OLED touchscreen. Excellent condition with original charger and box.", phone: "0807 123 4567" },
+      { title: "G-Wagon 2023 for Sale", category: "Vehicles", price: "45,000,000", description: "Mercedes-Benz G-Wagon 2023 G63 AMG. 5,000km only. Full optional extras. First owner. Serious inquiries only.", phone: "0809 234 5678" },
+      { title: "Shortlet Apartment - Banana Island", category: "Real Estate", price: "80,000/night", description: "Luxury 2-bedroom shortlet apartment on Banana Island. Fully furnished, pool access, gym, 24hr security, backup power.", phone: "0811 345 6789" },
+      { title: "Outdoor Patio Furniture Set", category: "Furniture", price: "220,000", description: "Rattan outdoor patio furniture set with 6 chairs, table, and umbrella. Weather resistant. Perfect for gardens and balconies.", phone: "0813 456 7890" },
+      { title: "Women's Premium Gele - Ready to Wear", category: "Fashion", price: "8,000", description: "Premium pre-tied gele headwrap. Ready to wear, no styling needed. Available in 20+ colors. Perfect for weddings and events.", phone: "0815 567 8901" },
+      { title: "Software Developer Wanted - Remote", category: "Jobs", price: "300,000/month", description: "Fintech startup needs a senior React Native developer. Remote role. 3+ years experience. Build and maintain mobile apps.", phone: "0817 678 9012" },
+      { title: "Mobile Phone Repair Service", category: "Services", price: "5,000", description: "Expert phone repair for all brands. Screen replacement, battery change, charging port fix. Free diagnostics. Same day service.", phone: "0819 789 0123" },
+      { title: "Fresh Pepper Mix - 5kg Bag", category: "Agriculture", price: "6,000", description: "Fresh pepper mix (tatashe, scotch bonnet, and cayenne). 5kg bag. Farm fresh from Kaduna. Wholesale and retail. Nationwide delivery.", phone: "0802 890 1234" },
+      { title: "Homemade Meat Pie - Pack of 6", category: "Food & Drinks", price: "3,500", description: "Freshly baked meat pies, large size. Pack of 6. Flaky pastry with spiced minced meat filling. Order by 8am for midday pickup.", phone: "0804 901 2345" },
+      { title: "Smart Doorbell Camera", category: "Electronics", price: "45,000", description: "WiFi smart video doorbell with 1080p HD camera, night vision, two-way audio. Works with Alexa. Easy DIY installation.", phone: "0806 012 3456" },
+      { title: "Keke NAPEP (Tricycle) - New", category: "Vehicles", price: "850,000", description: "Brand new Bajaj Keke NAPEP tricycle. 200cc engine. Fuel efficient. Suitable for commercial transport. Factory warranty included.", phone: "0808 123 4567" },
+      { title: "Warehouse for Lease - Ikeja", category: "Real Estate", price: "2,500,000/year", description: "Spacious warehouse in Ikeja Industrial Area. 500sqm with loading bay, 24hr security, good road access. Ideal for logistics business.", phone: "0810 234 5678" },
+      { title: "Kids Bunk Bed with Storage", category: "Furniture", price: "120,000", description: "Wooden bunk bed for kids with built-in drawers and shelving. Safety rails on top bunk. Suitable for ages 3-12. Easy assembly.", phone: "0812 345 6789" },
+      { title: "African Print Face Mask Set", category: "Fashion", price: "3,000", description: "Set of 3 reusable face masks in vibrant African prints. Cotton inner layer. Adjustable ear loops. Machine washable.", phone: "0814 456 7890" },
+      { title: "Barber Needed - Surulere Shop", category: "Jobs", price: "50,000/month", description: "Experienced barber needed for busy shop in Surulere. Must know modern cuts, fades, and designs. Tools provided. Commission available.", phone: "0816 567 8901" },
+      { title: "Event MC Services", category: "Services", price: "35,000", description: "Professional Master of Ceremonies for your event. Weddings, birthdays, corporate events. Bilingual (English & Yoruba). Sound system included.", phone: "0818 678 9012" },
+      { title: "Organic Honey - Pure 1L", category: "Agriculture", price: "4,500", description: "Pure organic honey straight from our farm in Oyo State. Unprocessed, no additives. 1 liter jar. Great for health and cooking.", phone: "0801 789 0123" },
+      { title: "Zobo Drink - 5 Liters", category: "Food & Drinks", price: "2,500", description: "Refreshing homemade zobo drink with ginger and pineapple. 5 liters. Natural ingredients, no preservatives. Perfect for parties.", phone: "0803 890 1234" },
+      { title: "Yoga Mat - Premium Non-Slip", category: "Other", price: "12,000", description: "Premium 6mm thick yoga mat with carrying strap. Non-slip surface, eco-friendly TPE material. Available in 4 colors.", phone: "0805 901 2345" },
     ];
+
+    var imgIdx = {};
+    function getImgUrl(cat, title) {
+      var s = title.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
+      var pool = {
+        'Electronics': 'https://picsum.photos/seed/' + s + '/400/300',
+        'Vehicles': 'https://picsum.photos/seed/' + s + '/400/300',
+        'Real Estate': 'https://picsum.photos/seed/' + s + '/400/300',
+        'Furniture': 'https://picsum.photos/seed/' + s + '/400/300',
+        'Fashion': 'https://picsum.photos/seed/' + s + '/400/300',
+        'Jobs': 'https://picsum.photos/seed/office' + s + '/400/300',
+        'Services': 'https://picsum.photos/seed/tools' + s + '/400/300',
+        'Agriculture': 'https://picsum.photos/seed/farm' + s + '/400/300',
+        'Food & Drinks': 'https://picsum.photos/seed/food' + s + '/400/300',
+        'Other': 'https://picsum.photos/seed/item' + s + '/400/300',
+      };
+      return pool[cat] || 'https://picsum.photos/seed/' + s + '/400/300';
+    }
 
     var status = document.getElementById('status');
     var count = 0;
@@ -73,9 +110,9 @@
         price: ad.price,
         description: ad.description,
         phone: ad.phone,
-        imageUrl: null,
+        imageUrl: getImgUrl(ad.category, ad.title),
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
+        expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000)
       }).then(function() {
         count++;
         setTimeout(function() { uploadNext(i + 1); }, 300);

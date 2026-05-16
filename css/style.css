@@ -772,6 +772,9 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 }
 .ad-detail-contact h2 { font-size: 1rem; margin-bottom: 12px; }
 .ad-detail-contact-phone { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
+.ad-detail-contact-whatsapp { margin-top: 8px; }
+.ad-detail-contact-whatsapp a { display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: #fff; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+.ad-detail-contact-whatsapp a:hover { background: #1da851; }
 .ad-detail-expired {
   text-align: center; padding: 48px 24px; color: #94a3b8;
 }
