@@ -203,6 +203,18 @@
       </div>
     </section>
 
+    <!-- Featured Products -->
+    <section class="featured-section" aria-label="Featured products">
+      <div class="container">
+        <h2 style="font-size:1.5rem;text-align:center;color:#0f172a;margin-bottom:8px;">Featured Products</h2>
+        <p style="text-align:center;color:#64748b;margin-bottom:30px;">Latest listings from the marketplace</p>
+        <div class="marketplace-grid" id="homeMarketplaceGrid"></div>
+        <div style="text-align:center;margin-top:24px">
+          <a href="marketplace.html" class="btn-outline">View All Products &rarr;</a>
+        </div>
+      </div>
+    </section>
+
     <!-- Marketplace Promo -->
     <section class="marketplace-promo" aria-label="Marketplace">
       <div class="container">
@@ -293,6 +305,9 @@
     </div>
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
   <script defer src="js/app.js"></script>
   <script defer>
     function heroSearch() {
@@ -304,9 +319,46 @@
       params.set('cat', 'hotels');
       window.location.href = 'listing.html?' + params.toString();
     }
+    function formatPrice(p) {
+      var c = p.replace(/,/g, '').trim();
+      if (/^\d+$/.test(c)) return '₦' + Number(c).toLocaleString();
+      return p;
+    }
+
+    function loadHomeMarketplace() {
+      var grid = document.getElementById('homeMarketplaceGrid');
+      if (!grid) return;
+      db.collection('marketplace')
+        .where('expiresAt', '>', new Date())
+        .orderBy('createdAt', 'desc')
+        .limit(6)
+        .get()
+        .then(function(snapshot) {
+          if (snapshot.empty) { grid.innerHTML = ''; return; }
+          grid.innerHTML = '';
+          snapshot.forEach(function(doc) {
+            var ad = doc.data();
+            var img = ad.imageUrl
+              ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
+              : '<div class="marketplace-card-img-placeholder">No photo</div>';
+            var card = document.createElement('a');
+            card.href = 'ad-detail.html?id=' + doc.id;
+            card.className = 'marketplace-card';
+            card.innerHTML = img +
+              '<div class="marketplace-card-body">' +
+                '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
+                '<h3>' + ad.title + '</h3>' +
+                '<div class="marketplace-card-meta"><span>' + ad.category + '</span></div>' +
+              '</div>';
+            grid.appendChild(card);
+          });
+        }).catch(function() {});
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       loadListings('hotels');
       loadFeatured();
+      loadHomeMarketplace();
     });
     window.heroSearch = heroSearch;
   </script>
