@@ -19,7 +19,7 @@
 
     container.innerHTML =
       '<header>' +
-        '<nav class="navbar" aria-label="Main navigation">' +
+        '<nav class="navbar' + (active === 'home' ? ' homepage-nav' : '') + '" aria-label="Main navigation">' +
           '<div class="container">' +
             '<a href="." class="logo">' +
               '<img src="bm logo.png" alt="BusinessMen" style="height:42px;vertical-align:middle;margin-right:10px">Business<span>Men</span>' +

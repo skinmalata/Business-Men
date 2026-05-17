@@ -17,10 +17,11 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 
 /* === NAVBAR === */
 .navbar {
-  background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(226,232,240,0.6); padding: 0; position: sticky; top: 0; z-index: 100;
   height: 64px; display: flex; align-items: center;
 }
+.navbar.homepage-nav { background: rgba(255,255,255,0.88); }
 .navbar .container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 .logo { font-size: 1.35rem; font-weight: 800; color: #0f172a; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; }
 .logo span { color: #e94560; }
