@@ -597,7 +597,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
   .cat-card-count { font-size: 0.72rem; }
   .navbar { height: 52px; }
   .logo { font-size: 1.1rem; }
-  .logo img { height: 22px; vertical-align: middle; }
+  .logo img { height: 28px; vertical-align: middle; }
   .nav-toggle { font-size: 1.3rem; }
   .listing-grid { gap: 12px; }
   .card-body { padding: 14px; }
