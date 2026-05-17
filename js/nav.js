@@ -22,7 +22,7 @@
         '<nav class="navbar" aria-label="Main navigation">' +
           '<div class="container">' +
             '<a href="." class="logo">' +
-              '<img src="bm2.png" alt="BusinessMen" style="height:26px;vertical-align:middle;margin-right:7px">Business<span>Men</span>' +
+              '<img src="bm logo.png" alt="BusinessMen" style="height:26px;vertical-align:middle;margin-right:7px">Business<span>Men</span>' +
             '</a>' +
             '<button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>' +
             '<div class="nav-scroll">' +
