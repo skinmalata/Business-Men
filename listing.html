@@ -8,7 +8,7 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://businessmen.com.ng/listing.html">
   <link rel="alternate" hreflang="en" href="https://businessmen.com.ng/listing.html">
-  <link rel="icon" href="bm2.png" type="image/png">
+  <link rel="icon" href="bm logo.png" type="image/png">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -143,6 +143,11 @@
       else params.delete('q');
       if (city) params.set('city', city);
       else params.delete('city');
+      if (!params.has('cat') && query) {
+        const ql = query.toLowerCase();
+        const kw = { hotel:'hotels',resort:'hotels',accommodation:'hotels',hospital:'hospitals',clinic:'hospitals',medical:'hospitals',school:'schools',university:'schools',college:'schools',education:'schools',agriculture:'agriculture',farm:'agriculture',farming:'agriculture',transport:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',shop:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',business:'business',consulting:'business','real estate':'realestate',property:'realestate',oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',construction:'construction',builder:'construction',building:'construction',auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',food:'food',restaurant:'food',bakery:'food' };
+        for (const [w,c] of Object.entries(kw)) { if (ql.includes(w)) { params.set('cat', c); break; } }
+      }
       window.location.href = 'listing.html?' + params.toString();
     }
     document.addEventListener('DOMContentLoaded', () => {

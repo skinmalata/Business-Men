@@ -9,7 +9,7 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://businessmen.com.ng/">
   <link rel="alternate" hreflang="en" href="https://businessmen.com.ng/">
-  <link rel="icon" href="bm2.png" type="image/png">
+  <link rel="icon" href="bm logo.png" type="image/png">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -311,12 +311,30 @@
   <script defer src="js/app.js"></script>
   <script defer>
     function heroSearch() {
-      const query = document.getElementById('heroQuery').value.trim();
+      const query = document.getElementById('heroQuery').value.trim().toLowerCase();
       const city = document.getElementById('heroCity').value;
       const params = new URLSearchParams();
+      const kw = {
+        hotel:'hotels',hotels:'hotels',resort:'hotels',accommodation:'hotels',
+        hospital:'hospitals',hospitals:'hospitals',clinic:'hospitals',medical:'hospitals',healthcare:'hospitals',
+        school:'schools',schools:'schools',university:'schools',college:'schools',education:'schools',
+        agriculture:'agriculture',farm:'agriculture',farming:'agriculture',agribusiness:'agriculture',
+        transport:'transportation',transportation:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',
+        shop:'shopping',shopping:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',
+        business:'business',consulting:'business',services:'business',
+        'realestate':'realestate','real estate':'realestate',property:'realestate',
+        oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',
+        construction:'construction',builder:'construction',building:'construction',contractor:'construction',
+        auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',mechanic:'automobile',
+        food:'food',restaurant:'food',restaurants:'food',caterer:'food',bakery:'food'
+      };
+      let cat = 'hotels';
+      for (const [word,c] of Object.entries(kw)) {
+        if (query.includes(word)) { cat = c; break; }
+      }
       if (query) params.set('q', query);
       if (city) params.set('city', city);
-      params.set('cat', 'hotels');
+      params.set('cat', cat);
       window.location.href = 'listing.html?' + params.toString();
     }
     function formatPrice(p) {
