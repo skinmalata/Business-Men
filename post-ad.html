@@ -72,6 +72,50 @@
         <input type="tel" id="whatsapp" placeholder="e.g. 0803 123 4567">
       </div>
 
+      <div class="form-group">
+        <label for="state">State *</label>
+        <select id="state" required>
+          <option value="">Select state</option>
+          <option>Abia</option>
+          <option>Adamawa</option>
+          <option>Akwa Ibom</option>
+          <option>Anambra</option>
+          <option>Bauchi</option>
+          <option>Bayelsa</option>
+          <option>Benue</option>
+          <option>Borno</option>
+          <option>Cross River</option>
+          <option>Delta</option>
+          <option>Ebonyi</option>
+          <option>Edo</option>
+          <option>Ekiti</option>
+          <option>Enugu</option>
+          <option>FCT Abuja</option>
+          <option>Gombe</option>
+          <option>Imo</option>
+          <option>Jigawa</option>
+          <option>Kaduna</option>
+          <option>Kano</option>
+          <option>Katsina</option>
+          <option>Kebbi</option>
+          <option>Kogi</option>
+          <option>Kwara</option>
+          <option>Lagos</option>
+          <option>Nasarawa</option>
+          <option>Niger</option>
+          <option>Ogun</option>
+          <option>Ondo</option>
+          <option>Osun</option>
+          <option>Oyo</option>
+          <option>Plateau</option>
+          <option>Rivers</option>
+          <option>Sokoto</option>
+          <option>Taraba</option>
+          <option>Yobe</option>
+          <option>Zamfara</option>
+        </select>
+      </div>
+
       <button class="btn-primary" id="submitBtn" onclick="submitAd()">Post Ad</button>
     </div>
 
@@ -136,10 +180,11 @@
       var desc = document.getElementById('description').value.trim();
       var phone = document.getElementById('phone').value.trim();
       var whatsapp = document.getElementById('whatsapp').value.trim();
+      var state = document.getElementById('state').value;
       var photoFile = document.getElementById('photoInput').files[0];
       var btn = document.getElementById('submitBtn');
 
-      if (!title || !category || !price || !desc || !phone) {
+      if (!title || !category || !price || !desc || !phone || !state) {
         alert('Please fill in all required fields.');
         return;
       }
@@ -157,6 +202,7 @@
           description: desc,
           phone: phone,
           whatsapp: whatsapp || null,
+          state: state,
           imageUrl: imageUrl,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
