@@ -5,14 +5,6 @@ let currentPage = 1;
 const ITEMS_PER_PAGE = 20;
 let searchTimeout = null;
 
-function normalizeWhatsApp(number) {
-  if (!number) return '';
-  var n = String(number).replace(/[^0-9]/g, '');
-  if (n.startsWith('0')) n = '234' + n.substring(1);
-  if (!n.startsWith('234')) n = '234' + n;
-  return n;
-}
-
 const DATA_FILES = {
   hotels: 'data/nigeria_hotels.json',
   hospitals: 'data/nigeria_hospitals.json',
@@ -396,7 +388,7 @@ function renderDetailView(item, cat) {
         ${email ? `<div class="info-row"><span class="label">Email</span><span class="value"><a href="mailto:${email}" rel="nofollow">${escapeHtml(email)}</a></span></div>` : ''}
         ${website ? `<div class="info-row"><span class="label">Website</span><span class="value"><a href="${website}" target="_blank" rel="noopener noreferrer">${escapeHtml(website)}</a></span></div>` : `<div class="info-row"><span class="label">Website</span><span class="value"><span class="no-website-badge-sm">No Website</span> <a href="services.html" class="get-website-link" target="_blank" rel="noopener">Get Website</a></span></div>`}
         ${hours ? `<div class="info-row"><span class="label">Hours</span><span class="value">${escapeHtml(hours)}</span></div>` : ''}
-        ${getClaim(id)?.whatsapp ? '<div class="info-row"><span class="label">WhatsApp</span><span class="value"><a href="https://wa.me/' + normalizeWhatsApp(getClaim(id).whatsapp) + '" target="_blank" rel="noopener">' + escapeHtml(getClaim(id).whatsapp) + '</a></span></div>' : ''}
+        ${getClaim(id)?.whatsapp ? `<div class="info-row"><span class="label">WhatsApp</span><span class="value"><a href="https://wa.me/${getClaim(id).whatsapp}" target="_blank" rel="noopener">${escapeHtml(getClaim(id).whatsapp)}</a></span></div>` : ''}
         ${!address && !phone && !email && !website && !hours ? '<p>No contact info available.</p>' : ''}
         ${phone || email || website ? '<p style="margin-top:16px;font-size:0.8rem;color:#94a3b8;">Contact information sourced from public business directories.</p>' : ''}
       </section>
