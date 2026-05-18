@@ -140,6 +140,7 @@
       filterAds();
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
     db.collection('marketplace')
       .where('expiresAt', '>', new Date())
       .onSnapshot(function(snapshot) {
@@ -156,8 +157,9 @@
         });
         filterAds();
       }, function(err) {
-        document.getElementById('adGrid').innerHTML = '<div class="empty-marketplace"><h3>Could not load listings</h3><p>' + err.message + '</p></div>';
+        document.getElementById('adGrid').innerHTML = '<div class="empty-marketplace"><h3>Could not load listings</h3><p>' + (err.message || err) + '</p></div>';
       });
+    });
   </script>
 </body>
 </html>
