@@ -623,20 +623,22 @@ async function loadFeatured() {
   if (!grid) return;
   const entries = Object.entries(DATA_FILES).filter(([k]) => k !== 'business');
   const results = [];
-  for (const [cat, file] of entries) {
+  const promises = entries.map(async ([cat, file]) => {
     try {
       const resp = await fetch(file);
-      if (!resp.ok) continue;
+      if (!resp.ok) return null;
       const data = await resp.json();
       const items = Array.isArray(data) ? data : [];
-      if (!items.length) continue;
+      if (!items.length) return null;
       const verifiedItems = items.filter(d => d.verified === true);
       const pool = verifiedItems.length > 0 ? verifiedItems : items;
       const pick = pool[Math.floor(Math.random() * pool.length)];
       const id = pick.url?.match(/(\d+)\/$/)?.[1] || '';
-      if (id) results.push({ cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified });
-    } catch (e) { /* skip */ }
-  }
+      if (id) return { cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified };
+    } catch (e) { return null; }
+  });
+  const fetched = await Promise.all(promises);
+  fetched.forEach(item => { if (item) results.push(item); });
   if (!results.length) return;
   results.sort(() => Math.random() - 0.5);
   grid.innerHTML = results.map(item => `
