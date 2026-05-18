@@ -53,7 +53,7 @@
 
       <div class="form-group">
         <label>Photo (optional)</label>
-        <div class="file-upload" id="fileUpload">
+        <div class="file-upload" id="fileUpload" onclick="document.getElementById('photoInput').click()">
           <input type="file" id="photoInput" accept="image/*">
           <div class="file-upload-label" id="uploadLabel">
             Click to upload a photo <strong>+</strong>
@@ -165,7 +165,7 @@
         document.getElementById('postForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
       }).catch(function(err) {
-        alert('Error posting ad: ' + err.message);
+        alert('Error posting ad: ' + (typeof err === 'string' ? err : err.message));
         btn.textContent = 'Post Ad';
         btn.disabled = false;
       });
