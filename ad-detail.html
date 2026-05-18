@@ -30,6 +30,14 @@
       return price;
     }
 
+    function normalizeWhatsApp(number) {
+      if (!number) return '';
+      var n = String(number).replace(/[^0-9]/g, '');
+      if (n.startsWith('0')) n = '234' + n.substring(1);
+      if (!n.startsWith('234')) n = '234' + n;
+      return n;
+    }
+
     var adId = getParam('id');
     var container = document.getElementById('adContainer');
 
@@ -73,7 +81,7 @@
           '<div class="ad-detail-contact">' +
             '<h2>Contact Seller</h2>' +
             '<div class="ad-detail-contact-phone">' + (ad.phone || 'No phone') + '</div>' +
-            (ad.whatsapp ? (function() { var n = ad.whatsapp.replace(/[^0-9]/g, ''); if (n.startsWith('0')) n = '234' + n.substring(1); if (!n.startsWith('234')) n = '234' + n; return '<div class="ad-detail-contact-whatsapp"><a href="https://wa.me/' + n + '" target="_blank" rel="noopener">Chat on WhatsApp</a></div>'; })()) : '') +
+            (ad.whatsapp ? '<div class="ad-detail-contact-whatsapp"><a href="https://wa.me/' + normalizeWhatsApp(ad.whatsapp) + '" target="_blank" rel="noopener">Chat on WhatsApp</a></div>' : '') +
             '<p style="color:#64748b;font-size:0.85rem;margin-top:6px">Call or WhatsApp to inquire about this listing.</p>' +
           '</div>' +
           '<a href="marketplace.html" style="color:#e94560;font-weight:500">&larr; Back to Marketplace</a>';
