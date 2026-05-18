@@ -343,6 +343,12 @@
       return p;
     }
 
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
     function loadHomeMarketplace() {
       var grid = document.getElementById('homeMarketplaceGrid');
       if (!grid) return;
@@ -374,8 +380,8 @@
             card.innerHTML = img +
               '<div class="marketplace-card-body">' +
                 '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
-                '<h3>' + ad.title + '</h3>' +
-                '<div class="marketplace-card-meta"><span>' + ad.category + '</span></div>' +
+                '<h3>' + escapeHtml(ad.title) + '</h3>' +
+                '<div class="marketplace-card-meta"><span>' + escapeHtml(ad.category) + '</span></div>' +
               '</div>';
             grid.appendChild(card);
           });

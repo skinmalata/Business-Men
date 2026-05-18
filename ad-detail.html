@@ -38,6 +38,12 @@
       return n;
     }
 
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
     var adId = getParam('id');
     var container = document.getElementById('adContainer');
 
@@ -67,20 +73,20 @@
 
         container.innerHTML =
           imgHtml +
-          '<h1 class="ad-detail-title">' + ad.title + '</h1>' +
+          '<h1 class="ad-detail-title">' + escapeHtml(ad.title) + '</h1>' +
           '<div class="ad-detail-price">' + formatPrice(ad.price) + '</div>' +
           '<div class="ad-detail-meta">' +
-            '<span>' + ad.category + '</span>' +
+            '<span>' + escapeHtml(ad.category) + '</span>' +
             '<span>Posted ' + created + '</span>' +
             '<span>Expires in 48h</span>' +
           '</div>' +
           '<div class="ad-detail-section">' +
             '<h2>Description</h2>' +
-            '<p>' + (ad.description || 'No description provided.') + '</p>' +
+            '<p>' + escapeHtml(ad.description || 'No description provided.') + '</p>' +
           '</div>' +
           '<div class="ad-detail-contact">' +
             '<h2>Contact Seller</h2>' +
-            '<div class="ad-detail-contact-phone">' + (ad.phone || 'No phone') + '</div>' +
+            '<div class="ad-detail-contact-phone">' + escapeHtml(ad.phone || 'No phone') + '</div>' +
             (ad.whatsapp ? '<div class="ad-detail-contact-whatsapp"><a href="https://wa.me/' + normalizeWhatsApp(ad.whatsapp) + '" target="_blank" rel="noopener">Chat on WhatsApp</a></div>' : '') +
             '<p style="color:#64748b;font-size:0.85rem;margin-top:6px">Call or WhatsApp to inquire about this listing.</p>' +
           '</div>' +

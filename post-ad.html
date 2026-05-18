@@ -173,6 +173,11 @@
       });
     }
 
+    function containsLink(text) {
+      var urlPattern = /https?:\/\/|www\.|\.com\b|\.org\b|\.net\b|\.ng\b|\.co\b|\.io\b|\.biz\b|\.info\b|bit\.ly|tinyurl|t\.co|goo\.gl|wa\.me|t\.me|t\.me\/|telegram\.org|facebook\.com|instagram\.com|twitter\.com|x\.com|linkedin\.com|youtube\.com|tiktok\.com|whatsapp\.com/gi;
+      return urlPattern.test(text);
+    }
+
     function submitAd() {
       var title = document.getElementById('title').value.trim();
       var category = document.getElementById('category').value;
@@ -186,6 +191,13 @@
 
       if (!title || !category || !price || !desc || !phone || !state) {
         alert('Please fill in all required fields.');
+        return;
+      }
+
+      if (containsLink(title) || containsLink(desc) || containsLink(phone) || containsLink(whatsapp)) {
+        alert('Links and URLs are not allowed in ads.');
+        btn.textContent = 'Post Ad';
+        btn.disabled = false;
         return;
       }
 
