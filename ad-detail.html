@@ -6,8 +6,9 @@
   <title>Ad Detail - BusinessMen Marketplace</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="bm logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=4">
   <script defer src="js/nav.js?v=3"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -35,12 +36,169 @@
       return div.innerHTML;
     }
 
-    var adId = getParam('id');
-    var container = document.getElementById('adContainer');
+    function getReviews(adId) {
+      try { return JSON.parse(localStorage.getItem('ad_reviews_' + adId)) || []; } catch { return []; }
+    }
 
-    if (!adId) {
-      container.innerHTML = '<div class="empty-marketplace"><h3>No ad specified</h3><p><a href="marketplace.html" style="color:#e94560">Browse marketplace</a></p></div>';
-    } else {
+    function saveReviews(adId, reviews) {
+      localStorage.setItem('ad_reviews_' + adId, JSON.stringify(reviews));
+    }
+
+    function calcAvgRating(reviews) {
+      if (!reviews.length) return 0;
+      return reviews.reduce(function(s, r) { return s + (r.rating || 0); }, 0) / reviews.length;
+    }
+
+    function renderStars(rating, size) {
+      var full = Math.round(rating);
+      var s = '';
+      for (var i = 1; i <= 5; i++) {
+        s += i <= full
+          ? '<span class="star-filled" style="font-size:' + size + 'px">★</span>'
+          : '<span class="star-empty" style="font-size:' + size + 'px">☆</span>';
+      }
+      return s;
+    }
+
+    function isBookmarked(id) {
+      try {
+        var b = JSON.parse(localStorage.getItem('mp_bookmarks') || '[]');
+        return b.indexOf(id) !== -1;
+      } catch { return false; }
+    }
+
+    function toggleBookmark(id) {
+      var bookmarks = [];
+      try { bookmarks = JSON.parse(localStorage.getItem('mp_bookmarks') || '[]'); } catch {}
+      var idx = bookmarks.indexOf(id);
+      if (idx === -1) bookmarks.push(id); else bookmarks.splice(idx, 1);
+      localStorage.setItem('mp_bookmarks', JSON.stringify(bookmarks));
+      loadAdDetail();
+    }
+
+    function shareAd(title) {
+      var url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: title, url: url }).catch(function() {});
+      } else {
+        navigator.clipboard.writeText(url).then(function() {
+          alert('Link copied to clipboard!');
+        }).catch(function() {});
+      }
+    }
+
+    function reportAd(id, title) {
+      var reason = prompt('Why are you reporting this ad? (e.g., spam, scam, inappropriate content)');
+      if (!reason || !reason.trim()) return;
+
+      var reportData = {
+        adId: id,
+        adTitle: title,
+        reason: reason.trim(),
+        url: window.location.href,
+        createdAt: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
+
+      if (typeof db !== 'undefined') {
+        db.collection('ad_reports').add(reportData)
+          .then(function() { alert('Thank you. Your report has been submitted for review.'); })
+          .catch(function(err) {
+            console.error('Report failed:', err);
+            alert('Failed to submit report. Please try again.');
+          });
+      } else {
+        var reports = [];
+        try { reports = JSON.parse(localStorage.getItem('ad_reports') || '[]'); } catch {}
+        reports.push(reportData);
+        localStorage.setItem('ad_reports', JSON.stringify(reports));
+        alert('Thank you. Your report has been submitted for review.');
+      }
+    }
+
+    function whatsappAd(phone, title) {
+      var cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+      var digits = cleaned.replace(/\D/g, '');
+      var number = digits.startsWith('234') ? digits : '234' + digits.replace(/^0+/, '');
+      var text = encodeURIComponent('Hi, I found your ad "' + title + '" on BusinessMen Marketplace. Is it still available?');
+      window.open('https://wa.me/' + number + '?text=' + text, '_blank', 'noopener');
+    }
+
+    var selectedAdRating = 0;
+    function setAdRating(val) {
+      selectedAdRating = val;
+      document.getElementById('adReviewRating').value = val;
+      var stars = document.querySelectorAll('#adStarRating .star');
+      for (var i = 0; i < stars.length; i++) {
+        stars[i].textContent = i < val ? '★' : '☆';
+        stars[i].style.color = i < val ? '#f59e0b' : '#d1d9e6';
+      }
+    }
+    function hoverAdRating(val) {
+      var stars = document.querySelectorAll('#adStarRating .star');
+      for (var i = 0; i < stars.length; i++) {
+        stars[i].textContent = i < val ? '★' : '☆';
+        stars[i].style.color = i < val ? '#f59e0b' : '#d1d9e6';
+      }
+    }
+    function resetAdRating() {
+      var stars = document.querySelectorAll('#adStarRating .star');
+      for (var i = 0; i < stars.length; i++) {
+        stars[i].textContent = i < selectedAdRating ? '★' : '☆';
+        stars[i].style.color = i < selectedAdRating ? '#f59e0b' : '#d1d9e6';
+      }
+    }
+
+    function submitAdReview(e, adId) {
+      e.preventDefault();
+
+      if (typeof turnstile !== 'undefined' && turnstile.getResponse().length === 0) {
+        alert('Please complete the verification.');
+        return;
+      }
+
+      var name = document.getElementById('adReviewName').value.trim();
+      var rating = parseInt(document.getElementById('adReviewRating').value);
+      var text = document.getElementById('adReviewText').value.trim();
+
+      if (!name || !rating || !text) {
+        alert('Please fill in all fields and select a rating.');
+        return;
+      }
+
+      if (/https?:\/\/[^\s]+|www\.[^\s]+/i.test(text) || /https?:\/\/[^\s]+|www\.[^\s]+/i.test(name)) {
+        alert('Links are not allowed in reviews. Please remove any URLs.');
+        return;
+      }
+
+      var reviews = getReviews(adId);
+      reviews.unshift({
+        name: name,
+        rating: rating,
+        text: text,
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      });
+      saveReviews(adId, reviews);
+
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+
+      loadAdDetail();
+
+      setTimeout(function() {
+        var el = document.querySelector('.ad-reviews-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    function loadAdDetail() {
+      var adId = getParam('id');
+      var container = document.getElementById('adContainer');
+
+      if (!adId) {
+        container.innerHTML = '<div class="empty-marketplace"><h3>No ad specified</h3><p><a href="marketplace.html" style="color:#e94560">Browse marketplace</a></p></div>';
+        return;
+      }
+
       db.collection('marketplace').doc(adId).get().then(function(doc) {
         if (!doc.exists) {
           container.innerHTML = '<div class="ad-detail-expired"><h3>Ad not found</h3><p>This ad may have expired or been removed.</p><a href="marketplace.html" class="btn-primary">Browse Marketplace</a></div>';
@@ -57,35 +215,125 @@
         }
 
         var imgHtml = ad.imageUrl
-          ? '<img class="ad-detail-img" src="' + ad.imageUrl + '" alt="' + ad.title + '">'
+          ? '<img class="ad-detail-img" src="' + ad.imageUrl + '" alt="' + escapeHtml(ad.title) + '">'
           : '<div class="ad-detail-img-placeholder">No photo available</div>';
 
         var created = ad.createdAt ? new Date(ad.createdAt.toMillis()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
 
+        var savedReviews = getReviews(adId);
+        var totalReviews = savedReviews.length;
+        var avgRating = calcAvgRating(savedReviews);
+
+        var reviewsHtml = '';
+        if (totalReviews > 0) {
+          reviewsHtml += '<div class="review-summary">';
+          reviewsHtml += '<div class="review-summary-stars">' + renderStars(avgRating, 24) + '<span class="review-summary-text">' + (avgRating > 0 ? avgRating.toFixed(1) : '?') + ' out of 5</span></div>';
+          reviewsHtml += '<p class="review-summary-count">Based on ' + totalReviews + ' review' + (totalReviews !== 1 ? 's' : '') + '</p>';
+          reviewsHtml += '</div>';
+          reviewsHtml += '<div class="review-list">';
+          for (var i = 0; i < savedReviews.length; i++) {
+            var r = savedReviews[i];
+            reviewsHtml += '<div class="review-card">';
+            reviewsHtml += '<div class="review-header">';
+            reviewsHtml += '<div class="review-avatar">' + ((r.name || 'A')[0].toUpperCase()) + '</div>';
+            reviewsHtml += '<div><div class="review-name">' + escapeHtml(r.name || 'Anonymous') + '</div>';
+            reviewsHtml += '<div class="review-stars">' + renderStars(r.rating || 0, 14) + '</div></div>';
+            reviewsHtml += '<span class="review-date">' + (r.date || '') + '</span>';
+            reviewsHtml += '</div>';
+            if (r.text) reviewsHtml += '<p class="review-text">' + escapeHtml(r.text) + '</p>';
+            reviewsHtml += '</div>';
+          }
+          reviewsHtml += '</div>';
+        } else {
+          reviewsHtml = '<p style="color:#64748b;">No reviews yet. Be the first to review!</p>';
+        }
+
         container.innerHTML =
+          '<a href="marketplace.html" class="back-link">&larr; Back to Marketplace</a>' +
           imgHtml +
           '<h1 class="ad-detail-title">' + escapeHtml(ad.title) + '</h1>' +
           '<div class="ad-detail-price">' + formatPrice(ad.price) + '</div>' +
           '<div class="ad-detail-meta">' +
             '<span>' + escapeHtml(ad.category) + '</span>' +
+            (ad.state ? '<span>' + escapeHtml(ad.state) + '</span>' : '') +
+            (ad.address ? '<span>' + escapeHtml(ad.address) + '</span>' : '') +
             '<span>Posted ' + created + '</span>' +
-            '<span>Expires in 48h</span>' +
           '</div>' +
+
+          '<div class="detail-toolbar">' +
+            (ad.address || ad.state ? '<button class="toolbar-btn" onclick="getAdDirections(\'' + escapeHtml(ad.address || ad.state) + '\')" title="View Location">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+              'Location</button>' : '') +
+            '<button class="toolbar-btn toolbar-btn-whatsapp" onclick="whatsappAd(\'' + escapeHtml(ad.phone || '') + '\', \'' + escapeHtml(ad.title) + '\')" title="Send WhatsApp Message">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
+              'WhatsApp</button>' +
+            '<button class="toolbar-btn" onclick="scrollToAdReviews()" title="Leave a Review">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+              'Review</button>' +
+            '<button class="toolbar-btn" onclick="shareAd(\'' + escapeHtml(ad.title) + '\')" title="Share">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+              'Share</button>' +
+            '<button class="toolbar-btn ' + (isBookmarked(adId) ? 'bookmarked' : '') + '" onclick="toggleBookmark(\'' + adId + '\')" title="Bookmark">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (isBookmarked(adId) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+              (isBookmarked(adId) ? 'Saved' : 'Save') + '</button>' +
+            '<button class="toolbar-btn toolbar-btn-danger" onclick="reportAd(\'' + adId + '\', \'' + escapeHtml(ad.title) + '\')" title="Report">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+              'Report</button>' +
+          '</div>' +
+
           '<div class="ad-detail-section">' +
             '<h2>Description</h2>' +
             '<p>' + escapeHtml(ad.description || 'No description provided.') + '</p>' +
           '</div>' +
           '<div class="ad-detail-contact">' +
             '<h2>Contact Seller</h2>' +
+            (ad.address ? '<div class="ad-detail-contact-address">' + escapeHtml(ad.address) + '</div>' : '') +
             '<div class="ad-detail-contact-phone">' + escapeHtml(ad.phone || 'No phone') + '</div>' +
             (ad.whatsapp ? '<div class="ad-detail-contact-whatsapp"><a href="https://wa.me/' + ad.whatsapp.replace(/[^0-9]/g, '') + '" target="_blank" rel="noopener">Chat on WhatsApp</a></div>' : '') +
             '<p style="color:#64748b;font-size:0.85rem;margin-top:6px">Call or WhatsApp to inquire about this listing.</p>' +
           '</div>' +
-          '<a href="marketplace.html" style="color:#e94560;font-weight:500">&larr; Back to Marketplace</a>';
+          '<div class="ad-detail-section ad-detail-section-full ad-reviews-section">' +
+            '<h2>Reviews & Ratings ' + (totalReviews > 0 ? '<span class="review-count-badge">' + totalReviews + '</span>' : '') + '</h2>' +
+            reviewsHtml +
+            '<form class="review-form" onsubmit="submitAdReview(event, \'' + adId + '\')">' +
+              '<div class="form-group">' +
+                '<label for="adReviewName">Your Name</label>' +
+                '<input type="text" id="adReviewName" required placeholder="Enter your name">' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label>Your Rating</label>' +
+                '<div class="star-rating" id="adStarRating">' +
+                  [1,2,3,4,5].map(function(i) { return '<span class="star" data-value="' + i + '" onclick="setAdRating(' + i + ')" onmouseover="hoverAdRating(' + i + ')" onmouseout="resetAdRating()">☆</span>'; }).join('') +
+                '</div>' +
+                '<input type="hidden" id="adReviewRating" value="0">' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="adReviewText">Your Review</label>' +
+                '<textarea id="adReviewText" rows="4" placeholder="Share your experience with this listing..." required></textarea>' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>' +
+              '</div>' +
+              '<button type="submit" class="btn-primary">Submit Review</button>' +
+            '</form>' +
+          '</div>' +
+          '<a href="marketplace.html" class="back-link" style="margin-top:24px">&larr; Back to Marketplace</a>';
       }).catch(function(err) {
         container.innerHTML = '<div class="empty-marketplace"><h3>Error loading ad</h3><p>' + (err.message || err) + '</p></div>';
       });
     }
+
+    function getAdDirections(location) {
+      var q = encodeURIComponent(location + ', Nigeria');
+      window.open('https://maps.google.com?q=' + q, '_blank', 'noopener');
+    }
+
+    function scrollToAdReviews() {
+      var el = document.querySelector('.ad-reviews-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAdDetail);
   </script>
 </body>
 </html>
