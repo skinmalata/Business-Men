@@ -455,7 +455,7 @@ function renderDetailView(item, cat) {
             <textarea id="reviewText" rows="4" placeholder="Share your experience with this business..." required></textarea>
           </div>
           <div class="form-group">
-            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-callback="onReviewCaptcha"></div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>
           </div>
           <button type="submit" class="btn-primary">Submit Review</button>
         </form>
@@ -527,8 +527,8 @@ function resetRating() {
 function submitReview(e, businessId) {
   e.preventDefault();
 
-  if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length === 0) {
-    alert('Please complete the reCAPTCHA verification.');
+  if (typeof turnstile !== 'undefined' && turnstile.getResponse().length === 0) {
+    alert('Please complete the verification.');
     return;
   }
 
@@ -554,6 +554,8 @@ function submitReview(e, businessId) {
     date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
   });
   saveReviews(businessId, reviews);
+
+  if (typeof turnstile !== 'undefined') turnstile.reset();
 
   // Re-render the detail view to show the new review
   const params = new URLSearchParams(window.location.search);
@@ -739,11 +741,38 @@ function toggleBookmark(id, cat) {
 function reportBusiness(id) {
   var reason = prompt('Why are you reporting this listing? (e.g., wrong number, closed business, spam)');
   if (!reason || !reason.trim()) return;
-  var reports = [];
-  try { reports = JSON.parse(localStorage.getItem('reports') || '[]'); } catch {}
-  reports.push({ id: id, reason: reason.trim(), date: new Date().toISOString() });
-  localStorage.setItem('reports', JSON.stringify(reports));
-  alert('Thank you. Your report has been submitted for review.');
+
+  var params = new URLSearchParams(window.location.search);
+  var cat = params.get('cat') || currentCategory;
+  var item = allData.find(function(d) { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
+  var businessName = item ? item.name : 'Unknown';
+
+  var reportData = {
+    businessId: id,
+    businessName: businessName,
+    category: cat,
+    reason: reason.trim(),
+    url: window.location.href,
+    createdAt: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  };
+
+  if (typeof db !== 'undefined') {
+    db.collection('reports').add(reportData)
+      .then(function() {
+        alert('Thank you. Your report has been submitted for review.');
+      })
+      .catch(function(err) {
+        console.error('Report submission failed:', err);
+        alert('Failed to submit report. Please try again later.');
+      });
+  } else {
+    var reports = [];
+    try { reports = JSON.parse(localStorage.getItem('reports') || '[]'); } catch {}
+    reports.push(reportData);
+    localStorage.setItem('reports', JSON.stringify(reports));
+    alert('Thank you. Your report has been submitted for review.');
+  }
 }
 
 window.handleSearch = handleSearch;

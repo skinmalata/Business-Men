@@ -8,6 +8,7 @@
   <link rel="icon" href="bm logo.png" type="image/png">
   <link rel="stylesheet" href="css/style.css?v=2">
   <script defer src="js/nav.js?v=3"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -116,6 +117,10 @@
         </select>
       </div>
 
+      <div class="form-group">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>
+      </div>
+
       <button class="btn-primary" id="submitBtn" onclick="submitAd()">Post Ad</button>
     </div>
 
@@ -179,6 +184,11 @@
     }
 
     function submitAd() {
+      if (typeof turnstile !== 'undefined' && turnstile.getResponse().length === 0) {
+        alert('Please complete the verification.');
+        return;
+      }
+
       var title = document.getElementById('title').value.trim();
       var category = document.getElementById('category').value;
       var price = document.getElementById('price').value.trim();
@@ -220,6 +230,7 @@
           expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
         });
       }).then(function() {
+        if (typeof turnstile !== 'undefined') turnstile.reset();
         document.getElementById('postForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
       }).catch(function(err) {

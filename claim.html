@@ -23,7 +23,7 @@
 
   <link rel="stylesheet" href="css/style.css?v=2">
   <script defer src="js/nav.js?v=3"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 </head>
 <body>
@@ -62,7 +62,7 @@
           <textarea id="claimMessage" rows="4" placeholder="Describe any changes you'd like to make..."></textarea>
         </div>
         <div class="form-group">
-          <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>
         </div>
         <button type="button" class="btn-primary" id="sendConfirmBtn" onclick="sendConfirmation()">Send Confirmation Email</button>
         <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">A confirmation code will be sent to your email to verify ownership.</p>
@@ -114,8 +114,8 @@
     }
 
     function sendConfirmation() {
-      if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length === 0) {
-        alert('Please complete the reCAPTCHA verification.');
+      if (typeof turnstile !== 'undefined' && turnstile.getResponse().length === 0) {
+        alert('Please complete the verification.');
         return;
       }
       var email = document.getElementById('claimEmail').value.trim();
@@ -131,6 +131,8 @@
       document.getElementById('editForm').style.display = 'none';
       document.getElementById('confirmForm').style.display = 'block';
       document.getElementById('claimSuccess').style.display = 'none';
+
+      if (typeof turnstile !== 'undefined') turnstile.reset();
 
       fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -195,6 +197,8 @@
       };
 
       localStorage.setItem('claim_' + id, JSON.stringify(editData));
+
+      if (typeof turnstile !== 'undefined') turnstile.reset();
 
       document.getElementById('confirmForm').style.display = 'none';
       document.getElementById('claimSuccess').style.display = 'block';
