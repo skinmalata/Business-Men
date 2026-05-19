@@ -15,7 +15,7 @@
 
   <main class="post-ad-page">
     <h1>Post an Ad</h1>
-    <p>Your ad will appear on the marketplace for 48 hours. No account needed.</p>
+    <p>Your ad will appear on the marketplace. No account needed.</p>
 
     <div id="postForm" class="post-ad-form">
       <div class="form-group">
@@ -131,7 +131,7 @@
 
     <div class="success-message" id="successMessage" style="display:none">
       <h2>Ad Posted Successfully!</h2>
-      <p>Your ad is now live on the marketplace. It will expire in 48 hours.</p>
+      <p>Your ad is now live on the marketplace. It will remain visible until the listing limit is reached.</p>
       <a href="marketplace.html" class="btn-primary">View Marketplace</a>
       <a href="post-ad.html" style="display:inline-block;margin-top:12px;color:#e94560;font-weight:500">Post another ad</a>
     </div>
@@ -223,18 +223,37 @@
       var uploadPromise = photoFile ? uploadToImgbb(photoFile) : Promise.resolve(null);
 
       uploadPromise.then(function(imageUrl) {
-        return db.collection('marketplace').add({
-          title: title,
-          category: category,
-          price: price,
-          description: desc,
-          phone: phone,
-          whatsapp: whatsapp || null,
-          state: state,
-          address: address || null,
-          imageUrl: imageUrl,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000)
+        return db.collection('marketplace').orderBy('createdAt', 'asc').get().then(function(snapshot) {
+          var count = snapshot.size;
+          if (count >= 200) {
+            var oldest = snapshot.docs[0];
+            return oldest.ref.delete().then(function() {
+              return db.collection('marketplace').add({
+                title: title,
+                category: category,
+                price: price,
+                description: desc,
+                phone: phone,
+                whatsapp: whatsapp || null,
+                state: state,
+                address: address || null,
+                imageUrl: imageUrl,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            });
+          }
+          return db.collection('marketplace').add({
+            title: title,
+            category: category,
+            price: price,
+            description: desc,
+            phone: phone,
+            whatsapp: whatsapp || null,
+            state: state,
+            address: address || null,
+            imageUrl: imageUrl,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
         });
       }).then(function() {
         if (typeof turnstile !== 'undefined') turnstile.reset();

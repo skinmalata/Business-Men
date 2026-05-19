@@ -7,7 +7,7 @@
   <meta name="description" content="Browse buy and sell listings in Nigeria. Post free ads for products, services, jobs, real estate and more. No account needed.">
   <link rel="canonical" href="https://businessmen.com.ng/marketplace.html">
   <link rel="icon" href="bm logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <script defer src="js/nav.js?v=3"></script>
 </head>
 <body>
@@ -16,7 +16,7 @@
   <section class="marketplace-hero">
     <div class="container">
       <h1>Marketplace</h1>
-      <p style="margin-bottom:20px">Buy, sell, and trade — free ads, no account needed. Listings expire in 48 hours.</p>
+      <p style="margin-bottom:20px">Buy, sell, and trade — free ads, no account needed.</p>
       <div class="marketplace-hero-search" role="search">
         <label for="marketplaceCat" class="sr-only">Select category</label>
         <select id="marketplaceCat" aria-label="Select category">
@@ -67,6 +67,7 @@
     </div>
 
     <div class="marketplace-grid" id="adGrid"></div>
+    <div id="mpPagination" class="pagination"></div>
   </main>
 
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -74,6 +75,8 @@
   <script src="js/firebase-config.js"></script>
   <script>
     var allAds = [];
+    var mpCurrentPage = 1;
+    var MP_ITEMS_PER_PAGE = 20;
 
     function formatPrice(price) {
       var p = price.replace(/,/g, '').trim();
@@ -88,7 +91,7 @@
       var mins = Math.floor(diff / 60000);
       if (mins < 60) return mins + 'm ago';
       var hours = Math.floor(mins / 60);
-      if (hours < 48) return hours + 'h ago';
+      if (hours < 24) return hours + 'h ago';
       var days = Math.floor(hours / 24);
       return days + 'd ago';
     }
@@ -101,12 +104,19 @@
 
     function renderAds(ads) {
       var grid = document.getElementById('adGrid');
+      var totalPages = Math.max(1, Math.ceil(ads.length / MP_ITEMS_PER_PAGE));
+      if (mpCurrentPage > totalPages) mpCurrentPage = totalPages;
+
+      var start = (mpCurrentPage - 1) * MP_ITEMS_PER_PAGE;
+      var pageItems = ads.slice(start, start + MP_ITEMS_PER_PAGE);
+
       document.getElementById('resultCount').textContent = ads.length + ' listing' + (ads.length !== 1 ? 's' : '');
       if (ads.length === 0) {
         grid.innerHTML = '<div class="empty-marketplace"><h3>No listings found</h3><p>Try a different search or <a href="post-ad.html" style="color:#e94560;font-weight:600">post an ad</a>.</p></div>';
+        document.getElementById('mpPagination').innerHTML = '';
         return;
       }
-      grid.innerHTML = ads.map(function(ad) {
+      grid.innerHTML = pageItems.map(function(ad) {
         var imgHtml = ad.imageUrl
           ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
           : '<div class="marketplace-card-img-placeholder">No photo</div>';
@@ -126,19 +136,65 @@
           '</a>'
         );
       }).join('');
+
+      renderMpPagination(ads.length, totalPages);
     }
 
-    function filterAds() {
+    function renderMpPagination(total, totalPages) {
+      var container = document.getElementById('mpPagination');
+      if (total <= MP_ITEMS_PER_PAGE) {
+        container.innerHTML = '';
+        return;
+      }
+
+      var html = '';
+      html += '<button onclick="goToMpPage(' + (mpCurrentPage - 1) + ')" ' + (mpCurrentPage <= 1 ? 'disabled' : '') + '>&larr; Prev</button>';
+
+      var startPage = Math.max(1, mpCurrentPage - 2);
+      var endPage = Math.min(totalPages, mpCurrentPage + 2);
+
+      if (startPage > 1) {
+        html += '<button onclick="goToMpPage(1)">1</button>';
+        if (startPage > 2) html += '<span class="page-info">...</span>';
+      }
+
+      for (var i = startPage; i <= endPage; i++) {
+        html += '<button onclick="goToMpPage(' + i + ')" class="' + (i === mpCurrentPage ? 'active' : '') + '">' + i + '</button>';
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<span class="page-info">...</span>';
+        html += '<button onclick="goToMpPage(' + totalPages + ')">' + totalPages + '</button>';
+      }
+
+      html += '<button onclick="goToMpPage(' + (mpCurrentPage + 1) + ')" ' + (mpCurrentPage >= totalPages ? 'disabled' : '') + '>Next &rarr;</button>';
+
+      container.innerHTML = html;
+    }
+
+    function goToMpPage(page) {
+      var ads = getFilteredAds();
+      var totalPages = Math.max(1, Math.ceil(ads.length / MP_ITEMS_PER_PAGE));
+      if (page < 1 || page > totalPages) return;
+      mpCurrentPage = page;
+      renderAds(ads);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getFilteredAds() {
       var search = document.getElementById('searchInput').value.toLowerCase().trim();
       var cat = document.getElementById('categoryFilter').value;
 
-      var filtered = allAds.filter(function(ad) {
+      return allAds.filter(function(ad) {
         if (cat !== 'all' && ad.category !== cat) return false;
         if (search && ad.title.toLowerCase().indexOf(search) === -1 && ad.description.toLowerCase().indexOf(search) === -1) return false;
         return true;
       });
+    }
 
-      renderAds(filtered);
+    function filterAds() {
+      mpCurrentPage = 1;
+      renderAds(getFilteredAds());
     }
 
     function heroMarketplaceSearch() {
@@ -151,8 +207,11 @@
       filterAds();
     }
 
+    window.goToMpPage = goToMpPage;
+    window.heroMarketplaceSearch = heroMarketplaceSearch;
+
     db.collection('marketplace')
-      .where('expiresAt', '>', new Date())
+      .orderBy('createdAt', 'desc')
       .onSnapshot(function(snapshot) {
         allAds = [];
         snapshot.forEach(function(doc) {

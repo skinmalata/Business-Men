@@ -79,7 +79,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <script defer src="js/nav.js?v=3"></script>
 </head>
 <body>
@@ -208,7 +208,7 @@
       <div class="container">
         <div class="marketplace-promo-inner">
           <h2>Buy &amp; Sell on BusinessMen Marketplace</h2>
-          <p>Post free ads for products, services, jobs, and more. No account needed. Listings stay live for 48 hours.</p>
+          <p>Post free ads for products, services, jobs, and more. No account needed. Listings stay live until the marketplace limit is reached.</p>
           <div class="marketplace-promo-actions">
             <a href="marketplace.html" class="btn-primary">Browse Marketplace</a>
             <a href="post-ad.html" class="btn-outline">Post a Free Ad</a>
@@ -287,6 +287,14 @@
           </div>
         </div>
         <div class="footer-col">
+          <h4>Top Cities</h4>
+          <a href="listing.html?city=Lagos">Lagos</a>
+          <a href="listing.html?city=Abuja FCT">Abuja</a>
+          <a href="listing.html?city=Rivers">Port Harcourt</a>
+          <a href="listing.html?city=Kano">Kano</a>
+          <a href="listing.html?city=Oyo">Ibadan</a>
+        </div>
+        <div class="footer-col">
           <h4>Business</h4>
           <a href="claim.html">Edit Your Business</a>
           <a href="getlisted.html">Add a Listing</a>
@@ -353,7 +361,7 @@
       var grid = document.getElementById('homeMarketplaceGrid');
       if (!grid) return;
       db.collection('marketplace')
-        .where('expiresAt', '>', new Date())
+        .orderBy('createdAt', 'desc')
         .get()
         .then(function(snapshot) {
           if (snapshot.empty) { grid.innerHTML = ''; return; }

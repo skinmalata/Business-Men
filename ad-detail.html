@@ -6,7 +6,7 @@
   <title>Ad Detail - BusinessMen Marketplace</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="bm logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <script defer src="js/nav.js?v=3"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
@@ -206,13 +206,6 @@
         }
 
         var ad = doc.data();
-        var now = new Date();
-        var expires = ad.expiresAt ? ad.expiresAt.toDate() : null;
-
-        if (expires && expires < now) {
-          container.innerHTML = '<div class="ad-detail-expired"><h3>This ad has expired</h3><p>Listings are active for 48 hours.</p><a href="marketplace.html" class="btn-primary">Browse Marketplace</a></div>';
-          return;
-        }
 
         var imgHtml = ad.imageUrl
           ? '<img class="ad-detail-img" src="' + ad.imageUrl + '" alt="' + escapeHtml(ad.title) + '">'
