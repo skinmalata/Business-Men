@@ -1,26 +1,14 @@
 let allData = [];
 let filteredData = [];
-let currentCategory = 'hotels';
+let currentCategory = 'all';
 let currentPage = 1;
 const ITEMS_PER_PAGE = 20;
 let searchTimeout = null;
 
-const DATA_FILES = {
-  hotels: 'data/nigeria_hotels.json',
-  hospitals: 'data/nigeria_hospitals.json',
-  schools: 'data/nigeria_schools.json',
-  agriculture: 'data/nigeria_agriculture.json',
-  transportation: 'data/nigeria_transportation.json',
-  shopping: 'data/nigeria_shopping.json',
-  business: 'data/nigeria_business.json',
-  realestate: 'data/nigeria_realestate.json',
-  oilgas: 'data/nigeria_oilgas.json',
-  construction: 'data/nigeria_construction.json',
-  automobile: 'data/nigeria_automobile.json',
-  food: 'data/nigeria_food.json'
-};
+const CONSOLIDATED_DATA_FILE = 'data/nigeria_all_businesses.json';
 
 const CATEGORY_NAMES = {
+  all: { label: 'All', title: 'All Businesses in Nigeria', desc: 'Browse all businesses across Nigeria. Search by name, city, or service.' },
   hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities. Browse contact info, addresses, and services.' },
   hospitals: { label: 'Hospitals', title: 'Hospitals in Nigeria', desc: 'Find hospitals, medical centres, and healthcare providers across Nigeria. Browse contact info and services.' },
   schools: { label: 'Schools', title: 'Schools & Universities in Nigeria', desc: 'Find schools, universities, colleges, and educational institutions across all Nigerian states.' },
@@ -32,21 +20,47 @@ const CATEGORY_NAMES = {
   oilgas: { label: 'Oil & Gas', title: 'Oil & Gas Companies in Nigeria', desc: 'Find oil and gas companies, petroleum marketers, and energy service providers across all Nigerian states.' },
   construction: { label: 'Construction', title: 'Construction Companies in Nigeria', desc: 'Find construction companies, building contractors, and civil engineering firms across all Nigerian states.' },
   automobile: { label: 'Automobile', title: 'Automobile Companies in Nigeria', desc: 'Find automobile dealers, car manufacturers, auto repair shops, and automotive service providers across all Nigerian states.' },
-  food: { label: 'Food & Restaurants', title: 'Food & Restaurants in Nigeria', desc: 'Find restaurants, food companies, caterers, bakeries, and food processing companies across all Nigerian states.' }
+  food: { label: 'Food & Restaurants', title: 'Food & Restaurants in Nigeria', desc: 'Find restaurants, food companies, caterers, bakeries, and food processing companies across all Nigerian states.' },
+  general: { label: 'General', title: 'Other Businesses in Nigeria', desc: 'Find other businesses and services across Nigeria.' }
+};
+
+const CATEGORY_MAP = {
+  'all': 'all',
+  'hotels': 'hotel',
+  'hospitals': 'hospital',
+  'schools': 'school',
+  'agriculture': 'agriculture',
+  'transportation': 'general',
+  'shopping': 'shopping',
+  'business': 'business',
+  'realestate': 'realestate',
+  'oilgas': 'oilgas',
+  'construction': 'construction',
+  'automobile': 'automobile',
+  'food': 'restaurant',
+  'general': 'general'
 };
 
 async function loadData(category) {
-  currentCategory = category || 'hotels';
-  const file = DATA_FILES[currentCategory] || DATA_FILES.hotels;
+  currentCategory = category || 'all';
   showSkeletons();
   try {
-    const resp = await fetch(file);
-    allData = await resp.json();
+    const resp = await fetch(CONSOLIDATED_DATA_FILE);
+    const allBusinesses = await resp.json();
+    
+    // Filter by category if not 'all'
+    const dataCat = CATEGORY_MAP[currentCategory] || currentCategory;
+    if (currentCategory === 'all') {
+      allData = allBusinesses;
+    } else {
+      allData = allBusinesses.filter(b => (b.category || '').toLowerCase() === dataCat);
+    }
+    
     const countEl = document.getElementById('totalCount');
     if (countEl) countEl.textContent = allData.length;
     const labelEl = document.getElementById('categoryLabel');
     if (labelEl) {
-      const labels = { hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings', business: 'business listings', realestate: 'real estate listings', oilgas: 'oil & gas listings', construction: 'construction listings', automobile: 'automobile listings', food: 'food & restaurants listed' };
+      const labels = { all: 'businesses listed', hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings', business: 'business listings', realestate: 'real estate listings', oilgas: 'oil & gas listings', construction: 'construction listings', automobile: 'automobile listings', food: 'food & restaurants listed', general: 'other listings' };
       labelEl.textContent = labels[currentCategory] || 'listings';
     }
     const cityCountEl = document.getElementById('cityCount');
@@ -659,38 +673,41 @@ async function loadListingDetail() {
 async function loadFeatured() {
   const grid = document.getElementById('featuredGrid');
   if (!grid) return;
-  const entries = Object.entries(DATA_FILES).filter(([k]) => k !== 'business');
-  const results = [];
-  const promises = entries.map(async ([cat, file]) => {
-    try {
-      const resp = await fetch(file);
-      if (!resp.ok) return null;
-      const data = await resp.json();
-      const items = Array.isArray(data) ? data : [];
-      if (!items.length) return null;
-      const verifiedItems = items.filter(d => d.verified === true);
-      const pool = verifiedItems.length > 0 ? verifiedItems : items;
+  try {
+    const resp = await fetch(CONSOLIDATED_DATA_FILE);
+    const allBusinesses = await resp.json();
+    
+    const categories = ['hotel', 'hospital', 'school', 'realestate', 'shopping', 'agriculture', 'automobile', 'construction', 'restaurant', 'oilgas'];
+    const results = [];
+    
+    for (const cat of categories) {
+      const catItems = allBusinesses.filter(b => (b.category || '').toLowerCase() === cat);
+      if (!catItems.length) continue;
+      
+      const verifiedItems = catItems.filter(d => d.verified === true);
+      const pool = verifiedItems.length > 0 ? verifiedItems : catItems;
       const pick = pool[Math.floor(Math.random() * pool.length)];
       const id = pick.url?.match(/(\d+)\/$/)?.[1] || '';
-      if (id) return { cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified };
-    } catch (e) { return null; }
-  });
-  const fetched = await Promise.all(promises);
-  fetched.forEach(item => { if (item) results.push(item); });
-  if (!results.length) return;
-  results.sort(() => Math.random() - 0.5);
-  grid.innerHTML = results.map(item => `
-    <a href="listing.html?cat=${item.cat}&id=${item.id}" class="featured-card">
-      <span class="featured-badge">Featured</span>
-      <div class="featured-card-body">
-        <h3>${item.name || 'Unnamed'} ${item.verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''}</h3>
-        <div class="featured-city">${item.city || ''}</div>
-        ${item.phone ? `<span class="featured-phone">${item.phone}</span>` : ''}
-        ${item.description ? `<p class="featured-desc">${item.description}</p>` : ''}
-        <span class="featured-view">View Details</span>
-      </div>
-    </a>
-  `).join('');
+      if (id) results.push({ cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified });
+    }
+    
+    if (!results.length) return;
+    results.sort(() => Math.random() - 0.5);
+    grid.innerHTML = results.map(item => `
+      <a href="listing.html?cat=${item.cat}&id=${item.id}" class="featured-card">
+        <span class="featured-badge">Featured</span>
+        <div class="featured-card-body">
+          <h3>${item.name || 'Unnamed'} ${item.verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''}</h3>
+          <div class="featured-city">${item.city || ''}</div>
+          ${item.phone ? `<span class="featured-phone">${item.phone}</span>` : ''}
+          ${item.description ? `<p class="featured-desc">${item.description}</p>` : ''}
+          <span class="featured-view">View Details</span>
+        </div>
+      </a>
+    `).join('');
+  } catch (e) {
+    console.error('Failed to load featured:', e);
+  }
 }
 
 function submitClaim() {
