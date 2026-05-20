@@ -8,6 +8,7 @@
     if (path.endsWith('marketplace.html')) return 'marketplace';
     if (path.endsWith('post-ad.html')) return 'marketplace';
     if (path.endsWith('ad-detail.html')) return 'marketplace';
+    if (path.includes('blog')) return 'blog';
     return 'home';
   }
 
@@ -48,6 +49,7 @@
                 '</div>' +
               '</div>' +
               '<a href="marketplace.html"' + (active === 'marketplace' ? ' class="active"' : '') + '>Marketplace</a>' +
+              '<a href="blog/"' + (active === 'blog' ? ' class="active"' : '') + '>Blog</a>' +
               '<a href="getlisted.html"' + (active === 'getlisted' ? ' class="active"' : '') + '>Get Listed</a>' +
               '<a href="claim.html"' + (active === 'contact' ? ' class="active"' : '') + '>Contact</a>' +
             '</div>' +
