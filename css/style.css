@@ -115,6 +115,18 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
   color: white; outline: none; min-width: 0;
 }
 .hero-search input::placeholder { color: rgba(148,163,184,0.6); }
+
+/* Override for light background contexts (listing page) */
+.listing-main .hero-search {
+  background: white; border: 1px solid #e2e8f0; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.listing-main .hero-search select {
+  background: #f8fafc; color: #1e293b; border-right-color: #e2e8f0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.listing-main .hero-search select option { background: white; color: #1e293b; }
+.listing-main .hero-search input { color: #0f172a; }
+.listing-main .hero-search input::placeholder { color: #94a3b8; }
 .hero-search button {
   padding: 18px 40px; background: linear-gradient(135deg, #e94560, #d63851); color: white;
   border: none; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;
