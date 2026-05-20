@@ -36,7 +36,6 @@
               '<div class="nav-dropdown">' +
                 '<span class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></span>' +
                 '<div class="nav-dropdown-menu">' +
-                  '<a href="' + p + 'listing.html?cat=all"><strong>All Businesses</strong></a>' +
                   '<a href="' + p + 'listing.html?cat=hotels">Hotels</a>' +
                   '<a href="' + p + 'listing.html?cat=hospitals">Hospitals</a>' +
                   '<a href="' + p + 'listing.html?cat=schools">Schools</a>' +
