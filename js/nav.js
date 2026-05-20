@@ -83,6 +83,12 @@
         e.stopPropagation();
         this.parentElement.classList.toggle('open');
       });
+      document.addEventListener('click', function(e) {
+        var dropdown = container.querySelector('.nav-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+          dropdown.classList.remove('open');
+        }
+      });
     }
   }
 
