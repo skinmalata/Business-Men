@@ -7,7 +7,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-YZ96VCVFWN');
   </script>
   <meta charset="UTF-8">
@@ -44,9 +43,27 @@
   }
   </script>
 
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="stylesheet" href="css/style.css?v=15">
   <script defer src="js/nav.js?v=8"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    .listing-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; margin-top: 24px; }
+    .listing-sidebar { position: sticky; top: 88px; align-self: start; max-height: calc(100vh - 100px); overflow-y: auto; }
+    .sidebar-title { font-size: 0.85rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e94560; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: #475569; font-size: 0.88rem; font-weight: 500; text-decoration: none; transition: all 0.15s; }
+    .sidebar-link:hover { background: rgba(233,69,96,0.06); color: #e94560; }
+    .sidebar-link.active { background: rgba(233,69,96,0.1); color: #e94560; font-weight: 600; }
+    .sidebar-link .cat-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+    .sidebar-toggle { display: none; width: 100%; padding: 12px 16px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; font-weight: 600; color: #0f172a; cursor: pointer; margin-bottom: 16px; text-align: left; }
+    .sidebar-toggle svg { width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; }
+    @media (max-width: 900px) {
+      .listing-layout { grid-template-columns: 1fr; }
+      .listing-sidebar { position: static; display: none; }
+      .listing-sidebar.open { display: block; }
+      .sidebar-toggle { display: flex; align-items: center; }
+    }
+  </style>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -55,41 +72,70 @@
     <div class="container">
       <!-- Listing grid view (when no id param) -->
       <div id="listView">
-        <div class="hero-search" role="search" style="margin: 24px 0;">
-          <label for="heroCity" class="sr-only">Select city</label>
-          <select id="heroCity" aria-label="Select city">
-            <option value="">All States</option>
-            <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>Abuja FCT</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
-          </select>
-          <label for="heroQuery" class="sr-only">Search businesses</label>
-          <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses" oninput="handleSearch(this.value)">
-          <button onclick="heroSearch()" aria-label="Search">Search</button>
+
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          Browse Categories
+        </button>
+
+        <div class="listing-layout">
+          <aside class="listing-sidebar" id="listingSidebar">
+            <div class="sidebar-title">Categories</div>
+            <nav class="sidebar-nav">
+              <a href="listing.html?cat=all" class="sidebar-link" data-cat="all"><span class="cat-icon">&#127758;</span> All Businesses</a>
+              <a href="listing.html?cat=hotels" class="sidebar-link" data-cat="hotels"><span class="cat-icon">&#127976;</span> Hotels</a>
+              <a href="listing.html?cat=hospitals" class="sidebar-link" data-cat="hospitals"><span class="cat-icon">&#127973;</span> Hospitals</a>
+              <a href="listing.html?cat=schools" class="sidebar-link" data-cat="schools"><span class="cat-icon">&#128218;</span> Schools</a>
+              <a href="listing.html?cat=agriculture" class="sidebar-link" data-cat="agriculture"><span class="cat-icon">&#127806;</span> Agriculture</a>
+              <a href="listing.html?cat=transportation" class="sidebar-link" data-cat="transportation"><span class="cat-icon">&#128666;</span> Transport</a>
+              <a href="listing.html?cat=shopping" class="sidebar-link" data-cat="shopping"><span class="cat-icon">&#128717;</span> Shopping</a>
+              <a href="listing.html?cat=business" class="sidebar-link" data-cat="business"><span class="cat-icon">&#128188;</span> Business</a>
+              <a href="listing.html?cat=realestate" class="sidebar-link" data-cat="realestate"><span class="cat-icon">&#127968;</span> Real Estate</a>
+              <a href="listing.html?cat=oilgas" class="sidebar-link" data-cat="oilgas"><span class="cat-icon">&#9981;</span> Oil &amp; Gas</a>
+              <a href="listing.html?cat=construction" class="sidebar-link" data-cat="construction"><span class="cat-icon">&#127959;</span> Construction</a>
+              <a href="listing.html?cat=automobile" class="sidebar-link" data-cat="automobile"><span class="cat-icon">&#128663;</span> Automobile</a>
+              <a href="listing.html?cat=food" class="sidebar-link" data-cat="food"><span class="cat-icon">&#127828;</span> Food &amp; Restaurants</a>
+            </nav>
+          </aside>
+
+          <div class="listing-main">
+            <div class="hero-search" role="search" style="margin: 0 0 16px;">
+              <label for="heroCity" class="sr-only">Select city</label>
+              <select id="heroCity" aria-label="Select city">
+                <option value="">All States</option>
+                <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>Abuja FCT</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
+              </select>
+              <label for="heroQuery" class="sr-only">Search businesses</label>
+              <input type="text" id="heroQuery" placeholder="Search by name or keyword..." aria-label="Search businesses" oninput="handleSearch(this.value)">
+              <button onclick="heroSearch()" aria-label="Search">Search</button>
+            </div>
+            <div class="toolbar">
+              <label for="cityFilter" class="sr-only">Filter by state</label>
+              <select id="cityFilter" onchange="applyFilters()" aria-label="Filter by state">
+                <option value="">All States</option>
+                <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>Abuja FCT</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
+              </select>
+              <label for="sortFilter" class="sr-only">Sort by</label>
+              <select id="sortFilter" onchange="handleSort(this.value)" aria-label="Sort by">
+                <option value="">Default Order</option>
+                <option value="verified">Verified First</option>
+                <option value="name">Name A-Z</option>
+                <option value="city">City</option>
+              </select>
+              <span class="results-count" id="resultsCount" style="margin-left:auto;color:#64748b;font-size:0.85rem;"></span>
+            </div>
+            <div id="skeletonGrid" class="skeleton-grid" style="display:none;">
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+              <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+            </div>
+            <div id="listingGrid" class="listing-grid" role="list" aria-label="Business listings"></div>
+            <div id="pagination" class="pagination"></div>
+          </div>
         </div>
-        <div class="toolbar">
-          <label for="cityFilter" class="sr-only">Filter by state</label>
-          <select id="cityFilter" onchange="applyFilters()" aria-label="Filter by state">
-            <option value="">All States</option>
-            <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>Abuja FCT</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
-          </select>
-          <label for="sortFilter" class="sr-only">Sort by</label>
-          <select id="sortFilter" onchange="handleSort(this.value)" aria-label="Sort by">
-            <option value="">Default Order</option>
-            <option value="verified">Verified First</option>
-            <option value="name">Name A-Z</option>
-            <option value="city">City</option>
-          </select>
-          <span class="results-count" id="resultsCount" style="margin-left:auto;color:#64748b;font-size:0.85rem;"></span>
-        </div>
-        <div id="skeletonGrid" class="skeleton-grid" style="display:none;">
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-          <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-        </div>
-        <div id="listingGrid" class="listing-grid" role="list" aria-label="Business listings"></div>
-        <div id="pagination" class="pagination"></div>
       </div>
       <!-- Single listing detail view (when id param present) -->
       <div id="listingDetail" class="listing-detail" itemscope itemtype="https://schema.org/LocalBusiness" style="display:none;"></div>
@@ -136,7 +182,10 @@
           <h4>Business</h4>
           <a href="claim.html">Edit Your Business</a>
           <a href="getlisted.html">Add a Listing</a>
-          <a href="marketplace.html">Marketplace</a>`n          <a href="blog/">Blog</a>`n          <a href=".">Home</a>
+          <a href="marketplace.html">Marketplace</a>
+          <a href="blog/">Blog</a>
+          <a href="contact.html">Contact</a>
+          <a href=".">Home</a>
         </div>
         <div class="footer-col">
           <h4>Legal</h4>
@@ -168,10 +217,27 @@
       for (const [w,c] of Object.entries(kw)) { if (ql.includes(w)) { params.set('cat', c); break; } }
       window.location.href = 'listing.html?' + params.toString();
     }
-    document.addEventListener('DOMContentLoaded', () => {
+    function toggleSidebar() {
+      document.getElementById('listingSidebar').classList.toggle('open');
+    }
+    function highlightSidebar() {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('cat') || 'all';
+      var links = document.querySelectorAll('.sidebar-link');
+      links.forEach(function(link) {
+        if (link.getAttribute('data-cat') === cat) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
       loadListingDetail();
+      highlightSidebar();
     });
     window.heroSearch = heroSearch;
+    window.toggleSidebar = toggleSidebar;
   </script>
 </body>
 </html>
