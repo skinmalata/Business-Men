@@ -81,7 +81,17 @@ function hideSkeletons() {
 }
 
 function normalizeCityDisplay(city) {
-  return city.replace(/ State$/i, '');
+  if (!city) return '';
+  return city.replace(/\s*State\s*$/i, '').trim();
+}
+
+function normalizeStateMatch(dataCity, filterValue) {
+  if (!dataCity || !filterValue) return false;
+  const normalized = normalizeCityDisplay(dataCity);
+  if (normalized === filterValue) return true;
+  if (filterValue === 'Abuja FCT' && (normalized.includes('Abuja') || normalized.includes('FCT') || normalized.toLowerCase().includes('abuja fct'))) return true;
+  if (normalized.includes(filterValue) || filterValue.includes(normalized)) return true;
+  return false;
 }
 
 function populateCityFilter() {
@@ -96,23 +106,33 @@ function handleSearch(query) {
   searchTimeout = setTimeout(() => {
     const grid = document.getElementById('listingGrid');
     if (!grid) return;
-    query = query.trim().toLowerCase();
+    query = (query || '').trim().toLowerCase();
+
+    if (query.length === 0) {
+      filteredData = [];
+      currentPage = 1;
+      applyFilters();
+      return;
+    }
 
     filteredData = allData.filter(item => {
       const name = (item.name || '').toLowerCase();
       const city = (item.city || '').toLowerCase();
       const desc = (item.description || '').toLowerCase();
       const phone = (item.phone || '');
-      return `${name} ${city} ${desc} ${phone}`.includes(query);
+      const address = (item.address || '').toLowerCase();
+      const searchable = `${name} ${city} ${desc} ${phone} ${address}`;
+      const terms = query.split(/\s+/);
+      return terms.every(term => searchable.includes(term));
     });
 
-    if (filteredData.length === 0 && query.length > 0) {
+    if (filteredData.length === 0) {
       const kw = { hotel:'hotels',resort:'hotels',accommodation:'hotels',hospital:'hospitals',clinic:'hospitals',medical:'hospitals',school:'schools',university:'schools',college:'schools',education:'schools',agriculture:'agriculture',farm:'agriculture',farming:'agriculture',transport:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',shop:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',business:'business',consulting:'business','real estate':'realestate',property:'realestate',oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',construction:'construction',builder:'construction',building:'construction',auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',food:'food',restaurant:'food',bakery:'food' };
       for (const [w,c] of Object.entries(kw)) {
         if (query.includes(w) && c !== currentCategory) {
           const params = new URLSearchParams(window.location.search);
           params.set('cat', c);
-          if (query) params.set('q', query);
+          params.set('q', query);
           window.location.href = 'listing.html?' + params.toString();
           return;
         }
@@ -140,7 +160,7 @@ function applyFilters() {
   let results = filteredData.length ? filteredData : allData;
 
   if (cityFilter && cityFilter.value) {
-    results = results.filter(d => normalizeCityDisplay(d.city) === cityFilter.value);
+    results = results.filter(d => normalizeStateMatch(d.city, cityFilter.value));
   }
 
   if (sortBy && sortBy.value) {
@@ -599,18 +619,34 @@ async function loadListingDetail() {
     if (listView) listView.style.display = '';
     if (detailView) detailView.style.display = 'none';
     await loadListings(cat);
-    if (query || cityParam) {
-      if (query) {
-        const el = document.getElementById('heroQuery');
-        if (el) el.value = query;
-      }
-      if (cityParam) {
-        const el = document.getElementById('cityFilter');
-        if (el) el.value = cityParam;
-      }
-      handleSearch(query);
-      if (cityParam) applyFilters();
+
+    if (query) {
+      const el = document.getElementById('heroQuery');
+      if (el) el.value = query;
     }
+    if (cityParam) {
+      const el = document.getElementById('cityFilter');
+      if (el) el.value = cityParam;
+    }
+
+    if (query) {
+      filteredData = allData.filter(item => {
+        const name = (item.name || '').toLowerCase();
+        const city = (item.city || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const phone = (item.phone || '');
+        const address = (item.address || '').toLowerCase();
+        const searchable = `${name} ${city} ${desc} ${phone} ${address}`;
+        const terms = query.toLowerCase().split(/\s+/);
+        return terms.every(term => searchable.includes(term));
+      });
+    } else {
+      filteredData = [];
+    }
+
+    currentPage = 1;
+    applyFilters();
+
     if (loading) loading.style.display = 'none';
     return;
   }

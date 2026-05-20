@@ -30,7 +30,7 @@
               '<a href="#about">About</a>' +
               '<a href="services.html"' + (active === 'services' ? ' class="active"' : '') + '>Services</a>' +
               '<div class="nav-dropdown">' +
-                '<a href="#categories" class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></a>' +
+                '<span class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></span>' +
                 '<div class="nav-dropdown-menu">' +
                   '<a href="listing.html?cat=hotels">Hotels</a>' +
                   '<a href="listing.html?cat=hospitals">Hospitals</a>' +
@@ -79,10 +79,8 @@
     var dropdownTrigger = container.querySelector('.nav-dropdown-trigger');
     if (dropdownTrigger) {
       dropdownTrigger.addEventListener('click', function(e) {
-        if (window.innerWidth <= 900) {
-          e.preventDefault();
-          this.parentElement.classList.toggle('open');
-        }
+        e.stopPropagation();
+        this.parentElement.classList.toggle('open');
       });
     }
   }
