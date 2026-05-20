@@ -1,38 +1,43 @@
 import json
-import os
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-os.chdir("..")
+# Load existing consolidated data
+with open("data/nigeria_all_businesses.json", "r", encoding="utf-8") as f:
+    existing_data = json.load(f)
 
-# Load existing hotels data
-existing = []
-for f in ["data/nigeria_hotels.json", "data/nigeria_hotels_scraped.json"]:
-    if os.path.exists(f):
-        data = json.load(open(f, encoding="utf-8"))
-        existing.extend(data)
-        print(f"Loaded {len(data)} from {f}")
+print(f"Existing businesses: {len(existing_data)}")
 
-# Load all businesses
-all_bus = json.load(open("data/nigeria_all_businesses.json", encoding="utf-8"))
+# Load new Hotels.ng data
+with open("data/nigeria_hotels_ng.json", "r", encoding="utf-8") as f:
+    new_hotels = json.load(f)
 
-# Merge new hotels into all businesses
-seen = set(b["name"].lower().strip() for b in all_bus)
-new_count = 0
-for item in existing:
-    name_key = item.get("name", "").lower().strip()
-    if name_key and name_key not in seen:
-        item.setdefault("category", "hotel")
-        all_bus.append(item)
-        seen.add(name_key)
-        new_count += 1
+print(f"New Hotels.ng entries: {len(new_hotels)}")
 
-print(f"\nAdded {new_count} new hotels to consolidated dataset")
-print(f"Total businesses: {len(all_bus)}")
+# Get existing hotel names for dedup
+existing_names = set()
+for item in existing_data:
+    if item.get("category") == "hotel":
+        existing_names.add(item.get("name", "").lower().strip())
 
-# Save
-with open("data/nigeria_all_businesses.json", "w", encoding="utf-8") as f:
-    json.dump(all_bus, f, indent=2, ensure_ascii=False)
+print(f"Existing hotels: {len(existing_names)}")
+
+# Merge new hotels (skip duplicates)
+merged_count = 0
+for hotel in new_hotels:
+    name_key = hotel.get("name", "").lower().strip()
+    if name_key not in existing_names:
+        existing_data.append(hotel)
+        existing_names.add(name_key)
+        merged_count += 1
+
+print(f"Merged {merged_count} new hotels")
+print(f"Total businesses after merge: {len(existing_data)}")
 
 # Count hotels
-hotel_count = sum(1 for b in all_bus if b.get("category") == "hotel")
-print(f"Total hotels: {hotel_count}")
+total_hotels = sum(1 for item in existing_data if item.get("category") == "hotel")
+print(f"Total hotels: {total_hotels}")
+
+# Save merged data
+with open("data/nigeria_all_businesses.json", "w", encoding="utf-8") as f:
+    json.dump(existing_data, f, indent=2, ensure_ascii=False)
+
+print("Saved merged dataset to data/nigeria_all_businesses.json")
