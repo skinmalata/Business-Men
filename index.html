@@ -79,7 +79,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <script defer src="js/nav.js?v=5"></script>
 </head>
 <body>
@@ -319,7 +319,7 @@
   <script defer src="js/app.js"></script>
   <script defer>
     function heroSearch() {
-      const query = document.getElementById('heroQuery').value.trim().toLowerCase();
+      const query = document.getElementById('heroQuery').value.trim();
       const city = document.getElementById('heroCity').value;
       const params = new URLSearchParams();
       const kw = {
@@ -337,8 +337,9 @@
         food:'food',restaurant:'food',restaurants:'food',caterer:'food',bakery:'food'
       };
       let cat = 'hotels';
+      const ql = query.toLowerCase();
       for (const [word,c] of Object.entries(kw)) {
-        if (query.includes(word)) { cat = c; break; }
+        if (ql.includes(word)) { cat = c; break; }
       }
       if (query) params.set('q', query);
       if (city) params.set('city', city);

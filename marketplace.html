@@ -7,7 +7,7 @@
   <meta name="description" content="Browse buy and sell listings in Nigeria. Post free ads for products, services, jobs, real estate and more. No account needed.">
   <link rel="canonical" href="https://businessmen.com.ng/marketplace.html">
   <link rel="icon" href="bm logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <script defer src="js/nav.js?v=5"></script>
 </head>
 <body>
@@ -187,7 +187,18 @@
 
       return allAds.filter(function(ad) {
         if (cat !== 'all' && ad.category !== cat) return false;
-        if (search && ad.title.toLowerCase().indexOf(search) === -1 && ad.description.toLowerCase().indexOf(search) === -1) return false;
+        if (search) {
+          var title = (ad.title || '').toLowerCase();
+          var desc = (ad.description || '').toLowerCase();
+          var state = (ad.state || '').toLowerCase();
+          var address = (ad.address || '').toLowerCase();
+          var phone = (ad.phone || '').toLowerCase();
+          var searchable = title + ' ' + desc + ' ' + state + ' ' + address + ' ' + phone;
+          var terms = search.split(/\s+/);
+          for (var i = 0; i < terms.length; i++) {
+            if (searchable.indexOf(terms[i]) === -1) return false;
+          }
+        }
         return true;
       });
     }
@@ -198,10 +209,11 @@
     }
 
     function heroMarketplaceSearch() {
-      var q = document.getElementById('marketplaceQuery').value;
+      var q = document.getElementById('marketplaceQuery').value.trim();
       var cat = document.getElementById('marketplaceCat').value;
       document.getElementById('searchInput').value = q;
       document.getElementById('categoryFilter').value = cat;
+      mpCurrentPage = 1;
       document.getElementById('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' });
       document.getElementById('searchInput').focus();
       filterAds();
