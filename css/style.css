@@ -19,25 +19,25 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .navbar {
   background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(226,232,240,0.6); padding: 0; position: sticky; top: 0; z-index: 100;
-  height: 64px; display: flex; align-items: center;
+  height: 64px; display: flex; align-items: center; overflow: visible;
 }
 .navbar .container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 .logo { font-size: 1.35rem; font-weight: 800; color: #0f172a; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; }
 .logo span { color: #e94560; }
-.nav-scroll { display: flex; gap: 4px; align-items: center; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 0 8px; flex: 1; justify-content: flex-end; }
+.nav-scroll { display: flex; gap: 4px; align-items: center; overflow: visible; scrollbar-width: none; -ms-overflow-style: none; padding: 0 8px; flex: 1; justify-content: flex-end; }
 .nav-scroll::-webkit-scrollbar { display: none; }
 
 .nav-dropdown { position: relative; }
 .nav-dropdown > a { cursor: pointer; }
 .nav-dropdown-menu {
-  display: none;
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px;
+  display: none !important;
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
   background: white; border: 1px solid #e8ecf4; border-radius: 12px; padding: 8px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12); min-width: 170px;
   z-index: 9999;
 }
 .nav-dropdown:hover .nav-dropdown-menu,
-.nav-dropdown.open .nav-dropdown-menu { display: block; }
+.nav-dropdown.open .nav-dropdown-menu { display: block !important; }
 .nav-dropdown-menu::before {
   content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
   width: 12px; height: 12px; background: white; border-left: 1px solid #e8ecf4; border-top: 1px solid #e8ecf4;
@@ -507,8 +507,8 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 
 /* === RESPONSIVE === */
 @media (hover: none) and (pointer: coarse) {
-  .nav-dropdown-menu { display: none; }
-  .nav-dropdown.open .nav-dropdown-menu { display: block; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0 0 0 16px; margin: 0; min-width: auto; background: transparent; }
+  .nav-dropdown-menu { display: none !important; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block !important; position: static; transform: none; box-shadow: none; border: none; padding: 0 0 0 16px; margin: 0; min-width: auto; background: transparent; }
   .nav-dropdown-menu::before { display: none; }
   .nav-dropdown-menu a { padding: 10px 14px; font-size: 0.85rem; color: #475569; }
   .nav-dropdown-trigger { cursor: pointer; }
@@ -533,11 +533,11 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
   .nav-dropdown-trigger { padding: 12px 24px !important; border-radius: 0; color: #1e293b; font-size: 0.9rem; }
   .nav-dropdown-trigger:hover { background: #f8fafc; }
   .nav-dropdown { display: flex; flex-direction: column; }
-  .nav-dropdown-menu { display: none; position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding: 0 0 0 24px; margin: 0; min-width: auto; background: transparent; border-radius: 0; }
+  .nav-dropdown-menu { display: none !important; position: static; transform: none; box-shadow: none; border: none; padding: 0 0 0 24px; margin: 0; min-width: auto; background: transparent; border-radius: 0; }
   .nav-dropdown-menu::before { display: none; }
   .nav-dropdown-menu a { padding: 10px 14px; font-size: 0.85rem; color: #475569; white-space: normal; }
   .nav-dropdown-menu a:hover { background: transparent; color: #e94560; }
-  .nav-dropdown.open .nav-dropdown-menu { display: block; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block !important; }
   .nav-dropdown-trigger { cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px !important; }
   .dropdown-arrow { font-size: 0.7rem; margin-left: 4px; display: inline-block; transition: transform 0.2s; }
   .nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
