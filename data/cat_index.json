@@ -1,0 +1,70 @@
+{
+  "hospital": {
+    "file": "data/cat_hospital.json",
+    "count": 4210
+  },
+  "automobile": {
+    "file": "data/cat_automobile.json",
+    "count": 521
+  },
+  "business": {
+    "file": "data/cat_business.json",
+    "count": 12798
+  },
+  "general": {
+    "file": "data/cat_general.json",
+    "count": 16961
+  },
+  "hotel": {
+    "file": "data/cat_hotel.json",
+    "count": 968
+  },
+  "restaurant": {
+    "file": "data/cat_restaurant.json",
+    "count": 278
+  },
+  "oilgas": {
+    "file": "data/cat_oilgas.json",
+    "count": 4158
+  },
+  "realestate": {
+    "file": "data/cat_realestate.json",
+    "count": 3256
+  },
+  "construction": {
+    "file": "data/cat_construction.json",
+    "count": 5800
+  },
+  "shopping": {
+    "file": "data/cat_shopping.json",
+    "count": 5452
+  },
+  "school": {
+    "file": "data/cat_school.json",
+    "count": 1234
+  },
+  "agriculture": {
+    "file": "data/cat_agriculture.json",
+    "count": 6827
+  },
+  "schools": {
+    "file": "data/cat_schools.json",
+    "count": 6414
+  },
+  "food": {
+    "file": "data/cat_food.json",
+    "count": 1049
+  },
+  "transportation": {
+    "file": "data/cat_transportation.json",
+    "count": 4037
+  },
+  "hospitals": {
+    "file": "data/cat_hospitals.json",
+    "count": 6378
+  },
+  "hotels": {
+    "file": "data/cat_hotels.json",
+    "count": 6435
+  }
+}

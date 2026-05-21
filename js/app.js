@@ -6,6 +6,77 @@ const ITEMS_PER_PAGE = 20;
 let searchTimeout = null;
 
 const CONSOLIDATED_DATA_FILE = 'data/nigeria_all_businesses.json';
+const DATA_CACHE = {};
+
+const CATEGORY_FILE_MAP = {
+  all: 'data/nigeria_all_businesses.json',
+  hotels: ['data/cat_hotel.json', 'data/cat_hotels.json'],
+  hospitals: ['data/cat_hospital.json', 'data/cat_hospitals.json'],
+  schools: ['data/cat_school.json', 'data/cat_schools.json'],
+  agriculture: 'data/cat_agriculture.json',
+  transportation: 'data/cat_transportation.json',
+  shopping: 'data/cat_shopping.json',
+  business: 'data/cat_business.json',
+  realestate: 'data/cat_realestate.json',
+  oilgas: 'data/cat_oilgas.json',
+  construction: 'data/cat_construction.json',
+  automobile: 'data/cat_automobile.json',
+  food: ['data/cat_food.json', 'data/cat_restaurant.json'],
+  general: 'data/cat_general.json'
+};
+
+async function loadCategoryFiles(files) {
+  if (typeof files === 'string') files = [files];
+  const cacheKey = files.join('|');
+  if (DATA_CACHE[cacheKey]) return DATA_CACHE[cacheKey];
+
+  let combined = [];
+  for (const file of files) {
+    try {
+      const resp = await fetch(file);
+      const data = await resp.json();
+      combined = combined.concat(data);
+    } catch (e) {
+      console.warn(`Failed to load ${file}:`, e);
+    }
+  }
+  DATA_CACHE[cacheKey] = combined;
+  return combined;
+}
+
+async function loadData(category) {
+  currentCategory = category || 'all';
+  showSkeletons();
+  try {
+    const files = CATEGORY_FILE_MAP[currentCategory] || CATEGORY_FILE_MAP.general;
+    const allBusinesses = await loadCategoryFiles(files);
+    
+    allData = allBusinesses;
+    
+    const countEl = document.getElementById('totalCount');
+    if (countEl) countEl.textContent = allData.length;
+    const labelEl = document.getElementById('categoryLabel');
+    if (labelEl) {
+      const labels = { all: 'businesses listed', hotels: 'hotels listed', hospitals: 'hospitals listed', schools: 'schools listed', agriculture: 'agriculture listings', transportation: 'transport listings', shopping: 'shopping listings', business: 'business listings', realestate: 'real estate listings', oilgas: 'oil & gas listings', construction: 'construction listings', automobile: 'automobile listings', food: 'food & restaurants listed', general: 'other listings' };
+      labelEl.textContent = labels[currentCategory] || 'listings';
+    }
+    const cityCountEl = document.getElementById('cityCount');
+    if (cityCountEl) {
+      const cities = new Set(allData.map(d => d.city).filter(Boolean));
+      cityCountEl.textContent = cities.size;
+    }
+    const verifiedEl = document.getElementById('statVerified');
+    if (verifiedEl) {
+      const verifiedCount = allData.filter(d => d.verified === true).length;
+      verifiedEl.textContent = verifiedCount;
+    }
+    populateCityFilter();
+    return allData;
+  } catch (e) {
+    console.error('Failed to load data:', e);
+    return [];
+  }
+}
 
 const CATEGORY_NAMES = {
   all: { label: 'All', title: 'All Businesses in Nigeria', desc: 'Browse all businesses across Nigeria. Search by name, city, or service.' },
