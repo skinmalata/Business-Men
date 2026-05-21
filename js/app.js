@@ -9,18 +9,18 @@ const CONSOLIDATED_DATA_FILE = 'data/nigeria_all_businesses.json';
 
 const CATEGORY_NAMES = {
   all: { label: 'All', title: 'All Businesses in Nigeria', desc: 'Browse all businesses across Nigeria. Search by name, city, or service.' },
-  hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities. Browse contact info, addresses, and services.' },
-  hospitals: { label: 'Hospitals', title: 'Hospitals in Nigeria', desc: 'Find hospitals, medical centres, and healthcare providers across Nigeria. Browse contact info and services.' },
-  schools: { label: 'Schools', title: 'Schools & Universities in Nigeria', desc: 'Find schools, universities, colleges, and educational institutions across all Nigerian states.' },
-  agriculture: { label: 'Agriculture', title: 'Agriculture Companies in Nigeria', desc: 'Find agriculture companies, farms, and agribusinesses across Nigeria. Browse contact info and services.' },
-  transportation: { label: 'Transport', title: 'Transportation Companies in Nigeria', desc: 'Find transport, logistics, courier, and shipping companies across Nigeria. Browse contact info and services.' },
-  shopping: { label: 'Shopping', title: 'Shopping & Retail in Nigeria', desc: 'Find online stores, supermarkets, and retail shops across Nigeria. Browse contact info and services.' },
-  business: { label: 'Business', title: 'Business Services in Nigeria', desc: 'Find business services, consulting firms, and professional services across all Nigerian cities.' },
-  realestate: { label: 'Real Estate', title: 'Real Estate Companies in Nigeria', desc: 'Find real estate agents, property developers, estate surveyors, and property managers across all Nigerian cities.' },
-  oilgas: { label: 'Oil & Gas', title: 'Oil & Gas Companies in Nigeria', desc: 'Find oil and gas companies, petroleum marketers, and energy service providers across all Nigerian states.' },
-  construction: { label: 'Construction', title: 'Construction Companies in Nigeria', desc: 'Find construction companies, building contractors, and civil engineering firms across all Nigerian states.' },
-  automobile: { label: 'Automobile', title: 'Automobile Companies in Nigeria', desc: 'Find automobile dealers, car manufacturers, auto repair shops, and automotive service providers across all Nigerian states.' },
-  food: { label: 'Food & Restaurants', title: 'Food & Restaurants in Nigeria', desc: 'Find restaurants, food companies, caterers, bakeries, and food processing companies across all Nigerian states.' },
+  hotels: { label: 'Hotels', title: 'Hotels in Nigeria', desc: 'Find hotels, resorts, and accommodation across all Nigerian cities.' },
+  hospitals: { label: 'Hospitals', title: 'Hospitals in Nigeria', desc: 'Find hospitals, medical centres, and healthcare providers across Nigeria.' },
+  schools: { label: 'Schools', title: 'Schools & Universities in Nigeria', desc: 'Find schools, universities, colleges, and educational institutions across Nigeria.' },
+  agriculture: { label: 'Agriculture', title: 'Agriculture Companies in Nigeria', desc: 'Find agriculture companies, farms, and agribusinesses across Nigeria.' },
+  transportation: { label: 'Transport', title: 'Transportation Companies in Nigeria', desc: 'Find transport, logistics, courier, and shipping companies across Nigeria.' },
+  shopping: { label: 'Shopping', title: 'Shopping & Retail in Nigeria', desc: 'Find online stores, supermarkets, and retail shops across Nigeria.' },
+  business: { label: 'Business', title: 'Business Services in Nigeria', desc: 'Find business services, consulting firms, and professional services across Nigeria.' },
+  realestate: { label: 'Real Estate', title: 'Real Estate Companies in Nigeria', desc: 'Find real estate agents, property developers, and estate surveyors across Nigeria.' },
+  oilgas: { label: 'Oil & Gas', title: 'Oil & Gas Companies in Nigeria', desc: 'Find oil and gas companies, petroleum marketers, and energy providers across Nigeria.' },
+  construction: { label: 'Construction', title: 'Construction Companies in Nigeria', desc: 'Find construction companies, building contractors, and engineering firms across Nigeria.' },
+  automobile: { label: 'Automobile', title: 'Automobile Companies in Nigeria', desc: 'Find automobile dealers, car manufacturers, and auto repair shops across Nigeria.' },
+  food: { label: 'Food & Restaurants', title: 'Food & Restaurants in Nigeria', desc: 'Find restaurants, food companies, caterers, and bakeries across Nigeria.' },
   general: { label: 'General', title: 'Other Businesses in Nigeria', desc: 'Find other businesses and services across Nigeria.' }
 };
 
@@ -28,16 +28,16 @@ const CATEGORY_MAP = {
   'all': 'all',
   'hotels': 'hotel',
   'hospitals': 'hospital',
-  'schools': 'school',
+  'schools': ['school', 'schools'],
   'agriculture': 'agriculture',
-  'transportation': 'general',
+  'transportation': 'transportation',
   'shopping': 'shopping',
   'business': 'business',
   'realestate': 'realestate',
   'oilgas': 'oilgas',
   'construction': 'construction',
   'automobile': 'automobile',
-  'food': 'restaurant',
+  'food': ['food', 'restaurant'],
   'general': 'general'
 };
 
@@ -48,10 +48,11 @@ async function loadData(category) {
     const resp = await fetch(CONSOLIDATED_DATA_FILE);
     const allBusinesses = await resp.json();
     
-    // Filter by category if not 'all'
     const dataCat = CATEGORY_MAP[currentCategory] || currentCategory;
     if (currentCategory === 'all') {
       allData = allBusinesses;
+    } else if (Array.isArray(dataCat)) {
+      allData = allBusinesses.filter(b => dataCat.includes((b.category || '').toLowerCase()));
     } else {
       allData = allBusinesses.filter(b => (b.category || '').toLowerCase() === dataCat);
     }
@@ -670,6 +671,14 @@ async function loadListingDetail() {
   showDetail(cat, id);
 }
 
+function getCategoryKey(catValue) {
+  for (const [key, val] of Object.entries(CATEGORY_MAP)) {
+    if (Array.isArray(val) && val.includes(catValue)) return key;
+    if (val === catValue) return key;
+  }
+  return 'general';
+}
+
 async function loadFeatured() {
   const grid = document.getElementById('featuredGrid');
   if (!grid) return;
@@ -677,7 +686,7 @@ async function loadFeatured() {
     const resp = await fetch(CONSOLIDATED_DATA_FILE);
     const allBusinesses = await resp.json();
     
-    const categories = ['hotel', 'hospital', 'school', 'realestate', 'shopping', 'agriculture', 'automobile', 'construction', 'restaurant', 'oilgas'];
+    const categories = ['hotel', 'hospital', 'school', 'schools', 'realestate', 'shopping', 'agriculture', 'automobile', 'construction', 'restaurant', 'oilgas', 'transportation', 'business', 'food', 'general'];
     const results = [];
     
     for (const cat of categories) {
@@ -688,7 +697,7 @@ async function loadFeatured() {
       const pool = verifiedItems.length > 0 ? verifiedItems : catItems;
       const pick = pool[Math.floor(Math.random() * pool.length)];
       const id = pick.url?.match(/(\d+)\/$/)?.[1] || '';
-      if (id) results.push({ cat, id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified });
+      if (id) results.push({ cat: getCategoryKey(cat), id, name: pick.name, city: pick.city, phone: pick.phone, description: pick.description, verified: pick.verified });
     }
     
     if (!results.length) return;
