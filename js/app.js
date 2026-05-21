@@ -226,15 +226,18 @@ function renderGrid(items) {
     const reviewCount = item.review_count || 0;
     const starsHtml = reviewCount > 0 ? `<span class="card-stars" title="${reviewCount} review${reviewCount > 1 ? 's' : ''}">${'★'.repeat(Math.min(reviewCount, 5))}${'☆'.repeat(Math.max(0, 5 - Math.min(reviewCount, 5)))} <small>${reviewCount}</small></span>` : '';
 
+    const hasWebsite = !!(item.website || '').trim();
+
     return `
       <article class="card" onclick="showDetail('${currentCategory}', '${id}')" role="listitem">
         <div class="card-body">
-          <h3>${escapeHtml(item.name || 'Unnamed')} ${verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''}</h3>
+          <h3>${escapeHtml(item.name || 'Unnamed')} ${verified ? '<span class="verified-badge" title="Verified Business">\u2713</span>' : ''} ${hasWebsite ? '<span class="website-badge" title="Has Website">\uD83C\uDF10</span>' : ''}</h3>
           <div class="card-city">${escapeHtml(city)}</div>
           ${phone ? `<a href="tel:${phone}" class="card-phone" onclick="event.stopPropagation();">${escapeHtml(phone)}</a>` : ''}
           ${desc ? `<div class="card-desc">${escapeHtml(desc)}</div>` : ''}
           <div class="card-footer">
             <span class="card-badge ${verified ? 'verified' : 'unverified'}">${verified ? 'Verified' : 'Unverified'}</span>
+            ${hasWebsite ? '<span class="card-badge website">Website</span>' : ''}
             ${starsHtml}
             <span class="card-claim">View Details &rarr;</span>
           </div>

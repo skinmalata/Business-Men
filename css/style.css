@@ -238,8 +238,10 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .get-website-link:hover { text-decoration: underline; }
 .no-website-badge-sm { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 600; }
 .verified-badge { color: #16a34a; font-size: 0.95rem; margin-left: 4px; display: inline-block; }
+.website-badge { color: #2563eb; font-size: 0.85rem; margin-left: 4px; display: inline-block; }
 .verified-badge-lg { color: #16a34a; font-size: 0.8rem; font-weight: 600; margin-left: 10px; background: #dcfce7; padding: 4px 12px; border-radius: 20px; vertical-align: middle; }
 .unverified-badge { color: #94a3b8; font-size: 0.75rem; font-weight: 500; margin-left: 10px; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; vertical-align: middle; }
+.card-badge.website { background: #dbeafe; color: #1d4ed8; }
 .card-claim { font-size: 0.8rem; color: #64748b; text-decoration: none; font-weight: 500; }
 .card-claim:hover { color: #e94560; }
 
