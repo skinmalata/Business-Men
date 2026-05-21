@@ -7,7 +7,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-YZ96VCVFWN');
   </script>
   <meta charset="UTF-8">
@@ -16,7 +15,7 @@
   <meta name="description" content="Browse buy and sell listings in Nigeria. Post free ads for products, services, jobs, real estate and more. No account needed.">
   <link rel="canonical" href="https://businessmen.com.ng/marketplace.html">
   <link rel="icon" href="bm logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css?v=18">
+  <link rel="stylesheet" href="css/style.css?v=22">
   <script defer src="js/nav.js?v=10"></script>
 </head>
 <body>
@@ -33,12 +32,16 @@
           <option>Real Estate</option>
           <option>Electronics</option>
           <option>Vehicles</option>
-          <option>Furniture</option>
+          <option>Home & Furniture</option>
           <option>Fashion</option>
+          <option>Phones & Tablets</option>
           <option>Jobs</option>
           <option>Services</option>
-          <option>Agriculture</option>
-          <option>Food & Drinks</option>
+          <option>Food & Agriculture</option>
+          <option>Beauty & Personal Care</option>
+          <option>Commercial Equipment</option>
+          <option>Repair & Construction</option>
+          <option>Leisure & Sports</option>
           <option>Other</option>
         </select>
         <label for="marketplaceQuery" class="sr-only">Search marketplace</label>
@@ -59,12 +62,16 @@
         <option>Real Estate</option>
         <option>Electronics</option>
         <option>Vehicles</option>
-        <option>Furniture</option>
+        <option>Home & Furniture</option>
         <option>Fashion</option>
+        <option>Phones & Tablets</option>
         <option>Jobs</option>
         <option>Services</option>
-        <option>Agriculture</option>
-        <option>Food & Drinks</option>
+        <option>Food & Agriculture</option>
+        <option>Beauty & Personal Care</option>
+        <option>Commercial Equipment</option>
+        <option>Repair & Construction</option>
+        <option>Leisure & Sports</option>
         <option>Other</option>
       </select>
       <span style="color:#94a3b8;font-size:0.85rem" id="resultCount"></span>
@@ -84,11 +91,12 @@
   <script src="js/firebase-config.js"></script>
   <script>
     var allAds = [];
+    var jijiProducts = [];
     var mpCurrentPage = 1;
     var MP_ITEMS_PER_PAGE = 20;
 
     function formatPrice(price) {
-      var p = price.replace(/,/g, '').trim();
+      var p = String(price).replace(/,/g, '').trim();
       if (/^\d+$/.test(p)) {
         return '₦' + Number(p).toLocaleString();
       }
@@ -96,7 +104,9 @@
     }
 
     function timeAgo(date) {
-      var diff = Date.now() - date;
+      if (!date) return '';
+      var ts = date.toMillis ? date.toMillis() : date;
+      var diff = Date.now() - ts;
       var mins = Math.floor(diff / 60000);
       if (mins < 60) return mins + 'm ago';
       var hours = Math.floor(mins / 60);
@@ -109,6 +119,45 @@
       var div = document.createElement('div');
       div.appendChild(document.createTextNode(text));
       return div.innerHTML;
+    }
+
+    function loadJijiProducts() {
+      fetch('data/marketplace_jiji_products.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          jijiProducts = data.map(function(p) {
+            return {
+              id: 'jiji_' + (p.title || '').replace(/\s+/g, '_').substring(0, 30) + '_' + Math.random().toString(36).substr(2, 5),
+              title: p.title || '',
+              price: p.price || '',
+              description: (p.description || '').substring(0, 150),
+              category: p.category || 'Other',
+              imageUrl: (p.images && p.images.length > 0) ? p.images[0] : '',
+              images: p.images || [],
+              location: p.location || 'Lagos',
+              sellerName: p.seller_name || '',
+              sellerType: p.seller_type || '',
+              phone: p.phone || '',
+              sourceUrl: p.source_url || '',
+              source: 'jiji.ng',
+              createdAt: { toMillis: function() { return Date.now(); } }
+            };
+          });
+          renderAllAds();
+        })
+        .catch(function() {
+          renderAllAds();
+        });
+    }
+
+    function renderAllAds() {
+      var combined = allAds.concat(jijiProducts);
+      combined.sort(function(a, b) {
+        var ta = a.createdAt ? a.createdAt.toMillis() : 0;
+        var tb = b.createdAt ? b.createdAt.toMillis() : 0;
+        return tb - ta;
+      });
+      filterAds();
     }
 
     function renderAds(ads) {
@@ -129,9 +178,12 @@
         var imgHtml = ad.imageUrl
           ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
           : '<div class="marketplace-card-img-placeholder">No photo</div>';
-        var created = ad.createdAt ? timeAgo(ad.createdAt.toMillis()) : '';
+        var created = ad.createdAt ? timeAgo(ad.createdAt) : '';
+        var linkUrl = ad.sourceUrl ? ad.sourceUrl : 'ad-detail.html?id=' + ad.id;
+        var linkTarget = ad.sourceUrl ? ' target="_blank" rel="noopener"' : '';
+        var sourceBadge = ad.source ? '<span class="marketplace-source-badge">' + ad.source + '</span>' : '';
         return (
-          '<a href="ad-detail.html?id=' + ad.id + '" class="marketplace-card">' +
+          '<a href="' + linkUrl + '" class="marketplace-card"' + linkTarget + '>' +
             imgHtml +
             '<div class="marketplace-card-body">' +
               '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
@@ -141,6 +193,7 @@
                 '<span>' + ad.category + '</span>' +
                 '<span>' + created + '</span>' +
               '</div>' +
+              sourceBadge +
             '</div>' +
           '</a>'
         );
@@ -194,12 +247,12 @@
       var search = document.getElementById('searchInput').value.toLowerCase().trim();
       var cat = document.getElementById('categoryFilter').value;
 
-      return allAds.filter(function(ad) {
+      return allAds.concat(jijiProducts).filter(function(ad) {
         if (cat !== 'all' && ad.category !== cat) return false;
         if (search) {
           var title = (ad.title || '').toLowerCase();
           var desc = (ad.description || '').toLowerCase();
-          var state = (ad.state || '').toLowerCase();
+          var state = (ad.state || ad.location || '').toLowerCase();
           var address = (ad.address || '').toLowerCase();
           var phone = (ad.phone || '').toLowerCase();
           var searchable = title + ' ' + desc + ' ' + state + ' ' + address + ' ' + phone;
@@ -213,8 +266,14 @@
     }
 
     function filterAds() {
+      var ads = getFilteredAds();
+      ads.sort(function(a, b) {
+        var ta = a.createdAt ? a.createdAt.toMillis() : 0;
+        var tb = b.createdAt ? b.createdAt.toMillis() : 0;
+        return tb - ta;
+      });
       mpCurrentPage = 1;
-      renderAds(getFilteredAds());
+      renderAds(ads);
     }
 
     function heroMarketplaceSearch() {
@@ -231,24 +290,31 @@
     window.goToMpPage = goToMpPage;
     window.heroMarketplaceSearch = heroMarketplaceSearch;
 
-    db.collection('marketplace')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(function(snapshot) {
-        allAds = [];
-        snapshot.forEach(function(doc) {
-          var ad = doc.data();
-          ad.id = doc.id;
-          allAds.push(ad);
+    // Load Jiji products first
+    loadJijiProducts();
+
+    // Then load Firebase ads
+    if (typeof db !== 'undefined') {
+      db.collection('marketplace')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(function(snapshot) {
+          allAds = [];
+          snapshot.forEach(function(doc) {
+            var ad = doc.data();
+            ad.id = doc.id;
+            allAds.push(ad);
+          });
+          allAds.sort(function(a, b) {
+            var ta = a.createdAt ? a.createdAt.toMillis() : 0;
+            var tb = b.createdAt ? b.createdAt.toMillis() : 0;
+            return tb - ta;
+          });
+          filterAds();
+        }, function(err) {
+          // Firebase error - still show Jiji products
+          filterAds();
         });
-        allAds.sort(function(a, b) {
-          var ta = a.createdAt ? a.createdAt.toMillis() : 0;
-          var tb = b.createdAt ? b.createdAt.toMillis() : 0;
-          return tb - ta;
-        });
-        filterAds();
-      }, function(err) {
-        document.getElementById('adGrid').innerHTML = '<div class="empty-marketplace"><h3>Could not load listings</h3><p>' + (err.message || err) + '</p></div>';
-      });
+    }
   </script>
   <footer class="footer" role="contentinfo">
     <div class="container">

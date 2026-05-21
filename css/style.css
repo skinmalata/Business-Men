@@ -708,6 +708,10 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 }
 .marketplace-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #94a3b8; }
 .marketplace-card-phone { font-size: 0.8rem; color: #e94560; font-weight: 600; }
+.marketplace-source-badge {
+  display: inline-block; margin-top: 8px; padding: 2px 8px; border-radius: 4px;
+  background: #f0fdf4; color: #16a34a; font-size: 0.7rem; font-weight: 600;
+}
 .marketplace-hero-search {
   display: flex; background: white; border-radius: 12px; overflow: hidden;
   max-width: 640px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
