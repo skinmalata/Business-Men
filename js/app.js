@@ -128,6 +128,11 @@ async function loadData(category) {
       allData = allBusinesses.filter(b => (b.category || '').toLowerCase() === dataCat);
     }
     
+    allData.forEach(function(b, i) {
+      var urlId = b.url && b.url.match(/(\d+)\/$/);
+      b._uid = urlId ? urlId[1] : ((b.name || 'business').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + i);
+    });
+    
     const countEl = document.getElementById('totalCount');
     if (countEl) countEl.textContent = allData.length;
     const labelEl = document.getElementById('categoryLabel');
@@ -283,7 +288,7 @@ function renderGrid(items) {
   if (loading) loading.style.display = 'none';
 
   grid.innerHTML = items.map((item, index) => {
-    const id = item.url?.match(/(\d+)\/$/)?.[1] || '';
+    const id = item._uid || '';
     const phone = item.phone || '';
     const desc = item.description || '';
     const city = item.city || '';
@@ -387,10 +392,7 @@ function escapeHtml(str) {
 
 function showDetail(cat, id) {
   if (!id) return;
-  const item = allData.find(d => {
-    const match = d.url?.match(/(\d+)\/$/);
-    return match && match[1] === id;
-  });
+  const item = allData.find(d => d._uid === id);
   if (!item) return;
 
   const listView = document.getElementById('listView');
@@ -438,7 +440,7 @@ function renderDetailView(item, cat) {
   const businessName = item.name || 'Business';
   const verified = item.verified === true;
 
-  const id = item.url?.match(/(\d+)\/$/)?.[1] || '';
+  const id = item._uid || '';
   const reviewCount = item.review_count || 0;
   const savedReviews = getReviews(id);
   const totalReviews = reviewCount + savedReviews.length;
