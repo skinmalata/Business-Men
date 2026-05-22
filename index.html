@@ -373,40 +373,87 @@
     function loadHomeMarketplace() {
       var grid = document.getElementById('homeMarketplaceGrid');
       if (!grid) return;
+
+      function renderHomeAds(ads) {
+        ads.sort(function(a, b) {
+          var ta = a.createdAt ? a.createdAt.toMillis ? a.createdAt.toMillis() : (typeof a.createdAt === 'number' ? a.createdAt : Date.parse(a.createdAt) || 0) : 0;
+          var tb = b.createdAt ? b.createdAt.toMillis ? b.createdAt.toMillis() : (typeof b.createdAt === 'number' ? b.createdAt : Date.parse(b.createdAt) || 0) : 0;
+          return tb - ta;
+        });
+        ads = ads.slice(0, 6);
+        grid.innerHTML = '';
+        ads.forEach(function(ad) {
+          var isJiji = ad.source === 'jiji.ng';
+          var link = isJiji ? (ad.sourceUrl || '#') : 'ad-detail.html?id=' + ad.id;
+          var target = isJiji ? ' target="_blank" rel="noopener"' : '';
+          var img = ad.imageUrl
+            ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
+            : '<div class="marketplace-card-img-placeholder">No photo</div>';
+          var card = document.createElement('a');
+          card.href = link;
+          card.className = 'marketplace-card';
+          card.setAttribute('target', isJiji ? '_blank' : '');
+          if (isJiji) card.setAttribute('rel', 'noopener');
+          card.innerHTML = img +
+            '<div class="marketplace-card-body">' +
+              '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
+              '<h3>' + escapeHtml(ad.title) + '</h3>' +
+              '<div class="marketplace-card-meta"><span>' + escapeHtml(ad.category) + '</span></div>' +
+            '</div>';
+          grid.appendChild(card);
+        });
+      }
+
+      var allAds = [];
+
       db.collection('marketplace')
         .orderBy('createdAt', 'desc')
         .get()
         .then(function(snapshot) {
-          if (snapshot.empty) { grid.innerHTML = ''; return; }
-          var ads = [];
           snapshot.forEach(function(doc) {
             var ad = doc.data();
             ad.id = doc.id;
-            ads.push(ad);
+            allAds.push(ad);
           });
-          ads.sort(function(a, b) {
-            var ta = a.createdAt ? a.createdAt.toMillis() : 0;
-            var tb = b.createdAt ? b.createdAt.toMillis() : 0;
-            return tb - ta;
-          });
-          ads = ads.slice(0, 6);
-          grid.innerHTML = '';
-          ads.forEach(function(ad) {
-            var img = ad.imageUrl
-              ? '<img class="marketplace-card-img" src="' + ad.imageUrl + '" alt="' + ad.title + '" loading="lazy">'
-              : '<div class="marketplace-card-img-placeholder">No photo</div>';
-            var card = document.createElement('a');
-            card.href = 'ad-detail.html?id=' + ad.id;
-            card.className = 'marketplace-card';
-            card.innerHTML = img +
-              '<div class="marketplace-card-body">' +
-                '<div class="marketplace-card-price">' + formatPrice(ad.price) + '</div>' +
-                '<h3>' + escapeHtml(ad.title) + '</h3>' +
-                '<div class="marketplace-card-meta"><span>' + escapeHtml(ad.category) + '</span></div>' +
-              '</div>';
-            grid.appendChild(card);
-          });
-        }).catch(function() {});
+          fetch('data/marketplace_jiji_products.json')
+            .then(function(r) { return r.json(); })
+            .then(function(jijiData) {
+              jijiData.forEach(function(p) {
+                allAds.push({
+                  id: 'jiji_' + (p.title || '').replace(/\s+/g, '_').substring(0, 30) + '_' + Math.random().toString(36).substr(2, 5),
+                  title: p.title || '',
+                  price: p.price || '',
+                  category: p.category || 'Other',
+                  imageUrl: (p.images && p.images.length > 0) ? p.images[0] : '',
+                  source: 'jiji.ng',
+                  sourceUrl: p.source_url || '',
+                  createdAt: Date.now()
+                });
+              });
+              renderHomeAds(allAds);
+            })
+            .catch(function() {
+              renderHomeAds(allAds);
+            });
+        }).catch(function() {
+          fetch('data/marketplace_jiji_products.json')
+            .then(function(r) { return r.json(); })
+            .then(function(jijiData) {
+              jijiData.forEach(function(p) {
+                allAds.push({
+                  id: 'jiji_' + (p.title || '').replace(/\s+/g, '_').substring(0, 30) + '_' + Math.random().toString(36).substr(2, 5),
+                  title: p.title || '',
+                  price: p.price || '',
+                  category: p.category || 'Other',
+                  imageUrl: (p.images && p.images.length > 0) ? p.images[0] : '',
+                  source: 'jiji.ng',
+                  sourceUrl: p.source_url || '',
+                  createdAt: Date.now()
+                });
+              });
+              renderHomeAds(allAds);
+            }).catch(function() {});
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
