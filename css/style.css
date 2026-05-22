@@ -842,11 +842,11 @@ h1, h2, h3 { font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
 .testimonials-header h2 { font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; letter-spacing: -0.03em; }
 .testimonials-header p { font-size: 1.05rem; color: #64748b; max-width: 520px; margin: 0 auto; }
 .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; position: relative; z-index: 1; }
-.testimonial-card { border-radius: 16px; padding: 32px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
-.testimonial-card:nth-child(1) { background: linear-gradient(135deg, #fef2f2, #fff); border: 1px solid #fecaca; box-shadow: 0 4px 16px rgba(233,69,96,0.06); }
-.testimonial-card:nth-child(2) { background: linear-gradient(135deg, #eff6ff, #fff); border: 1px solid #bfdbfe; box-shadow: 0 4px 16px rgba(37,99,235,0.06); }
-.testimonial-card:nth-child(3) { background: linear-gradient(135deg, #f0fdf4, #fff); border: 1px solid #bbf7d0; box-shadow: 0 4px 16px rgba(5,150,105,0.06); }
-.testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+.testimonial-card { border-radius: 16px; padding: 32px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; border-width: 2px; border-style: solid; }
+.testimonial-card:nth-child(1) { background: #fef2f2; border-color: #fecaca; box-shadow: 0 8px 24px rgba(233,69,96,0.1); }
+.testimonial-card:nth-child(2) { background: #eff6ff; border-color: #bfdbfe; box-shadow: 0 8px 24px rgba(37,99,235,0.1); }
+.testimonial-card:nth-child(3) { background: #f0fdf4; border-color: #bbf7d0; box-shadow: 0 8px 24px rgba(5,150,105,0.1); }
+.testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
 .testimonial-quote-icon { font-size: 3.5rem; line-height: 1; font-family: Georgia, serif; position: absolute; top: 12px; right: 20px; user-select: none; }
 .testimonial-card:nth-child(1) .testimonial-quote-icon { color: rgba(233,69,96,0.12); }
 .testimonial-card:nth-child(2) .testimonial-quote-icon { color: rgba(37,99,235,0.12); }
