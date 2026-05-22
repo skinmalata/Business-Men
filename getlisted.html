@@ -26,6 +26,9 @@
   <link rel="stylesheet" href="css/style.css?v=18">
   <script defer src="js/nav.js?v=10"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="js/firebase-config.js"></script>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -213,7 +216,7 @@
     var pending = [];
     try { pending = JSON.parse(localStorage.getItem('pendingListings') || '[]'); } catch(e) {}
 
-    pending.push({
+    var listingData = {
       name: name,
       email: email,
       category: category,
@@ -225,9 +228,21 @@
       description: desc,
       submitted: new Date().toISOString(),
       confirmed: false
-    });
+    };
 
+    pending.push(listingData);
     localStorage.setItem('pendingListings', JSON.stringify(pending));
+
+    if (typeof db !== 'undefined') {
+      db.collection('pendingListings').add(listingData).catch(function(err) {
+        console.warn('Firestore write failed:', err);
+      });
+    }
+
+    document.getElementById('getListedForm').style.display = 'none';
+    document.getElementById('glSuccess').style.display = 'block';
+
+    if (typeof turnstile !== 'undefined') turnstile.reset();
 
     var mailto = 'mailto:businessmenlisting@gmail.com?subject=' + encodeURIComponent('New Listing: ' + name) +
       '&body=' + encodeURIComponent(
@@ -242,11 +257,6 @@
         'Description: ' + desc + '\n\n' +
         'Please confirm and publish this listing.'
       );
-
-    document.getElementById('getListedForm').style.display = 'none';
-    document.getElementById('glSuccess').style.display = 'block';
-
-    if (typeof turnstile !== 'undefined') turnstile.reset();
 
     var mailLink = document.createElement('a');
     mailLink.href = mailto;

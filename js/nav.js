@@ -32,7 +32,7 @@
             '<div class="nav-scroll">' +
               '<a href="' + p + '."' + (active === 'home' ? ' class="active"' : '') + '>Home</a>' +
               '<a href="' + p + '#about">About</a>' +
-              '<a href="' + p + 'services.html"' + (active === 'services' ? ' class="active"' : '') + '>Services</a>' +
+              '<a href="' + p + 'services.html"' + (active === 'services' ? ' class="active"' : '') + '>Web Design</a>' +
               '<div class="nav-dropdown">' +
                 '<span class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></span>' +
                 '<div class="nav-dropdown-menu">' +

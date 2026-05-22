@@ -579,6 +579,87 @@ function renderDetailView(item, cat) {
       </section>
     </div>
   `;
+
+  // Firestore override — apply claimed edits on top of static JSON data
+  if (id && typeof db !== 'undefined') {
+    db.collection('edits').doc(id).get().then(function(doc) {
+      if (doc.exists && doc.data().verified === true) {
+        applyClaimedEdit(container, doc.data());
+      }
+    }).catch(function(err) {
+      console.warn('Firestore edit fetch failed:', err);
+    });
+  }
+}
+
+function applyClaimedEdit(container, editData) {
+  var ed = editData;
+  var rows = container.querySelectorAll('.info-row');
+
+  function findRow(labelText) {
+    for (var i = 0; i < rows.length; i++) {
+      var lbl = rows[i].querySelector('.label');
+      if (lbl && lbl.textContent.trim() === labelText) return rows[i];
+    }
+    return null;
+  }
+
+  // Override phone
+  if (ed.phone) {
+    var r = findRow('Phone');
+    if (r) {
+      var v = r.querySelector('.value');
+      if (v) v.innerHTML = '<a href="tel:' + ed.phone.replace(/"/g,'') + '" rel="nofollow">' + escapeHtml(ed.phone) + '</a>';
+    }
+  }
+
+  // Override email
+  if (ed.email) {
+    var r = findRow('Email');
+    if (r) {
+      var v = r.querySelector('.value');
+      if (v) v.innerHTML = '<a href="mailto:' + ed.email.replace(/"/g,'') + '" rel="nofollow">' + escapeHtml(ed.email) + '</a>';
+    }
+  }
+
+  // Override website
+  if (ed.website) {
+    var r = findRow('Website');
+    if (r) {
+      var v = r.querySelector('.value');
+      if (v) v.innerHTML = '<a href="' + ed.website.replace(/"/g,'') + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(ed.website) + '</a>';
+    }
+  }
+
+  // Add WhatsApp row if claimed has one
+  if (ed.whatsapp) {
+    var existingWa = findRow('WhatsApp');
+    if (!existingWa) {
+      var contactSection = container.querySelector('.detail-section');
+      if (contactSection) {
+        var waRow = document.createElement('div');
+        waRow.className = 'info-row';
+        waRow.innerHTML = '<span class="label">WhatsApp</span><span class="value"><a href="https://wa.me/' + ed.whatsapp.replace(/"/g,'') + '" target="_blank" rel="noopener">' + escapeHtml(ed.whatsapp) + '</a></span>';
+        contactSection.appendChild(waRow);
+      }
+    }
+  }
+
+  // Replace "Edit This Business" button with "Verified Owner" badge
+  var detailActions = container.querySelector('.detail-actions');
+  if (detailActions) {
+    detailActions.innerHTML = '<span class="claimed-badge" title="Verified Owner">\u2713 Verified Owner</span>';
+  }
+
+  // Replace bottom "Edit Now" section with verified notice
+  var sections = container.querySelectorAll('.detail-section');
+  var lastSection = sections[sections.length - 1];
+  if (lastSection) {
+    var h2 = lastSection.querySelector('h2');
+    if (h2 && h2.textContent.trim() === 'Edit This Listing') {
+      lastSection.innerHTML = '<h2>Edit This Listing</h2><div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Verified Owner</span><p style="color:#166534;margin-top:8px;">You have verified ownership and edited this listing.</p></div>';
+    }
+  }
 }
 
 // === REVIEWS ===
