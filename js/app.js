@@ -70,6 +70,10 @@ async function loadData(category) {
       const verifiedCount = allData.filter(d => d.verified === true).length;
       verifiedEl.textContent = verifiedCount;
     }
+    allData.forEach(function(b, i) {
+      var urlId = b.url && b.url.match(/(\d+)\/$/);
+      b._uid = urlId ? urlId[1] : ((b.name || 'business').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + i);
+    });
     populateCityFilter();
     return allData;
   } catch (e) {
@@ -392,7 +396,8 @@ function escapeHtml(str) {
 
 function showDetail(cat, id) {
   if (!id) return;
-  const item = allData.find(d => d._uid === id);
+  var item = allData.find(d => d._uid === id);
+  if (!item) item = allData.find(d => { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
   if (!item) return;
 
   const listView = document.getElementById('listView');
