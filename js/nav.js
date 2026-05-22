@@ -2,6 +2,7 @@
   function getActivePage() {
     var path = window.location.pathname.replace(/\/+$/, '');
     if (path.endsWith('listing.html')) return 'listings';
+    if (path.endsWith('about.html')) return 'about';
     if (path.endsWith('getlisted.html')) return 'getlisted';
     if (path.endsWith('services.html')) return 'services';
     if (path.endsWith('claim.html')) return 'claim';
@@ -31,7 +32,7 @@
             '<button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>' +
             '<div class="nav-scroll">' +
               '<a href="' + p + '."' + (active === 'home' ? ' class="active"' : '') + '>Home</a>' +
-              '<a href="' + p + '#about">About</a>' +
+              '<a href="' + p + 'about.html"' + (active === 'about' ? ' class="active"' : '') + '>About</a>' +
               '<a href="' + p + 'services.html"' + (active === 'services' ? ' class="active"' : '') + '>Web Design</a>' +
               '<div class="nav-dropdown">' +
                 '<span class="nav-dropdown-trigger">Categories <span class="dropdown-arrow">&#9662;</span></span>' +
