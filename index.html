@@ -368,28 +368,9 @@
       const query = document.getElementById('heroQuery').value.trim();
       const city = document.getElementById('heroCity').value;
       const params = new URLSearchParams();
-      const kw = {
-        hotel:'hotels',hotels:'hotels',resort:'hotels',accommodation:'hotels',
-        hospital:'hospitals',hospitals:'hospitals',clinic:'hospitals',medical:'hospitals',healthcare:'hospitals',
-        school:'schools',schools:'schools',university:'schools',college:'schools',education:'schools',
-        agriculture:'agriculture',farm:'agriculture',farming:'agriculture',agribusiness:'agriculture',
-        transport:'transportation',transportation:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',
-        shop:'shopping',shopping:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',
-        business:'business',consulting:'business',services:'business',
-        'realestate':'realestate','real estate':'realestate',property:'realestate',
-        oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',
-        construction:'construction',builder:'construction',building:'construction',contractor:'construction',
-        auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',mechanic:'automobile',
-        food:'food',restaurant:'food',restaurants:'food',caterer:'food',bakery:'food'
-      };
-      let cat = 'hotels';
-      const ql = query.toLowerCase();
-      for (const [word,c] of Object.entries(kw)) {
-        if (ql.includes(word)) { cat = c; break; }
-      }
       if (query) params.set('q', query);
       if (city) params.set('city', city);
-      params.set('cat', cat);
+      params.set('cat', 'all');
       window.location.href = 'listing.html?' + params.toString();
     }
     function formatPrice(p) {

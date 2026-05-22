@@ -206,14 +206,12 @@
     function heroSearch() {
       const query = document.getElementById('heroQuery').value.trim();
       const city = document.getElementById('heroCity').value;
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams();
       if (query) params.set('q', query);
       else params.delete('q');
       if (city) params.set('city', city);
       else params.delete('city');
-      const ql = query.toLowerCase();
-      const kw = { hotel:'hotels',resort:'hotels',accommodation:'hotels',hospital:'hospitals',clinic:'hospitals',medical:'hospitals',school:'schools',university:'schools',college:'schools',education:'schools',agriculture:'agriculture',farm:'agriculture',farming:'agriculture',transport:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',shop:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',business:'business',consulting:'business','real estate':'realestate',property:'realestate',oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',construction:'construction',builder:'construction',building:'construction',auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',food:'food',restaurant:'food',bakery:'food' };
-      for (const [w,c] of Object.entries(kw)) { if (ql.includes(w)) { params.set('cat', c); break; } }
+      params.set('cat', 'all');
       window.location.href = 'listing.html?' + params.toString();
     }
     function toggleSidebar() {

@@ -212,17 +212,12 @@ function handleSearch(query) {
       return terms.every(term => searchable.includes(term));
     });
 
-    if (filteredData.length === 0) {
-      const kw = { hotel:'hotels',resort:'hotels',accommodation:'hotels',hospital:'hospitals',clinic:'hospitals',medical:'hospitals',school:'schools',university:'schools',college:'schools',education:'schools',agriculture:'agriculture',farm:'agriculture',farming:'agriculture',transport:'transportation',logistics:'transportation',courier:'transportation',shipping:'transportation',shop:'shopping',store:'shopping',retail:'shopping',supermarket:'shopping',business:'business',consulting:'business','real estate':'realestate',property:'realestate',oil:'oilgas',gas:'oilgas',petroleum:'oilgas',energy:'oilgas',construction:'construction',builder:'construction',building:'construction',auto:'automobile',automobile:'automobile',car:'automobile',vehicle:'automobile',food:'food',restaurant:'food',bakery:'food' };
-      for (const [w,c] of Object.entries(kw)) {
-        if (query.includes(w) && c !== currentCategory) {
-          const params = new URLSearchParams(window.location.search);
-          params.set('cat', c);
-          params.set('q', query);
-          window.location.href = 'listing.html?' + params.toString();
-          return;
-        }
-      }
+    if (filteredData.length === 0 && currentCategory !== 'all' && query) {
+      const params = new URLSearchParams();
+      params.set('cat', 'all');
+      params.set('q', query);
+      window.location.href = 'listing.html?' + params.toString();
+      return;
     }
 
     currentPage = 1;
