@@ -375,11 +375,11 @@ function updateListingPageMeta(category) {
   const twTitle = document.getElementById('twTitle');
   const twDesc = document.getElementById('twDesc');
 
-  if (titleEl) titleEl.textContent = `${catInfo.title} - BusinessMen Nigeria Directory`;
+  if (titleEl) titleEl.textContent = `${catInfo.title} - BusinessMen.com.ng Nigeria Directory`;
   if (descEl) descEl.setAttribute('content', catInfo.desc);
-  if (ogTitle) ogTitle.setAttribute('content', `${catInfo.title} | BusinessMen Nigeria`);
+  if (ogTitle) ogTitle.setAttribute('content', `${catInfo.title} | BusinessMen.com.ng Nigeria`);
   if (ogDesc) ogDesc.setAttribute('content', catInfo.desc);
-  if (twTitle) twTitle.setAttribute('content', `${catInfo.title} | BusinessMen Nigeria`);
+  if (twTitle) twTitle.setAttribute('content', `${catInfo.title} | BusinessMen.com.ng Nigeria`);
   if (twDesc) twDesc.setAttribute('content', catInfo.desc);
 }
 
@@ -574,7 +574,7 @@ function renderDetailView(item, cat) {
         <h2>Edit This Listing</h2>
         ${getClaim(id)?.verified
           ? `<div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Verified Owner</span><p style="color:#166534;margin-top:8px;">You have verified ownership and edited this listing.</p></div>`
-          : `<p style="color:#64748b;font-size:0.9rem;">Is this your business? Edit your listing on BusinessMen to update contact info, add a WhatsApp number, and keep your information current.</p>
+          : `<p style="color:#64748b;font-size:0.9rem;">Is this your business? Edit your listing on BusinessMen.com.ng to update contact info, add a WhatsApp number, and keep your information current.</p>
         <a href="claim.html?cat=${cat}&id=${id}&name=${encodeURIComponent(businessName)}&phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}" class="btn-primary" style="display:inline-block;margin-top:14px;" rel="nofollow">Edit Now</a>`}
       </section>
     </div>
@@ -927,7 +927,7 @@ function whatsappBusiness(name, phone) {
     alert('No valid phone number available for WhatsApp.');
     return;
   }
-  const text = encodeURIComponent('Hi, I found your business on BusinessMen. I would like to know more about your services.');
+  const text = encodeURIComponent('Hi, I found your business on BusinessMen.com.ng. I would like to know more about your services.');
   window.open('https://wa.me/' + number + '?text=' + text, '_blank', 'noopener');
 }
 

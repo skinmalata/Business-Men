@@ -12,7 +12,7 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ad Detail - BusinessMen Marketplace</title>
+  <title>Ad Detail - BusinessMen.com.ng Marketplace</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="bm logo.png" type="image/png">
   <link rel="stylesheet" href="css/style.css?v=18">
@@ -129,7 +129,7 @@
       var cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
       var digits = cleaned.replace(/\D/g, '');
       var number = digits.startsWith('234') ? digits : '234' + digits.replace(/^0+/, '');
-      var text = encodeURIComponent('Hi, I found your ad "' + title + '" on BusinessMen Marketplace. Is it still available?');
+      var text = encodeURIComponent('Hi, I found your ad "' + title + '" on BusinessMen.com.ng Marketplace. Is it still available?');
       window.open('https://wa.me/' + number + '?text=' + text, '_blank', 'noopener');
     }
 

@@ -12,8 +12,8 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit This Business Listing - BusinessMen Nigeria Directory</title>
-  <meta name="description" content="Edit your business listing on BusinessMen, Nigeria's fastest-growing business directory. Update your information, add WhatsApp, and manage your listing.">
+  <title>Edit This Business Listing - BusinessMen.com.ng Nigeria Directory</title>
+  <meta name="description" content="Edit your business listing on BusinessMen.com.ng, Nigeria's fastest-growing business directory. Update your information, add WhatsApp, and manage your listing.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://businessmen.com.ng/claim.html">
   <link rel="alternate" hreflang="en" href="https://businessmen.com.ng/claim.html">
@@ -21,14 +21,14 @@
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://businessmen.com.ng/claim.html">
-  <meta property="og:title" content="Edit This Business Listing - BusinessMen Nigeria">
-  <meta property="og:description" content="Edit your business listing on BusinessMen, Nigeria's fastest-growing business directory.">
-  <meta property="og:site_name" content="BusinessMen">
+  <meta property="og:title" content="Edit This Business Listing - BusinessMen.com.ng Nigeria">
+  <meta property="og:description" content="Edit your business listing on BusinessMen.com.ng, Nigeria's fastest-growing business directory.">
+  <meta property="og:site_name" content="BusinessMen.com.ng">
   <meta property="og:locale" content="en_NG">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Edit This Business Listing - BusinessMen Nigeria">
-  <meta name="twitter:description" content="Edit your business listing on BusinessMen, Nigeria's fastest-growing business directory.">
+  <meta name="twitter:title" content="Edit This Business Listing - BusinessMen.com.ng Nigeria">
+  <meta name="twitter:description" content="Edit your business listing on BusinessMen.com.ng, Nigeria's fastest-growing business directory.">
 
   <link rel="stylesheet" href="css/style.css?v=18">
   <script defer src="js/nav.js?v=10"></script>
@@ -111,7 +111,7 @@
 
   <footer class="footer" role="contentinfo">
     <div class="container">
-      <p><strong>BusinessMen</strong> &mdash; Nigeria Business Directory. <a href=".">Browse businesses</a>, read our <a href="blog/">blog</a>, or <a href="contact.html">contact us</a>.</p>
+      <p><strong>BusinessMen.com.ng</strong> &mdash; Nigeria Business Directory. <a href=".">Browse businesses</a>, read our <a href="blog/">blog</a>, or <a href="contact.html">contact us</a>.</p>
     </div>
   </footer>
 
@@ -152,13 +152,13 @@
         body: JSON.stringify({
           access_key: WEB3FORMS_KEY,
           email: email,
-          subject: 'BusinessMen - Confirm Edit: ' + businessName,
+          subject: 'BusinessMen.com.ng - Confirm Edit: ' + businessName,
           message: 'Your confirmation code is: ' + _confirmCode + '\n\n' +
                    'Enter this code on the website to complete your edit.\n\n' +
                    'Business: ' + businessName + '\n' +
                    'Submitted: ' + new Date().toLocaleString() + '\n\n' +
                    'If you did not request this, please ignore this email.',
-          from_name: 'BusinessMen'
+          from_name: 'BusinessMen.com.ng'
         })
       }).then(function(resp) {
         return resp.json();
