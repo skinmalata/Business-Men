@@ -27,6 +27,7 @@ files_to_merge = [
     "data/nigeria_energy_v2.json",
     "data/nigeria_businesslist_all.json",
     "data/nigeria_multi_source_new.json",
+    "data/nigeria_instagram_businesses.json",
 ]
 
 all_data = []
