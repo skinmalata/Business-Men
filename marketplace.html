@@ -301,6 +301,7 @@
           allAds = [];
           snapshot.forEach(function(doc) {
             var ad = doc.data();
+            if (ad.confirmed === false) return;
             ad.id = doc.id;
             allAds.push(ad);
           });

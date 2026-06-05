@@ -126,7 +126,7 @@
             <div style="text-align:center;padding:40px 20px;">
               <div style="font-size:3rem;margin-bottom:16px;">&#10003;</div>
               <h2 style="color:#166534;margin-bottom:8px;">Listing Submitted!</h2>
-              <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! We've sent a confirmation email to the address you provided. Click the link in that email to verify your listing. Once confirmed, your business will go live on BusinessMen.com.ng within 24 hours.</p>
+              <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! We've sent an activation email to the address you provided. <strong>Click the link in that email</strong> to make your listing go live immediately.</p>
               <p style="color:#94a3b8;font-size:0.9rem;">Didn't receive the email? Check your spam folder or <a href="mailto:businessmenlisting@gmail.com?subject=Confirm%20Listing">contact us</a>.</p>
               <a href="." class="btn-primary" style="display:inline-block;margin-top:20px;">Back to Home</a>
             </div>
@@ -191,6 +191,14 @@
   </main>
 
   <script>
+  var WEB3FORMS_KEY = '80a38aab-9247-4e00-8133-4b2f7ec81138';
+
+  function generateToken() {
+    var arr = new Uint8Array(24);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+
   document.getElementById('getListedForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -215,8 +223,7 @@
       return;
     }
 
-    var pending = [];
-    try { pending = JSON.parse(localStorage.getItem('pendingListings') || '[]'); } catch(e) {}
+    var token = generateToken();
 
     var listingData = {
       name: name,
@@ -229,40 +236,57 @@
       address: address,
       description: desc,
       submitted: new Date().toISOString(),
-      confirmed: false
+      confirmed: false,
+      type: 'business',
+      token: token
     };
 
-    pending.push(listingData);
-    localStorage.setItem('pendingListings', JSON.stringify(pending));
-
     if (typeof db !== 'undefined') {
-      db.collection('pendingListings').add(listingData).catch(function(err) {
+      db.collection('pendingSubmissions').doc(token).set(listingData).catch(function(err) {
         console.warn('Firestore write failed:', err);
       });
     }
+
+    var confirmLink = 'https://businessmen.com.ng/confirm.html?token=' + token + '&type=business';
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        email: email,
+        subject: 'Confirm Your Business Listing - BusinessMen.com.ng',
+        message: 'Hello ' + name + ',\n\n' +
+                 'Thank you for listing your business on BusinessMen.com.ng!\n\n' +
+                 'To activate your listing, click the link below:\n\n' +
+                 confirmLink + '\n\n' +
+                 'Your listing will only go live after you confirm.\n\n' +
+                 'Here is a summary of your submission:\n\n' +
+                 'Business: ' + name + '\n' +
+                 'Category: ' + category + '\n' +
+                 'State: ' + state + '\n' +
+                 'Phone: ' + phone + '\n' +
+                 'Address: ' + address + '\n' +
+                 (website ? 'Website: ' + website + '\n' : '') +
+                 '\n' +
+                 'If you did not submit this listing, please ignore this email.\n\n' +
+                 'Best regards,\nBusinessMen.com.ng Team',
+        from_name: 'BusinessMen.com.ng'
+      })
+    }).then(function(resp) {
+      return resp.json();
+    }).then(function(data) {
+      if (!data.success) {
+        console.warn('Confirmation email failed to send');
+      }
+    }).catch(function(err) {
+      console.warn('Confirmation email error:', err);
+    });
 
     document.getElementById('getListedForm').style.display = 'none';
     document.getElementById('glSuccess').style.display = 'block';
 
     if (typeof turnstile !== 'undefined') turnstile.reset();
-
-    var mailto = 'mailto:businessmenlisting@gmail.com?subject=' + encodeURIComponent('New Listing: ' + name) +
-      '&body=' + encodeURIComponent(
-        'Category: ' + category + '\n' +
-        'State: ' + state + '\n' +
-        'Business: ' + name + '\n' +
-        'Phone: ' + phone + '\n' +
-        'Email: ' + email + '\n' +
-        'Website: ' + (website || 'N/A') + '\n' +
-        'WhatsApp: ' + (whatsapp || 'N/A') + '\n' +
-        'Address: ' + address + '\n' +
-        'Description: ' + desc + '\n\n' +
-        'Please confirm and publish this listing.'
-      );
-
-    var mailLink = document.createElement('a');
-    mailLink.href = mailto;
-    mailLink.click();
   });
   </script>
 </body>

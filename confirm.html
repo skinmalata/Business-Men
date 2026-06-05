@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ96VCVFWN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YZ96VCVFWN');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Listing - BusinessMen.com.ng</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="bm logo.png" type="image/png">
+  <link rel="stylesheet" href="css/style.css?v=18">
+  <script defer src="js/nav.js?v=10"></script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main class="container" style="padding:80px 0;min-height:60vh;">
+    <div id="confirmStatus" style="text-align:center;max-width:600px;margin:0 auto;">
+      <div id="confirmLoading" style="padding:60px 0;">
+        <div style="font-size:3rem;margin-bottom:16px;animation:pulse 1.5s infinite;">&#8987;</div>
+        <h2>Confirming your listing...</h2>
+      </div>
+
+      <div id="confirmSuccess" style="display:none;padding:60px 0;">
+        <div style="font-size:4rem;margin-bottom:16px;color:#166534;">&#10003;</div>
+        <h2 style="color:#166534;margin-bottom:12px;">Listing Confirmed!</h2>
+        <p style="color:#64748b;max-width:450px;margin:0 auto 24px;" id="successMessage">Your listing is now live on BusinessMen.com.ng.</p>
+        <a id="confirmViewLink" href="." class="btn-primary" style="display:inline-block;">View Listing</a>
+      </div>
+
+      <div id="confirmError" style="display:none;padding:60px 0;">
+        <div style="font-size:4rem;margin-bottom:16px;color:#dc2626;">&#10007;</div>
+        <h2 style="color:#dc2626;margin-bottom:12px;">Confirmation Failed</h2>
+        <p style="color:#64748b;max-width:450px;margin:0 auto 24px;" id="errorMessage">This link is invalid or expired. Please contact us for assistance.</p>
+        <a href="contact.html" class="btn-primary" style="display:inline-block;">Contact Support</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>BusinessMen.com.ng</strong> &mdash; Nigeria Business Directory. <a href=".">Browse businesses</a> or <a href="contact.html">contact us</a>.</p>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    function getParam(name) {
+      var m = window.location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+
+    function showSuccess(type) {
+      document.getElementById('confirmLoading').style.display = 'none';
+      document.getElementById('confirmSuccess').style.display = 'block';
+      var msg = document.getElementById('successMessage');
+      var link = document.getElementById('confirmViewLink');
+      if (type === 'marketplace') {
+        msg.textContent = 'Your marketplace ad is now live and visible to everyone on BusinessMen.com.ng.';
+        link.href = 'marketplace.html';
+        link.textContent = 'View Marketplace';
+      } else {
+        msg.textContent = 'Your business listing is now live on BusinessMen.com.ng.';
+        link.href = 'listing.html';
+        link.textContent = 'View Listings';
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('confirmLoading').style.display = 'none';
+      document.getElementById('confirmError').style.display = 'block';
+      document.getElementById('errorMessage').textContent = msg || 'This confirmation link is invalid or has expired.';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var token = getParam('token');
+      var type = getParam('type');
+
+      if (!token) {
+        showError('No confirmation token provided.');
+        return;
+      }
+
+      if (typeof db === 'undefined') {
+        showError('Could not connect to database. Please try again later.');
+        return;
+      }
+
+      if (type === 'marketplace') {
+        db.collection('marketplace').where('token', '==', token).get().then(function(snapshot) {
+          if (snapshot.empty) {
+            showError('This confirmation link is invalid or has expired. The ad may already be confirmed.');
+            return;
+          }
+          var doc = snapshot.docs[0];
+          var data = doc.data();
+          if (data.confirmed === true) {
+            showSuccess('marketplace');
+            return;
+          }
+          doc.ref.update({
+            confirmed: true,
+            confirmedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(function() {
+            showSuccess('marketplace');
+          }).catch(function(err) {
+            showError('Failed to confirm. Please try again: ' + err.message);
+          });
+        }).catch(function(err) {
+          showError('Database error: ' + err.message);
+        });
+      } else {
+        db.collection('pendingSubmissions').doc(token).get().then(function(doc) {
+          if (!doc.exists) {
+            showError('This confirmation link is invalid or has expired. The listing may already be confirmed.');
+            return;
+          }
+          var data = doc.data();
+          if (data.confirmed === true) {
+            showSuccess('business');
+            return;
+          }
+          doc.ref.update({
+            confirmed: true,
+            confirmedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(function() {
+            showSuccess('business');
+          }).catch(function(err) {
+            showError('Failed to confirm. Please try again: ' + err.message);
+          });
+        }).catch(function(err) {
+          showError('Database error: ' + err.message);
+        });
+      }
+    });
+  </script>
+  <style>
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  </style>
+</body>
+</html>

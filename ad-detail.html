@@ -216,6 +216,11 @@
 
         var ad = doc.data();
 
+        if (ad.confirmed === false) {
+          container.innerHTML = '<div class="ad-detail-expired"><h3>Ad Pending Activation</h3><p>This ad has not been activated yet. The owner needs to confirm via the email link.</p><a href="marketplace.html" class="btn-primary">Browse Marketplace</a></div>';
+          return;
+        }
+
         var imgHtml = ad.imageUrl
           ? '<img class="ad-detail-img" src="' + ad.imageUrl + '" alt="' + escapeHtml(ad.title) + '">'
           : '<div class="ad-detail-img-placeholder">No photo available</div>';

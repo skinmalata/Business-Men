@@ -44,14 +44,56 @@ async function loadCategoryFiles(files) {
   return combined;
 }
 
+async function loadUserListings() {
+  if (typeof db === 'undefined') return [];
+  try {
+    var snapshot = await db.collection('pendingSubmissions').get();
+    var results = [];
+    snapshot.forEach(function(doc) {
+      var d = doc.data();
+      if (d.confirmed === true && d.type === 'business') {
+        results.push({
+          name: d.name || 'Unnamed',
+          city: d.state || '',
+          phone: d.phone || '',
+          website: d.website || '',
+          email: d.email || '',
+          address: d.address || '',
+          description: d.description || '',
+          category: (d.category || '').toLowerCase().replace(/[^a-z]+/g, ''),
+          verified: true,
+          _uid: 'user_' + doc.id,
+          source: 'user_submitted'
+        });
+      }
+    });
+    return results;
+  } catch (e) {
+    console.warn('Failed to load user listings:', e);
+    return [];
+  }
+}
+
 async function loadData(category) {
   currentCategory = category || 'all';
   showSkeletons();
   try {
     const files = CATEGORY_FILE_MAP[currentCategory] || CATEGORY_FILE_MAP.general;
-    const allBusinesses = await loadCategoryFiles(files);
-    
-    allData = allBusinesses;
+    allData = await loadCategoryFiles(files);
+
+    var userListings = await loadUserListings();
+    if (userListings.length > 0) {
+      if (currentCategory === 'all') {
+        allData = allData.concat(userListings);
+      } else {
+        var dataCat = CATEGORY_MAP[currentCategory] || currentCategory;
+        var matching = userListings.filter(function(b) {
+          if (Array.isArray(dataCat)) return dataCat.includes(b.category);
+          return b.category === dataCat;
+        });
+        allData = allData.concat(matching);
+      }
+    }
     
     const countEl = document.getElementById('totalCount');
     if (countEl) countEl.textContent = allData.length;
@@ -130,6 +172,19 @@ async function loadData(category) {
       allData = allBusinesses.filter(b => dataCat.includes((b.category || '').toLowerCase()));
     } else {
       allData = allBusinesses.filter(b => (b.category || '').toLowerCase() === dataCat);
+    }
+
+    var userListings = await loadUserListings();
+    if (userListings.length > 0) {
+      if (currentCategory === 'all') {
+        allData = allData.concat(userListings);
+      } else {
+        var matching = userListings.filter(function(b) {
+          if (Array.isArray(dataCat)) return dataCat.includes(b.category);
+          return b.category === dataCat;
+        });
+        allData = allData.concat(matching);
+      }
     }
     
     allData.forEach(function(b, i) {

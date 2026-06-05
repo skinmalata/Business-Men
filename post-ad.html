@@ -78,6 +78,12 @@
       </div>
 
       <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+        <p style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">We'll send an activation link to this email.</p>
+      </div>
+
+      <div class="form-group">
         <label for="whatsapp">WhatsApp Number (optional)</label>
         <input type="tel" id="whatsapp" placeholder="e.g. 0803 123 4567">
       </div>
@@ -139,8 +145,8 @@
     </div>
 
     <div class="success-message" id="successMessage" style="display:none">
-      <h2>Ad Posted Successfully!</h2>
-      <p>Your ad is now live on the marketplace. It will remain visible until the listing limit is reached.</p>
+      <h2>Ad Submitted!</h2>
+      <p>We've sent an activation email to you. <strong>Click the link in that email</strong> to make your ad go live immediately.</p>
       <a href="marketplace.html" class="btn-primary">View Marketplace</a>
       <a href="post-ad.html" style="display:inline-block;margin-top:12px;color:#e94560;font-weight:500">Post another ad</a>
     </div>
@@ -150,7 +156,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script>
-    const IMGBB_KEY = '80f6be9e7166c0e3acc2d285154cd7c4';
+    var WEB3FORMS_KEY = '80a38aab-9247-4e00-8133-4b2f7ec81138';
+    var IMGBB_KEY = '80f6be9e7166c0e3acc2d285154cd7c4';
 
     document.getElementById('title').addEventListener('input', function() {
       document.getElementById('titleCount').textContent = this.value.length;
@@ -171,6 +178,12 @@
       };
       reader.readAsDataURL(file);
     });
+
+    function generateToken() {
+      var arr = new Uint8Array(24);
+      crypto.getRandomValues(arr);
+      return Array.from(arr, function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
 
     function uploadToImgbb(file) {
       return new Promise(function(resolve, reject) {
@@ -208,13 +221,14 @@
       var price = document.getElementById('price').value.trim();
       var desc = document.getElementById('description').value.trim();
       var phone = document.getElementById('phone').value.trim();
+      var email = document.getElementById('email').value.trim();
       var whatsapp = document.getElementById('whatsapp').value.trim();
       var state = document.getElementById('state').value;
       var address = document.getElementById('address').value.trim();
       var photoFile = document.getElementById('photoInput').files[0];
       var btn = document.getElementById('submitBtn');
 
-      if (!title || !category || !price || !desc || !phone || !state) {
+      if (!title || !category || !price || !desc || !phone || !email || !state) {
         alert('Please fill in all required fields.');
         return;
       }
@@ -226,50 +240,63 @@
         return;
       }
 
-      btn.textContent = 'Posting...';
+      var token = generateToken();
+
+      btn.textContent = 'Submitting...';
       btn.disabled = true;
 
       var uploadPromise = photoFile ? uploadToImgbb(photoFile) : Promise.resolve(null);
 
       uploadPromise.then(function(imageUrl) {
-        return db.collection('marketplace').orderBy('createdAt', 'asc').get().then(function(snapshot) {
-          var count = snapshot.size;
-          if (count >= 200) {
-            var oldest = snapshot.docs[0];
-            return oldest.ref.delete().then(function() {
-              return db.collection('marketplace').add({
-                title: title,
-                category: category,
-                price: price,
-                description: desc,
-                phone: phone,
-                whatsapp: whatsapp || null,
-                state: state,
-                address: address || null,
-                imageUrl: imageUrl,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-              });
-            });
-          }
-          return db.collection('marketplace').add({
-            title: title,
-            category: category,
-            price: price,
-            description: desc,
-            phone: phone,
-            whatsapp: whatsapp || null,
-            state: state,
-            address: address || null,
-            imageUrl: imageUrl,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+        return db.collection('marketplace').add({
+          title: title,
+          category: category,
+          price: price,
+          description: desc,
+          phone: phone,
+          email: email,
+          whatsapp: whatsapp || null,
+          state: state,
+          address: address || null,
+          imageUrl: imageUrl,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          confirmed: false,
+          token: token
         });
       }).then(function() {
+        var confirmLink = 'https://businessmen.com.ng/confirm.html?token=' + token + '&type=marketplace';
+
+        return fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            email: email,
+            subject: 'Confirm Your Marketplace Ad - BusinessMen.com.ng',
+            message: 'Hello,\n\n' +
+                     'Thank you for posting an ad on BusinessMen.com.ng!\n\n' +
+                     'To activate your ad, click the link below:\n\n' +
+                     confirmLink + '\n\n' +
+                     'Your ad will only go live after you confirm.\n\n' +
+                     'Here is a summary of your ad:\n\n' +
+                     'Title: ' + title + '\n' +
+                     'Category: ' + category + '\n' +
+                     'Price: ' + price + '\n' +
+                     'Phone: ' + phone + '\n' +
+                     'State: ' + state + '\n\n' +
+                     'If you did not submit this ad, please ignore this email.\n\n' +
+                     'Best regards,\nBusinessMen.com.ng Team',
+            from_name: 'BusinessMen.com.ng'
+          })
+        });
+      }).then(function(resp) {
+        return resp.json();
+      }).then(function(data) {
         if (typeof turnstile !== 'undefined') turnstile.reset();
         document.getElementById('postForm').style.display = 'none';
         document.getElementById('successMessage').style.display = 'block';
       }).catch(function(err) {
-        alert('Error posting ad: ' + (typeof err === 'string' ? err : err.message));
+        alert('Error: ' + (typeof err === 'string' ? err : err.message));
         btn.textContent = 'Post Ad';
         btn.disabled = false;
       });
