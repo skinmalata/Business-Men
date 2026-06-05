@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YZ96VCVFWN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YZ96VCVFWN');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newly Listed Businesses - BusinessMen.com.ng Nigeria</title>
+  <meta name="description" content="Browse newly listed businesses on BusinessMen.com.ng. Recent additions from business owners across Nigeria.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://businessmen.com.ng/new-listings.html">
+  <link rel="icon" href="bm logo.png" type="image/png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://businessmen.com.ng/new-listings.html">
+  <meta property="og:title" content="Newly Listed Businesses - BusinessMen.com.ng Nigeria">
+  <meta property="og:description" content="Browse newly listed businesses on BusinessMen.com.ng.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Newly Listed Businesses - BusinessMen.com.ng Nigeria">
+  <link rel="stylesheet" href="css/style.css?v=22">
+  <script defer src="js/nav.js?v=10"></script>
+  <style>
+    .new-page { padding: 40px 0 60px; }
+    .new-header { text-align: center; margin-bottom: 32px; }
+    .new-header h1 { font-size: 1.75rem; color: #0f172a; margin-bottom: 8px; }
+    .new-header p { color: #64748b; font-size: 1rem; }
+    .new-date { font-size: 0.78rem; color: #94a3b8; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .new-date::before { content: '\1F4C5'; font-size: 0.75rem; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }
+    .empty-state h2 { font-size: 1.2rem; color: #64748b; margin-bottom: 8px; }
+    .empty-state p { font-size: 0.9rem; }
+    .new-count { font-size: 0.85rem; color: #64748b; text-align: center; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main>
+    <div class="container new-page">
+      <div class="new-header">
+        <h1>Newly Listed Businesses</h1>
+        <p>Recent businesses added by owners to BusinessMen.com.ng</p>
+      </div>
+      <div class="new-count" id="newCount"></div>
+      <div id="skeletonGrid" class="skeleton-grid" style="display:none;">
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+      </div>
+      <div id="listingGrid" class="listing-grid"></div>
+      <div id="pagination" class="pagination"></div>
+      <div id="emptyState" class="empty-state" style="display:none;">
+        <h2>No new listings yet</h2>
+        <p>Be the first! <a href="getlisted.html" style="color:#e94560;text-decoration:underline;">Add your business</a> to get listed.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Business<span>Men</span></h3>
+          <p>Nigeria's fastest-growing business directory. Find verified companies with direct contact information across all Nigerian cities.</p>
+        </div>
+        <div class="footer-col footer-categories">
+          <h4>Categories</h4>
+          <div class="footer-cat-cols">
+            <div>
+              <a href="listing.html?cat=hotels">Hotels</a>
+              <a href="listing.html?cat=hospitals">Hospitals</a>
+              <a href="listing.html?cat=schools">Schools</a>
+              <a href="listing.html?cat=agriculture">Agriculture</a>
+              <a href="listing.html?cat=transportation">Transport</a>
+              <a href="listing.html?cat=food">Food & Restaurants</a>
+            </div>
+            <div>
+              <a href="listing.html?cat=shopping">Shopping</a>
+              <a href="listing.html?cat=realestate">Real Estate</a>
+              <a href="listing.html?cat=construction">Construction</a>
+              <a href="listing.html?cat=automobile">Automobile</a>
+              <a href="listing.html?cat=oilgas">Oil & Gas</a>
+              <a href="listing.html?cat=business">Business Services</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Top Cities</h4>
+          <a href="listing.html?city=Lagos">Lagos</a>
+          <a href="listing.html?city=Abuja FCT">Abuja</a>
+          <a href="listing.html?city=Rivers">Port Harcourt</a>
+          <a href="listing.html?city=Kano">Kano</a>
+          <a href="listing.html?city=Oyo">Ibadan</a>
+        </div>
+        <div class="footer-col">
+          <h4>Business</h4>
+          <a href="new-listings.html">New Listings</a>
+          <a href="claim.html">Edit Your Business</a>
+          <a href="getlisted.html">Add a Listing</a>
+          <a href="marketplace.html">Marketplace</a>
+          <a href="blog/">Blog</a>
+          <a href="contact.html">Contact</a>
+          <a href=".">Home</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p><strong>BusinessMen.com.ng</strong> &mdash; Nigeria Business Directory. <a href="getlisted.html">Get listed</a> to add your business.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script>
+    var ITEMS_PER_PAGE = 20;
+    var currentPage = 1;
+    var allListings = [];
+
+    function showSkeletons() {
+      var grid = document.getElementById('listingGrid');
+      var skel = document.getElementById('skeletonGrid');
+      if (skel) skel.style.display = 'grid';
+      if (grid) grid.innerHTML = '';
+    }
+
+    function hideSkeletons() {
+      var el = document.getElementById('skeletonGrid');
+      if (el) el.style.display = 'none';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '';
+      var then = new Date(dateStr);
+      var now = new Date();
+      var diff = Math.floor((now - then) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      if (diff < 2592000) return Math.floor(diff / 86400) + 'd ago';
+      return then.toLocaleDateString();
+    }
+
+    function renderGrid(items) {
+      var grid = document.getElementById('listingGrid');
+      if (!grid) return;
+      grid.innerHTML = items.map(function(item) {
+        var name = item.name || 'Unnamed';
+        var phone = item.phone || '';
+        var city = item.city || item.state || '';
+        var cat = item.category || '';
+        var desc = item.description || '';
+        var date = item.submitted || '';
+        var searchQuery = encodeURIComponent(name);
+        var detailUrl = 'listing.html?cat=all&q=' + searchQuery;
+
+        return '<article class="card" onclick="window.location.href=\'' + detailUrl + '\'" role="listitem" style="cursor:pointer;">' +
+          '<div class="card-body">' +
+            '<h3>' + escapeHtml(name) + ' <span class="verified-badge" title="Verified Business">\u2713</span></h3>' +
+            '<div class="card-city">' + escapeHtml(city) + '</div>' +
+            (phone ? '<a href="tel:' + phone + '" class="card-phone" onclick="event.stopPropagation();">' + escapeHtml(phone) + '</a>' : '') +
+            (desc ? '<div class="card-desc">' + escapeHtml(desc) + '</div>' : '') +
+            '<div class="card-footer">' +
+              '<span class="card-badge verified">New Listing</span>' +
+              (cat ? '<span class="card-badge" style="background:#f1f5f9;color:#475569;">' + escapeHtml(cat) + '</span>' : '') +
+              (date ? '<span class="new-date" style="margin-left:auto;">' + timeAgo(date) + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+    }
+
+    function renderPagination(total, totalPages) {
+      var container = document.getElementById('pagination');
+      if (!container) return;
+      if (total <= ITEMS_PER_PAGE) {
+        container.innerHTML = '';
+        return;
+      }
+      var html = '';
+      html += '<button onclick="goToPage(' + (currentPage - 1) + ')"' + (currentPage <= 1 ? ' disabled' : '') + '>&larr; Prev</button>';
+      var startPage = Math.max(1, currentPage - 2);
+      var endPage = Math.min(totalPages, currentPage + 2);
+      if (startPage > 1) {
+        html += '<button onclick="goToPage(1)">1</button>';
+        if (startPage > 2) html += '<span class="page-info">...</span>';
+      }
+      for (var i = startPage; i <= endPage; i++) {
+        html += '<button onclick="goToPage(' + i + ')"' + (i === currentPage ? ' class="active"' : '') + '>' + i + '</button>';
+      }
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += '<span class="page-info">...</span>';
+        html += '<button onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
+      }
+      html += '<button onclick="goToPage(' + (currentPage + 1) + ')"' + (currentPage >= totalPages ? ' disabled' : '') + '>Next &rarr;</button>';
+      container.innerHTML = html;
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      applyPagination();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function applyPagination() {
+      var total = allListings.length;
+      var totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      var start = (currentPage - 1) * ITEMS_PER_PAGE;
+      var pageItems = allListings.slice(start, start + ITEMS_PER_PAGE);
+      hideSkeletons();
+      renderGrid(pageItems);
+      renderPagination(total, totalPages);
+    }
+
+    async function loadNewListings() {
+      showSkeletons();
+      try {
+        var snapshot = await db.collection('pendingSubmissions').get();
+        allListings = [];
+        snapshot.forEach(function(doc) {
+          var d = doc.data();
+          if (d.confirmed === true) {
+            allListings.push({
+              name: d.name || 'Unnamed',
+              phone: d.phone || '',
+              city: d.state || d.city || '',
+              category: d.category || '',
+              description: d.description || '',
+              submitted: d.submitted || d.editedAt || ''
+            });
+          }
+        });
+        allListings.sort(function(a, b) {
+          var ta = a.submitted ? new Date(a.submitted).getTime() : 0;
+          var tb = b.submitted ? new Date(b.submitted).getTime() : 0;
+          return tb - ta;
+        });
+        var countEl = document.getElementById('newCount');
+        if (countEl) countEl.textContent = allListings.length + ' new listing' + (allListings.length !== 1 ? 's' : '');
+        if (allListings.length === 0) {
+          hideSkeletons();
+          document.getElementById('emptyState').style.display = 'block';
+          return;
+        }
+        currentPage = 1;
+        applyPagination();
+      } catch (e) {
+        console.error('Failed to load new listings:', e);
+        hideSkeletons();
+        document.getElementById('emptyState').style.display = 'block';
+        document.querySelector('#emptyState h2').textContent = 'Unable to load listings';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadNewListings);
+  </script>
+</body>
+</html>
