@@ -45,6 +45,10 @@ async function applyListingEdits() {
           override = edits[slug + '-' + numId] || edits[numId];
         }
       }
+      if (!override && b.name && b.city) {
+        var nameCityKey = (b.name + '|' + b.city).toLowerCase().replace(/[^a-z0-9|]/g, '');
+        override = edits[nameCityKey];
+      }
       if (!override && b.name && __listingEditsList.length) {
         var bName = (b.name || '').toLowerCase().trim();
         var bCity = (b.city || '').toLowerCase().trim();
@@ -700,6 +704,18 @@ function renderDetailView(item, cat) {
         }
       }
       if (matched) break;
+    }
+
+    if (!matched && item.name) {
+      if (item.city) {
+        var nameCityKey = (item.name + '|' + item.city).toLowerCase().replace(/[^a-z0-9|]/g, '');
+        for (var li = 0; li < __listingEditsList.length; li++) {
+          if (__listingEditsList[li].id === nameCityKey) {
+            matched = __listingEditsList[li].data;
+            break;
+          }
+        }
+      }
     }
 
     if (!matched && item.name) {
