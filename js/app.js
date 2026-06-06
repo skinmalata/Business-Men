@@ -33,8 +33,16 @@ async function applyListingEdits() {
     snapshot.forEach(function(doc) {
       edits[doc.id] = doc.data();
     });
+    var editKeys = Object.keys(edits);
     allData.forEach(function(b) {
       var override = edits[b._uid];
+      if (!override && b.url) {
+        var numId = b.url.match(/(\d+)\/$/)?.[1];
+        if (numId) {
+          var slug = (b.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          override = edits[slug + '-' + numId] || edits[numId];
+        }
+      }
       if (override) {
         if (override.phone) b.phone = override.phone;
         if (override.whatsapp) b.whatsapp = override.whatsapp;
@@ -476,19 +484,34 @@ async function showDetail(cat, id) {
   if (!id) return;
   var item = allData.find(d => d._uid === id);
   if (!item) item = allData.find(d => { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
-  if (!item) return;
+  if (!item) {
+    item = allData.find(d => {
+      var slug = (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      var numId = d.url && d.url.match(/(\d+)\/$/)?.[1] || '';
+      return slug + '-' + numId === id || d._uid === id || numId === id;
+    });
+  }
+  if (!item) { console.warn('[showDetail] Item not found for id:', id, '_uid values:', allData.slice(0,5).map(d => d._uid)); return; }
 
+  console.log('[showDetail] Found item:', item.name, '_uid:', item._uid, 'id param:', id);
+
+  var overrideData = null;
   if (typeof db !== 'undefined') {
     try {
-      var overrideDoc = await db.collection('listingEdits').doc(id).get();
+      var lookupId = item._uid || id;
+      console.log('[showDetail] Fetching override for lookupId:', lookupId);
+      var overrideDoc = await db.collection('listingEdits').doc(lookupId).get();
       if (overrideDoc.exists) {
-        var override = overrideDoc.data();
-        if (override.phone) item.phone = override.phone;
-        if (override.whatsapp) item.whatsapp = override.whatsapp;
-        if (override.address) item.address = override.address;
+        overrideData = overrideDoc.data();
+        console.log('[showDetail] Override found:', overrideData);
+        if (overrideData.phone) item.phone = overrideData.phone;
+        if (overrideData.whatsapp) item.whatsapp = overrideData.whatsapp;
+        if (overrideData.address) item.address = overrideData.address;
+      } else {
+        console.log('[showDetail] No override found for', lookupId);
       }
     } catch (e) {
-      console.warn('Failed to load listing override:', e);
+      console.warn('[showDetail] Failed to load listing override:', e);
     }
   }
 
