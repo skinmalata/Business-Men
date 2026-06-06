@@ -48,6 +48,17 @@ async function applyListingEdits() {
       if (!override && b.name && b.city) {
         var nameCityKey = (b.name + '|' + b.city).toLowerCase().replace(/[^a-z0-9|]/g, '');
         override = edits[nameCityKey];
+        if (!override) {
+          var cityClean = b.city.replace(/\s*State\s*/i, '').trim().toLowerCase();
+          if (cityClean !== b.city.toLowerCase().trim()) {
+            nameCityKey = (b.name + '|' + cityClean).replace(/[^a-z0-9|]/g, '');
+            override = edits[nameCityKey];
+          }
+        }
+      }
+      if (!override && b.name) {
+        var nameOnlyKey = (b.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        override = edits[nameOnlyKey];
       }
       if (!override && b.name && __listingEditsList.length) {
         var bName = (b.name || '').toLowerCase().trim();
@@ -711,6 +722,27 @@ function renderDetailView(item, cat) {
         var nameCityKey = (item.name + '|' + item.city).toLowerCase().replace(/[^a-z0-9|]/g, '');
         for (var li = 0; li < __listingEditsList.length; li++) {
           if (__listingEditsList[li].id === nameCityKey) {
+            matched = __listingEditsList[li].data;
+            break;
+          }
+        }
+        if (!matched) {
+          var cityClean = item.city.replace(/\s*State\s*/i, '').trim().toLowerCase();
+          if (cityClean !== item.city.toLowerCase().trim()) {
+            nameCityKey = (item.name + '|' + cityClean).replace(/[^a-z0-9|]/g, '');
+            for (var li = 0; li < __listingEditsList.length; li++) {
+              if (__listingEditsList[li].id === nameCityKey) {
+                matched = __listingEditsList[li].data;
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (!matched) {
+        var nameOnlyKey = (item.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (var li = 0; li < __listingEditsList.length; li++) {
+          if (__listingEditsList[li].id === nameOnlyKey) {
             matched = __listingEditsList[li].data;
             break;
           }
