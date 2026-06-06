@@ -4,6 +4,7 @@ let currentCategory = 'all';
 let currentPage = 1;
 const ITEMS_PER_PAGE = 20;
 let searchTimeout = null;
+var __listingEditsList = [];
 
 const CONSOLIDATED_DATA_FILE = 'data/nigeria_all_businesses.json';
 const DATA_CACHE = {};
@@ -30,10 +31,11 @@ async function applyListingEdits() {
   try {
     var snapshot = await db.collection('listingEdits').get();
     var edits = {};
+    __listingEditsList = [];
     snapshot.forEach(function(doc) {
       edits[doc.id] = doc.data();
+      __listingEditsList.push({ id: doc.id, data: doc.data() });
     });
-    var editKeys = Object.keys(edits);
     allData.forEach(function(b) {
       var override = edits[b._uid];
       if (!override && b.url) {
@@ -480,40 +482,11 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-async function showDetail(cat, id) {
+function showDetail(cat, id) {
   if (!id) return;
   var item = allData.find(d => d._uid === id);
   if (!item) item = allData.find(d => { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
-  if (!item) {
-    item = allData.find(d => {
-      var slug = (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      var numId = d.url && d.url.match(/(\d+)\/$/)?.[1] || '';
-      return slug + '-' + numId === id || d._uid === id || numId === id;
-    });
-  }
-  if (!item) { console.warn('[showDetail] Item not found for id:', id, '_uid values:', allData.slice(0,5).map(d => d._uid)); return; }
-
-  console.log('[showDetail] Found item:', item.name, '_uid:', item._uid, 'id param:', id);
-
-  var overrideData = null;
-  if (typeof db !== 'undefined') {
-    try {
-      var lookupId = item._uid || id;
-      console.log('[showDetail] Fetching override for lookupId:', lookupId);
-      var overrideDoc = await db.collection('listingEdits').doc(lookupId).get();
-      if (overrideDoc.exists) {
-        overrideData = overrideDoc.data();
-        console.log('[showDetail] Override found:', overrideData);
-        if (overrideData.phone) item.phone = overrideData.phone;
-        if (overrideData.whatsapp) item.whatsapp = overrideData.whatsapp;
-        if (overrideData.address) item.address = overrideData.address;
-      } else {
-        console.log('[showDetail] No override found for', lookupId);
-      }
-    } catch (e) {
-      console.warn('[showDetail] Failed to load listing override:', e);
-    }
-  }
+  if (!item) return;
 
   const listView = document.getElementById('listView');
   const detailView = document.getElementById('listingDetail');
@@ -697,6 +670,30 @@ function renderDetailView(item, cat) {
     </div>
   `;
 
+  // Firestore override — apply admin-approved listing edits
+  if (typeof db !== 'undefined') {
+    var possibleIds = [id];
+    var numFromUrl = item.url && item.url.match(/(\d+)\/$/)?.[1];
+    if (numFromUrl && possibleIds.indexOf(numFromUrl) === -1) possibleIds.push(numFromUrl);
+    var nameSlug = (item.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    if (numFromUrl && nameSlug) possibleIds.push(nameSlug + '-' + numFromUrl);
+
+    var matched = null;
+    for (var pi = 0; pi < possibleIds.length; pi++) {
+      for (var li = 0; li < __listingEditsList.length; li++) {
+        if (__listingEditsList[li].id === possibleIds[pi]) {
+          matched = __listingEditsList[li].data;
+          break;
+        }
+      }
+      if (matched) break;
+    }
+
+    if (matched) {
+      applyListingEditOverride(container, matched);
+    }
+  }
+
   // Firestore override — apply claimed edits on top of static JSON data
   if (id && typeof db !== 'undefined') {
     db.collection('edits').doc(id).get().then(function(doc) {
@@ -775,6 +772,64 @@ function applyClaimedEdit(container, editData) {
     var h2 = lastSection.querySelector('h2');
     if (h2 && h2.textContent.trim() === 'Edit This Listing') {
       lastSection.innerHTML = '<h2>Edit This Listing</h2><div class="claimed-notice"><span class="claimed-badge-lg">\u2713 Verified Owner</span><p style="color:#166534;margin-top:8px;">You have verified ownership and edited this listing.</p></div>';
+    }
+  }
+}
+
+function applyListingEditOverride(container, overrideData) {
+  var ed = overrideData;
+  var rows = container.querySelectorAll('.info-row');
+  function findRow(labelText) {
+    for (var i = 0; i < rows.length; i++) {
+      var lbl = rows[i].querySelector('.label');
+      if (lbl && lbl.textContent.trim() === labelText) return rows[i];
+    }
+    return null;
+  }
+  if (ed.phone) {
+    var r = findRow('Phone');
+    if (r) {
+      var v = r.querySelector('.value');
+      if (v) v.innerHTML = '<a href="tel:' + ed.phone.replace(/"/g,'') + '" rel="nofollow">' + escapeHtml(ed.phone) + '</a>';
+    } else {
+      var contactSection = container.querySelector('.detail-section');
+      if (contactSection) {
+        var row = document.createElement('div');
+        row.className = 'info-row';
+        row.innerHTML = '<span class="label">Phone</span><span class="value"><a href="tel:' + ed.phone.replace(/"/g,'') + '" rel="nofollow">' + escapeHtml(ed.phone) + '</a></span>';
+        var firstRow = contactSection.querySelector('.info-row');
+        if (firstRow) contactSection.insertBefore(row, firstRow);
+        else contactSection.appendChild(row);
+      }
+    }
+  }
+  if (ed.whatsapp) {
+    var existingWa = findRow('WhatsApp');
+    if (!existingWa) {
+      var contactSection = container.querySelector('.detail-section');
+      if (contactSection) {
+        var waRow = document.createElement('div');
+        waRow.className = 'info-row';
+        waRow.innerHTML = '<span class="label">WhatsApp</span><span class="value"><a href="https://wa.me/' + ed.whatsapp.replace(/"/g,'') + '" target="_blank" rel="noopener">' + escapeHtml(ed.whatsapp) + '</a></span>';
+        contactSection.appendChild(waRow);
+      }
+    }
+  }
+  if (ed.address) {
+    var r = findRow('Address');
+    if (r) {
+      var v = r.querySelector('.value');
+      if (v) v.textContent = escapeHtml(ed.address);
+    } else {
+      var contactSection = container.querySelector('.detail-section');
+      if (contactSection) {
+        var addrRow = document.createElement('div');
+        addrRow.className = 'info-row';
+        addrRow.innerHTML = '<span class="label">Address</span><span class="value">' + escapeHtml(ed.address) + '</span>';
+        var firstRow = contactSection.querySelector('.info-row');
+        if (firstRow) contactSection.insertBefore(addrRow, firstRow);
+        else contactSection.appendChild(addrRow);
+      }
     }
   }
 }
