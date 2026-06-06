@@ -35,6 +35,7 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
   <script defer src="js/firebase-config.js"></script>
 
 </head>
@@ -44,7 +45,7 @@
   <main>
     <div class="container claim-page">
       <h1>Edit This Business</h1>
-      <p class="claim-subtitle">Update your business listing. A confirmation email will be sent to verify ownership.</p>
+      <p class="claim-subtitle">Submit your changes below. An admin will review and apply them within 48 hours.</p>
 
       <!-- Step 1: Edit Form -->
       <form class="claim-form" id="editForm" style="display:block;">
@@ -66,6 +67,10 @@
           <p style="font-size:0.8rem;color:#64748b;margin-top:4px;">Include country code without the + sign (e.g. 2348012345678).</p>
         </div>
         <div class="form-group">
+          <label for="claimAddress">Business Address</label>
+          <input type="text" id="claimAddress" placeholder="Street, area, landmark">
+        </div>
+        <div class="form-group">
           <label for="claimEmail">Your Email *</label>
           <input type="email" id="claimEmail" placeholder="you@example.com" required>
         </div>
@@ -76,35 +81,19 @@
         <div class="form-group">
           <div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>
         </div>
-        <button type="button" class="btn-primary" id="sendConfirmBtn" onclick="sendConfirmation()">Send Confirmation Email</button>
-        <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">A confirmation code will be sent to your email to verify ownership.</p>
+        <button type="submit" class="btn-primary" id="submitEditBtn" style="width:100%;padding:16px;font-size:1.05rem;">Submit Edit for Review</button>
+        <p style="margin-top:12px;font-size:0.8rem;color:#9ca3af;">Your changes will be reviewed by an admin before going live.</p>
       </form>
 
-      <!-- Step 2: Confirm Code -->
-      <div class="claim-form" id="confirmForm" style="display:none;">
-        <div style="text-align:center;padding:12px 0;">
-          <div style="font-size:2.5rem;margin-bottom:6px;">&#9993;</div>
-          <h3 style="font-size:1.1rem;margin-bottom:8px;">Check Your Email</h3>
-          <p style="color:#64748b;font-size:0.9rem;margin-bottom:4px;">We sent a 6-digit confirmation code to:</p>
-          <p id="confirmEmailDisplay" style="font-weight:600;color:#0f172a;font-size:1rem;"></p>
-          <p style="color:#94a3b8;font-size:0.8rem;margin-top:4px;">
-            Didn't get it?
-            <a href="#" onclick="resendConfirmation(); return false;" style="color:#e94560;text-decoration:underline;">Resend</a>
-          </p>
-        </div>
-        <div class="form-group" style="margin-top:20px;">
-          <label for="confirmCode">Enter Confirmation Code</label>
-          <input type="text" id="confirmCode" placeholder="000000" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px;font-weight:700;" oninput="this.value=this.value.replace(/\D/g,'')" autocomplete="off">
-          <div id="confirmError" style="display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:0.85rem;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;"></div>
-        </div>
-        <button type="button" class="btn-primary" id="confirmBtn" onclick="handleEditConfirm()" style="width:100%;">Confirm Edit</button>
-      </div>
-
-      <!-- Step 3: Success -->
+      <!-- Step 2: Success -->
       <div id="claimSuccess" class="claim-success" style="display:none" role="alert">
-        <h3>Edit Confirmed!</h3>
-        <p>Your changes to this business listing have been saved. Updates will appear on the listing page.</p>
-        <a href="listing.html" class="btn-primary" style="display:inline-block;margin-top:15px;">Back to Directory</a>
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:3rem;margin-bottom:16px;">&#128260;</div>
+          <h2 style="color:#166534;margin-bottom:8px;">Edit Submitted for Review</h2>
+          <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! Your edit request has been received. An admin will review your changes within <strong>48 hours</strong>. You'll be notified once the update is live.</p>
+          <p style="color:#94a3b8;font-size:0.9rem;">If you have any questions, <a href="contact.html" style="color:#e94560;">contact us</a>.</p>
+          <a href="listing.html" class="btn-primary" style="display:inline-block;margin-top:20px;">Back to Directory</a>
+        </div>
       </div>
     </div>
   </main>
@@ -117,98 +106,47 @@
 
   <script defer src="js/app.js?v=13"></script>
   <script defer>
-    var WEB3FORMS_KEY = '80a38aab-9247-4e00-8133-4b2f7ec81138';
-    var _confirmCode = '';
     var _editId = null;
 
-    function generateCode() {
-      return String(Math.floor(100000 + Math.random() * 900000));
-    }
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-    function sendConfirmation() {
       if (typeof turnstile !== 'undefined' && turnstile.getResponse().length === 0) {
         alert('Please complete the verification.');
         return;
       }
+
       var email = document.getElementById('claimEmail').value.trim();
       if (!email) {
         alert('Please enter your email address.');
         return;
       }
-      _confirmCode = generateCode();
-      _editId = new URLSearchParams(window.location.search).get('id');
-      var businessName = document.getElementById('claimName').value.trim();
 
-      document.getElementById('confirmEmailDisplay').textContent = email;
-      document.getElementById('editForm').style.display = 'none';
-      document.getElementById('confirmForm').style.display = 'block';
-      document.getElementById('claimSuccess').style.display = 'none';
+      var btn = document.getElementById('submitEditBtn');
+      btn.textContent = 'Submitting...';
+      btn.disabled = true;
 
-      if (typeof turnstile !== 'undefined') turnstile.reset();
-
-      fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          email: email,
-          subject: 'BusinessMen.com.ng - Confirm Edit: ' + businessName,
-          message: 'Your confirmation code is: ' + _confirmCode + '\n\n' +
-                   'Enter this code on the website to complete your edit.\n\n' +
-                   'Business: ' + businessName + '\n' +
-                   'Submitted: ' + new Date().toLocaleString() + '\n\n' +
-                   'If you did not request this, please ignore this email.',
-          from_name: 'BusinessMen.com.ng'
-        })
-      }).then(function(resp) {
-        return resp.json();
-      }).then(function(data) {
-        if (!data.success) {
-          document.getElementById('confirmError').style.display = 'block';
-          document.getElementById('confirmError').textContent = 'Failed to send email. Please try again.';
-        }
-      }).catch(function(err) {
-        console.error('Web3Forms failed:', err);
-        document.getElementById('confirmError').style.display = 'block';
-        document.getElementById('confirmError').textContent = 'Failed to send email. Please try again.';
-      });
-    }
-
-    function resendConfirmation() {
-      sendConfirmation();
-    }
-
-    function handleEditConfirm() {
-      var entered = document.getElementById('confirmCode').value.trim();
-      var errorEl = document.getElementById('confirmError');
-
-      if (entered !== _confirmCode) {
-        errorEl.style.display = 'block';
-        errorEl.textContent = 'Incorrect code. Please check your email and try again.';
-        return;
-      }
-
-      errorEl.style.display = 'none';
-
-      var params = new URLSearchParams(window.location.search);
-      var id = params.get('id');
+      var id = new URLSearchParams(window.location.search).get('id');
+      _editId = id;
       var name = document.getElementById('claimName').value.trim();
-      var email = document.getElementById('claimEmail').value.trim();
-      var message = document.getElementById('claimMessage').value.trim();
+      var city = document.getElementById('claimCity').value.trim();
       var phone = document.getElementById('claimPhone').value.trim();
       var whatsapp = document.getElementById('claimWhatsApp').value.trim();
+      var address = document.getElementById('claimAddress').value.trim();
+      var message = document.getElementById('claimMessage').value.trim();
 
       var editData = {
         name: name,
+        city: city,
         email: email,
-        message: message,
         phone: phone,
         whatsapp: whatsapp,
+        address: address,
+        message: message,
         editedAt: new Date().toISOString(),
-        verified: true
+        status: 'pending',
+        listingId: id
       };
-
-      localStorage.setItem('claim_' + id, JSON.stringify(editData));
 
       if (typeof db !== 'undefined') {
         db.collection('edits').doc(id).set(editData).catch(function(err) {
@@ -216,11 +154,16 @@
         });
       }
 
+      var notifyAdmin = firebase.functions().httpsCallable('notifyAdminEdit');
+      notifyAdmin(editData).catch(function(err) {
+        console.warn('Admin notification error:', err);
+      });
+
       if (typeof turnstile !== 'undefined') turnstile.reset();
 
-      document.getElementById('confirmForm').style.display = 'none';
+      document.getElementById('editForm').style.display = 'none';
       document.getElementById('claimSuccess').style.display = 'block';
-    }
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
       var params = new URLSearchParams(window.location.search);
@@ -230,14 +173,6 @@
 
       if (name) document.getElementById('claimName').value = decodeURIComponent(name);
       if (city) document.getElementById('claimCity').value = decodeURIComponent(city);
-
-      var existingEdit = null;
-      try { existingEdit = JSON.parse(localStorage.getItem('claim_' + id)); } catch(e) {}
-
-      if (existingEdit && existingEdit.verified) {
-        document.getElementById('editForm').innerHTML =
-          '<div class="claim-success"><h3>Already Edited</h3><p>This business listing has already been edited and verified.</p><a href="listing.html?cat=' + params.get('cat') + '&id=' + id + '" class="btn-primary" style="display:inline-block;margin-top:15px;">View Listing</a></div>';
-      }
     });
   </script>
 </body>

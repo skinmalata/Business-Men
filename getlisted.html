@@ -37,7 +37,7 @@
     <section class="services-hero" style="padding:80px 0 56px;">
       <div class="container" style="text-align:center;">
         <h1>Get Your Business Listed</h1>
-        <p>Submit your business details below. You'll receive an email confirmation, and once verified, your listing goes live on BusinessMen.com.ng.</p>
+        <p>Submit your business details below. An admin will review your listing within 48 hours before it goes live.</p>
       </div>
     </section>
 
@@ -111,11 +111,6 @@
             </div>
 
             <div class="form-group">
-              <label for="glEmailConfirm">Confirm Email Address</label>
-              <input type="email" id="glEmailConfirm" required placeholder="Re-enter your email">
-            </div>
-
-            <div class="form-group">
               <div class="cf-turnstile" data-sitekey="0x4AAAAAADSQX4TZupvwvbTC"></div>
             </div>
 
@@ -124,10 +119,10 @@
 
           <div id="glSuccess" class="claim-success" style="display:none;">
             <div style="text-align:center;padding:40px 20px;">
-              <div style="font-size:3rem;margin-bottom:16px;">&#10003;</div>
-              <h2 style="color:#166534;margin-bottom:8px;">Listing Submitted!</h2>
-              <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! We've sent an activation email to the address you provided. <strong>Click the link in that email</strong> to make your listing go live immediately.</p>
-              <p style="color:#94a3b8;font-size:0.9rem;">Didn't receive the email? Check your spam folder or <a href="mailto:businessmenlisting@gmail.com?subject=Confirm%20Listing">contact us</a>.</p>
+              <div style="font-size:3rem;margin-bottom:16px;">&#128260;</div>
+              <h2 style="color:#166534;margin-bottom:8px;">Listing Submitted for Review!</h2>
+              <p style="color:#64748b;max-width:500px;margin:0 auto 20px;">Thank you! Your listing has been received. An admin will review it within <strong>48 hours</strong> before it goes live on the directory.</p>
+              <p style="color:#94a3b8;font-size:0.9rem;">If you have any questions, <a href="contact.html" style="color:#e94560;">contact us</a>.</p>
               <a href="." class="btn-primary" style="display:inline-block;margin-top:20px;">Back to Home</a>
             </div>
           </div>
@@ -192,8 +187,6 @@
   </main>
 
   <script>
-  var WEB3FORMS_KEY = '80a38aab-9247-4e00-8133-4b2f7ec81138';
-
   function generateToken() {
     var arr = new Uint8Array(24);
     crypto.getRandomValues(arr);
@@ -210,7 +203,6 @@
 
     var name = document.getElementById('glBusiness').value.trim();
     var email = document.getElementById('glEmail').value.trim();
-    var emailConfirm = document.getElementById('glEmailConfirm').value.trim();
     var category = document.getElementById('glCategory').value;
     var state = document.getElementById('glState').value;
     var phone = document.getElementById('glPhone').value.trim();
@@ -218,11 +210,6 @@
     var whatsapp = document.getElementById('glWhatsapp').value.trim();
     var address = document.getElementById('glAddress').value.trim();
     var desc = document.getElementById('glDesc').value.trim();
-
-    if (email !== emailConfirm) {
-      alert('Email addresses do not match. Please re-enter.');
-      return;
-    }
 
     var token = generateToken();
 
@@ -247,42 +234,6 @@
         console.warn('Firestore write failed:', err);
       });
     }
-
-    var confirmLink = 'https://businessmen.com.ng/confirm.html?token=' + token + '&type=business';
-
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_KEY,
-        email: email,
-        subject: 'Confirm Your Business Listing - BusinessMen.com.ng',
-        message: 'Hello ' + name + ',\n\n' +
-                 'Thank you for listing your business on BusinessMen.com.ng!\n\n' +
-                 'To activate your listing, click the link below:\n\n' +
-                 confirmLink + '\n\n' +
-                 'Your listing will only go live after you confirm.\n\n' +
-                 'Here is a summary of your submission:\n\n' +
-                 'Business: ' + name + '\n' +
-                 'Category: ' + category + '\n' +
-                 'State: ' + state + '\n' +
-                 'Phone: ' + phone + '\n' +
-                 'Address: ' + address + '\n' +
-                 (website ? 'Website: ' + website + '\n' : '') +
-                 '\n' +
-                 'If you did not submit this listing, please ignore this email.\n\n' +
-                 'Best regards,\nBusinessMen.com.ng Team',
-        from_name: 'BusinessMen.com.ng'
-      })
-    }).then(function(resp) {
-      return resp.json();
-    }).then(function(data) {
-      if (!data.success) {
-        console.warn('Confirmation email failed to send');
-      }
-    }).catch(function(err) {
-      console.warn('Confirmation email error:', err);
-    });
 
     document.getElementById('getListedForm').style.display = 'none';
     document.getElementById('glSuccess').style.display = 'block';
