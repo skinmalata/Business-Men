@@ -472,11 +472,25 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function showDetail(cat, id) {
+async function showDetail(cat, id) {
   if (!id) return;
   var item = allData.find(d => d._uid === id);
   if (!item) item = allData.find(d => { var m = d.url && d.url.match(/(\d+)\/$/); return m && m[1] === id; });
   if (!item) return;
+
+  if (typeof db !== 'undefined') {
+    try {
+      var overrideDoc = await db.collection('listingEdits').doc(id).get();
+      if (overrideDoc.exists) {
+        var override = overrideDoc.data();
+        if (override.phone) item.phone = override.phone;
+        if (override.whatsapp) item.whatsapp = override.whatsapp;
+        if (override.address) item.address = override.address;
+      }
+    } catch (e) {
+      console.warn('Failed to load listing override:', e);
+    }
+  }
 
   const listView = document.getElementById('listView');
   const detailView = document.getElementById('listingDetail');
