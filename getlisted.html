@@ -28,6 +28,7 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
   <script defer src="js/firebase-config.js"></script>
 </head>
 <body>
@@ -229,16 +230,21 @@
       token: token
     };
 
-    if (typeof db !== 'undefined') {
-      db.collection('pendingSubmissions').doc(token).set(listingData).catch(function(err) {
-        console.warn('Firestore write failed:', err);
+      if (typeof db !== 'undefined') {
+        db.collection('pendingSubmissions').doc(token).set(listingData).catch(function(err) {
+          console.warn('Firestore write failed:', err);
+        });
+      }
+
+      var notifyAdmin = firebase.functions().httpsCallable('notifyAdminListing');
+      notifyAdmin(listingData).catch(function(err) {
+        console.warn('Admin notification error:', err);
       });
-    }
 
-    document.getElementById('getListedForm').style.display = 'none';
-    document.getElementById('glSuccess').style.display = 'block';
+      document.getElementById('getListedForm').style.display = 'none';
+      document.getElementById('glSuccess').style.display = 'block';
 
-    if (typeof turnstile !== 'undefined') turnstile.reset();
+      if (typeof turnstile !== 'undefined') turnstile.reset();
   });
   </script>
 </body>

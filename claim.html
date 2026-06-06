@@ -135,6 +135,8 @@
       var address = document.getElementById('claimAddress').value.trim();
       var message = document.getElementById('claimMessage').value.trim();
 
+      var token = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
+
       var editData = {
         name: name,
         city: city,
@@ -144,12 +146,14 @@
         address: address,
         message: message,
         editedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         status: 'pending',
-        listingId: id
+        listingId: id,
+        token: token
       };
 
       if (typeof db !== 'undefined') {
-        db.collection('edits').doc(id).set(editData).catch(function(err) {
+        db.collection('edits').doc(token).set(editData).catch(function(err) {
           console.warn('Firestore write failed:', err);
         });
       }

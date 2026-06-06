@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Action — BusinessMen.com.ng</title>
+  <link rel="icon" href="bm logo.png" type="image/png">
+  <link rel="stylesheet" href="css/style.css?v=18">
+  <script defer src="js/nav.js?v=10"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
+  <script defer src="js/firebase-config.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <main>
+    <div class="container" style="max-width:600px;padding:80px 24px;text-align:center;">
+      <div id="statusPending" style="padding:40px 20px;">
+        <div style="font-size:3rem;margin-bottom:16px;">&#9203;</div>
+        <h2 style="color:#0f172a;margin-bottom:8px;">Processing...</h2>
+        <p style="color:#64748b;">Please wait while we process your request.</p>
+      </div>
+
+      <div id="statusSuccess" style="display:none;padding:40px 20px;">
+        <div style="font-size:3rem;margin-bottom:16px;">&#10003;</div>
+        <h2 id="successTitle" style="color:#166534;margin-bottom:8px;">Done!</h2>
+        <p id="successMessage" style="color:#64748b;margin-bottom:24px;">Action completed successfully.</p>
+        <a href="." class="btn-primary" style="display:inline-block;">Back to Home</a>
+      </div>
+
+      <div id="statusError" style="display:none;padding:40px 20px;">
+        <div style="font-size:3rem;margin-bottom:16px;">&#9888;</div>
+        <h2 id="errorTitle" style="color:#dc2626;margin-bottom:8px;">Error</h2>
+        <p id="errorMessage" style="color:#64748b;margin-bottom:24px;"></p>
+        <a href="." class="btn-primary" style="display:inline-block;">Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p><strong>BusinessMen.com.ng</strong> &mdash; Nigeria Business Directory.</p>
+    </div>
+  </footer>
+
+  <script defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    var params = new URLSearchParams(window.location.search);
+    var type = params.get('type');
+    var token = params.get('token');
+
+    if (!type || !token) {
+      document.getElementById('statusPending').style.display = 'none';
+      document.getElementById('statusError').style.display = 'block';
+      document.getElementById('errorTitle').textContent = 'Invalid Link';
+      document.getElementById('errorMessage').textContent = 'This confirmation link is missing required parameters.';
+      return;
+    }
+
+    var confirmFn;
+    if (type === 'edit') {
+      confirmFn = firebase.functions().httpsCallable('confirmEdit');
+    } else if (type === 'listing') {
+      confirmFn = firebase.functions().httpsCallable('confirmListing');
+    } else {
+      document.getElementById('statusPending').style.display = 'none';
+      document.getElementById('statusError').style.display = 'block';
+      document.getElementById('errorTitle').textContent = 'Invalid Link';
+      document.getElementById('errorMessage').textContent = 'Unknown confirmation type.';
+      return;
+    }
+
+    confirmFn({ token: token }).then(function(result) {
+      document.getElementById('statusPending').style.display = 'none';
+      document.getElementById('statusSuccess').style.display = 'block';
+      if (result.data && result.data.message) {
+        document.getElementById('successMessage').textContent = result.data.message;
+      }
+      if (type === 'edit') {
+        document.getElementById('successTitle').textContent = 'Edit Approved!';
+      } else if (type === 'listing') {
+        document.getElementById('successTitle').textContent = 'Listing Published!';
+      }
+    }).catch(function(err) {
+      document.getElementById('statusPending').style.display = 'none';
+      document.getElementById('statusError').style.display = 'block';
+      var msg = (err.details && err.details.message) || err.message || 'An unexpected error occurred.';
+      document.getElementById('errorMessage').textContent = msg;
+      if (err.code === 'deadline-exceeded') {
+        document.getElementById('errorTitle').textContent = 'Link Expired';
+      } else if (err.code === 'not-found') {
+        document.getElementById('errorTitle').textContent = 'Not Found';
+      } else if (err.code === 'already-exists') {
+        document.getElementById('errorTitle').textContent = 'Already Confirmed';
+      }
+    });
+  });
+  </script>
+</body>
+</html>
