@@ -45,6 +45,19 @@ async function applyListingEdits() {
           override = edits[slug + '-' + numId] || edits[numId];
         }
       }
+      if (!override && b.name && __listingEditsList.length) {
+        var bName = (b.name || '').toLowerCase().trim();
+        var bCity = (b.city || '').toLowerCase().trim();
+        for (var li = 0; li < __listingEditsList.length; li++) {
+          var ed = __listingEditsList[li].data;
+          var edName = (ed._businessName || '').toLowerCase().trim();
+          var edCity = (ed._businessCity || '').toLowerCase().trim();
+          if (edName && edName === bName && edCity && edCity === bCity) {
+            override = ed;
+            break;
+          }
+        }
+      }
       if (override) {
         if (override.phone) b.phone = override.phone;
         if (override.whatsapp) b.whatsapp = override.whatsapp;
@@ -687,6 +700,20 @@ function renderDetailView(item, cat) {
         }
       }
       if (matched) break;
+    }
+
+    if (!matched && item.name) {
+      var bName = (item.name || '').toLowerCase().trim();
+      var bCity = (item.city || '').toLowerCase().trim();
+      for (var li = 0; li < __listingEditsList.length; li++) {
+        var ed = __listingEditsList[li].data;
+        var edName = (ed._businessName || '').toLowerCase().trim();
+        var edCity = (ed._businessCity || '').toLowerCase().trim();
+        if (edName && edName === bName && edCity && edCity === bCity) {
+          matched = ed;
+          break;
+        }
+      }
     }
 
     if (matched) {
