@@ -25,6 +25,27 @@ const CATEGORY_FILE_MAP = {
   general: 'data/cat_general.json'
 };
 
+async function applyListingEdits() {
+  if (typeof db === 'undefined') return;
+  try {
+    var snapshot = await db.collection('listingEdits').get();
+    var edits = {};
+    snapshot.forEach(function(doc) {
+      edits[doc.id] = doc.data();
+    });
+    allData.forEach(function(b) {
+      var override = edits[b._uid];
+      if (override) {
+        if (override.phone) b.phone = override.phone;
+        if (override.whatsapp) b.whatsapp = override.whatsapp;
+        if (override.address) b.address = override.address;
+      }
+    });
+  } catch (e) {
+    console.warn('Failed to load listing edits:', e);
+  }
+}
+
 async function loadCategoryFiles(files) {
   if (typeof files === 'string') files = [files];
   const cacheKey = files.join('|');
@@ -116,6 +137,7 @@ async function loadData(category) {
       var urlId = b.url && b.url.match(/(\d+)\/$/);
       b._uid = urlId ? urlId[1] : ((b.name || 'business').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + i);
     });
+    await applyListingEdits();
     populateCityFilter();
     return allData;
   } catch (e) {
@@ -191,6 +213,7 @@ async function loadData(category) {
       var urlId = b.url && b.url.match(/(\d+)\/$/);
       b._uid = urlId ? urlId[1] : ((b.name || 'business').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + i);
     });
+    await applyListingEdits();
     
     const countEl = document.getElementById('totalCount');
     if (countEl) countEl.textContent = allData.length;
